@@ -26,7 +26,7 @@ description: Padrões de código e regras de desenvolvimento do projeto San Paol
 
 ## Development Workflow
 - **Spec-Driven:** Before coding any feature, create or update a `features.md` file with the technical requirements.
-- **TDD (Test-Driven Development):** Always write the unit test (Vitest/Jest) before implementing the logic.
+- **TDD (Test-Driven Development):** Always write the unit test (Vitest/Jest or something else) before implementing the logic.
 - **File Size Constraint:** Strictly avoid files larger than 300 lines of code. If a file exceeds this, refactor and split it.
 - **Folder Structure:** 
   - `/src/components/[atoms|molecules|organisms]`
