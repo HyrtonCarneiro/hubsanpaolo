@@ -40,6 +40,13 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
 - Isolate business logic (Hooks) from the UI (Components).
 - All responses must be technical, direct, and focused on code efficiency.
 
+## Metodologia de Testes Ágeis
+
+1.  **Isolamento de Lógica Pura**: Sempre que possível, extraia a lógica de negócio para arquivos em `js/logic/`. Eles devem ser agnósticos ao DOM/Firebase.
+2.  **Testes de Unidade Primários**: Valide o código prioritariamente via Node.js em `js/tests/`. Isso garante feedback em milissegundos.
+3.  **Browser Subagent**: Use apenas para validação visual final e integração DOM/CSS. Minimize o tempo de browser aberto.
+
 ## Custom Workflow Policies
+
 - **Git:** Do NOT perform `git commit` or `git push` automatically. Always wait for explicit user instruction.
 - **Verification:** Perform tests and verification internally. Do NOT attach screenshots or recordings to the `walkthrough.md` unless explicitly requested by the user.

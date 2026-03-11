@@ -14,12 +14,17 @@ description: Padrões de código e regras de desenvolvimento do projeto San Paol
 3. Verifique a estrutura `js/controllers/` do setor se a alteração envolver um setor específico
 4. Se alguma regra não fizer sentido para a situação, **consulte o usuário antes de desviar**
 
-### Passo 5 — Verificar no navegador (Uso Interno)
-Após alterações, verifique internamente (sem gravar ou printar para o usuário, a menos que solicitado):
+### Passo 5 — Verificação Ágil (Prioritário)
+Antes de qualquer verificação manual no navegador:
+1.  **Isolar Lógica**: Certifique-se que a lógica de negócio está em `js/logic/`.
+2.  **Executar Testes de Unidade**: Rode `node js/tests/[arquivo].test.js`.
+3.  **Garantir Verde**: Não avance se os testes de unidade falharem.
+
+Após os testes de unidade, verifique internamente no navegador:
 - [ ] Console JS sem erros
-- [ ] Navegação entre views funciona
+- [ ] Renderização UI correta
+- [ ] Integração com Firebase OK
 - [ ] Dark mode continua funcionando
-- [ ] Funcionalidades alteradas OK
 
 ### Passo 6 — Finalização
 1. Informe o usuário sobre as alterações concluídas.
@@ -54,6 +59,8 @@ hubsanpaolo/
 │       ├── index.html          # Página do setor (inclui CDNs + Tailwind config)
 │       └── js/
 │           ├── app.js          # Entry point do setor
+│           ├── logic/          # Lógica pura (testável em Node.js)
+│           ├── tests/          # Scripts de teste de unidade
 │           └── controllers/    # Controllers SOLID do setor
 └── index.html                  # Hub de login e seleção de setores
 ```

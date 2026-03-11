@@ -7,53 +7,21 @@ window.chartInstTarefaStatus = null;
 window.chartInstTarefaEquipe = null;
 
 window.atualizarGraficos = function () {
-    var pendentes = 0;
-    var regiaoCount = {};
-    var lojaCallCount = {}; // Agrupamento por loja para o novo gráfico
-
-    // Processar Chamados (Lojas)
-    lojasIniciais.forEach(function (loja) {
-        var lgs = window.sysLogs[loja.id] || [];
-        lgs.forEach(function (l) {
-            if (!l.resolvido) {
-                pendentes++;
-                // Contagem por estado
-                if (loja.estado) {
-                    regiaoCount[loja.estado] = (regiaoCount[loja.estado] || 0) + 1;
-                }
-                // Grupar por nome da loja (para o gráfico de pizza)
-                if (loja.nome) {
-                    lojaCallCount[loja.nome] = (lojaCallCount[loja.nome] || 0) + 1;
-                }
-            }
-        });
-    });
-
-    // Calcular KPIs de Tarefas/Projetos (Excluir Concluídas)
-    var tasksAndamento = 0;
-    var tasksPendentes = 0;
-    if (window.sysProjetos) {
-        Object.values(window.sysProjetos).forEach(function(projetosDoMembro) {
-            projetosDoMembro.forEach(function(p) {
-                var st = p.status || 'Pendente';
-                if (st === 'Em Andamento') tasksAndamento++;
-                else if (st === 'Pendente') tasksPendentes++;
-            });
-        });
-    }
+    const l_metrics = DashboardLogic.processarMetricasLojas(window.lojasIniciais, window.sysLogs);
+    const t_metrics = DashboardLogic.processarMetricasTarefasAtivas(window.sysProjetos);
 
     // Atualizar Contadores do Topo
     var elTotal = document.getElementById('statTotalLojas');
     var elPendentes = document.getElementById('statPendentes');
-    if (elTotal) elTotal.innerText = lojasIniciais.length;
-    if (elPendentes) elPendentes.innerText = pendentes;
+    if (elTotal) elTotal.innerText = window.lojasIniciais ? window.lojasIniciais.length : 0;
+    if (elPendentes) elPendentes.innerText = l_metrics.totalPendentes;
 
     // Novos KPIs de Tarefas
     var elTasksAnd = document.getElementById('statTarefasPendentes'); 
-    if (elTasksAnd) elTasksAnd.innerText = tasksAndamento;
+    if (elTasksAnd) elTasksAnd.innerText = t_metrics.andamento;
 
     var elTasksPend = document.getElementById('statTarefasConcluidas');
-    if (elTasksPend) elTasksPend.innerText = tasksPendentes;
+    if (elTasksPend) elTasksPend.innerText = t_metrics.pendentes;
 
     var textColor = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
     var elChartStatus = document.getElementById('chartStatus');
@@ -63,8 +31,8 @@ window.atualizarGraficos = function () {
 
     if (elChartStatus) {
         if (chartInstStatus) chartInstStatus.destroy();
-        var labelsLoja = Object.keys(lojaCallCount);
-        var valuesLoja = labelsLoja.map(function(n) { return lojaCallCount[n]; });
+        var labelsLoja = Object.keys(l_metrics.lojaCallCount);
+        var valuesLoja = labelsLoja.map(function(n) { return l_metrics.lojaCallCount[n]; });
         
         chartInstStatus = new Chart(elChartStatus, {
             type: 'doughnut',
@@ -86,8 +54,8 @@ window.atualizarGraficos = function () {
 
     if (elChartRegionais) {
         if (chartInstRegiao) chartInstRegiao.destroy();
-        var orderedStates = Object.keys(regiaoCount).sort(function (a, b) { return a.localeCompare(b); });
-        var orderedValues = orderedStates.map(function (k) { return regiaoCount[k]; });
+        var orderedStates = Object.keys(l_metrics.regiaoCount).sort(function (a, b) { return a.localeCompare(b); });
+        var orderedValues = orderedStates.map(function (k) { return l_metrics.regiaoCount[k]; });
         chartInstRegiao = new Chart(elChartRegionais, {
             type: 'bar',
             data: {
@@ -108,7 +76,7 @@ window.atualizarGraficos = function () {
             type: 'doughnut',
             data: {
                 labels: ['Pendente', 'Em Andamento'],
-                datasets: [{ data: [tasksPendentes, tasksAndamento], backgroundColor: ['#ef4444', '#3b82f6'] }]
+                datasets: [{ data: [t_metrics.pendentes, t_metrics.andamento], backgroundColor: ['#ef4444', '#3b82f6'] }]
             },
             options: { plugins: { title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, legend: { labels: { color: textColor } } } }
         });
@@ -116,10 +84,8 @@ window.atualizarGraficos = function () {
 
     if (elChartTarefaEquipe && window.sysProjetos) {
         if (window.chartInstTarefaEquipe) window.chartInstTarefaEquipe.destroy();
-        var labels = Object.keys(window.sysProjetos).sort();
-        var dataValues = labels.map(function(l) { 
-            return window.sysProjetos[l].filter(function(p) { return (p.status || 'Pendente') !== 'Concluído'; }).length; 
-        });
+        var labels = Object.keys(t_metrics.porMembro).sort();
+        var dataValues = labels.map(function(l) { return t_metrics.porMembro[l]; });
         window.chartInstTarefaEquipe = new Chart(elChartTarefaEquipe, {
             type: 'bar',
             data: {
