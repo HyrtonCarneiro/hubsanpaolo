@@ -461,7 +461,15 @@ window.abrirModalEditPlanejamento = function (nomeLoja) {
     document.getElementById('modalPlanId').value = nomeLoja;
 
     document.getElementById('modalPlanDataProx').value = cfg.dataProxima || '';
+    
+    // Atualiza as opções do select com a equipe atual (audiEquipe)
+    const selectAuditor = document.getElementById('modalPlanAuditor');
+    if (selectAuditor) {
+        selectAuditor.innerHTML = '<option value="">A Definir</option>' + 
+            audiEquipe.map(mb => `<option value="${mb.nome}">${mb.nome}</option>`).join('');
+    }
     document.getElementById('modalPlanAuditor').value = cfg.auditor || '';
+    
     document.getElementById('modalPlanNotas').value = cfg.notasInternas || '';
 
     document.getElementById('modalPlanejamentoObj').classList.add('show');
