@@ -8,54 +8,52 @@ window.chartInstTarefaEquipe = null;
 
 window.atualizarGraficos = function () {
     var pendentes = 0;
-    var resolvidos = 0;
-    var lojasPendentes = 0;
-    var lojasResolvidas = 0;
     var regiaoCount = {};
+    var lojaCallCount = {}; // Agrupamento por loja para o novo gráfico
 
+    // Processar Chamados (Lojas)
     lojasIniciais.forEach(function (loja) {
-        if (!regiaoCount[loja.estado]) regiaoCount[loja.estado] = 0;
         var lgs = window.sysLogs[loja.id] || [];
-
-        var temPendenteNaLoja = false;
-        if (lgs.length > 0) {
-            regiaoCount[loja.estado] += lgs.length;
-            lgs.forEach(function (l) {
-                if (!l.resolvido) {
-                    pendentes++;
-                    temPendenteNaLoja = true;
-                } else {
-                    resolvidos++;
+        lgs.forEach(function (l) {
+            if (!l.resolvido) {
+                pendentes++;
+                // Contagem por estado
+                if (loja.estado) {
+                    regiaoCount[loja.estado] = (regiaoCount[loja.estado] || 0) + 1;
                 }
-            });
-
-            if (temPendenteNaLoja) lojasPendentes++;
-            else lojasResolvidas++;
-        }
+                // Grupar por nome da loja (para o gráfico de pizza)
+                if (loja.nome) {
+                    lojaCallCount[loja.nome] = (lojaCallCount[loja.nome] || 0) + 1;
+                }
+            }
+        });
     });
 
-    var elTotal = document.getElementById('statTotalLojas');
-    var elPendentes = document.getElementById('statPendentes');
-    if (elTotal) elTotal.innerText = lojasIniciais.length;
-    if (elPendentes) elPendentes.innerText = pendentes;
-    
-    // Calcular KPIs de Tarefas/Projetos
-    var tarefasPendentesAndamento = 0;
-    var tarefasConcluidas = 0;
+    // Calcular KPIs de Tarefas/Projetos (Excluir Concluídas)
+    var tasksAndamento = 0;
+    var tasksPendentes = 0;
     if (window.sysProjetos) {
         Object.values(window.sysProjetos).forEach(function(projetosDoMembro) {
             projetosDoMembro.forEach(function(p) {
                 var st = p.status || 'Pendente';
-                if (st === 'Concluído') tarefasConcluidas++;
-                else tarefasPendentesAndamento++; // Considera Em Andamento e Pendente
+                if (st === 'Em Andamento') tasksAndamento++;
+                else if (st === 'Pendente') tasksPendentes++;
             });
         });
     }
 
-    var elTarefasPendentes = document.getElementById('statTarefasPendentes');
-    var elTarefasConcluidas = document.getElementById('statTarefasConcluidas');
-    if (elTarefasPendentes) elTarefasPendentes.innerText = tarefasPendentesAndamento;
-    if (elTarefasConcluidas) elTarefasConcluidas.innerText = tarefasConcluidas;
+    // Atualizar Contadores do Topo
+    var elTotal = document.getElementById('statTotalLojas');
+    var elPendentes = document.getElementById('statPendentes');
+    if (elTotal) elTotal.innerText = lojasIniciais.length;
+    if (elPendentes) elPendentes.innerText = pendentes;
+
+    // Novos KPIs de Tarefas
+    var elTasksAnd = document.getElementById('statTarefasPendentes'); 
+    if (elTasksAnd) elTasksAnd.innerText = tasksAndamento;
+
+    var elTasksPend = document.getElementById('statTarefasConcluidas');
+    if (elTasksPend) elTasksPend.innerText = tasksPendentes;
 
     var textColor = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
     var elChartStatus = document.getElementById('chartStatus');
@@ -65,13 +63,24 @@ window.atualizarGraficos = function () {
 
     if (elChartStatus) {
         if (chartInstStatus) chartInstStatus.destroy();
+        var labelsLoja = Object.keys(lojaCallCount);
+        var valuesLoja = labelsLoja.map(function(n) { return lojaCallCount[n]; });
+        
         chartInstStatus = new Chart(elChartStatus, {
             type: 'doughnut',
             data: {
-                labels: ['Lojas com Pendências', 'Lojas 100% Resolvidas'],
-                datasets: [{ data: [lojasPendentes, lojasResolvidas], backgroundColor: ['#ef4444', '#10b981'] }]
+                labels: labelsLoja,
+                datasets: [{ 
+                    data: valuesLoja, 
+                    backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#06b6d4', '#ec4899'] 
+                }]
             },
-            options: { plugins: { title: { display: true, text: 'Status Atual das Lojas', color: textColor }, legend: { labels: { color: textColor } } } }
+            options: { 
+                plugins: { 
+                    title: { display: true, text: 'Pendências por Unidade', color: textColor }, 
+                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } } 
+                } 
+            }
         });
     }
 
@@ -92,35 +101,33 @@ window.atualizarGraficos = function () {
         });
     }
 
-    // Novos Gráficos de Tarefas
+    // Gráficos de Tarefas (Excluindo Concluídas)
     if (elChartTarefaStatus && window.sysProjetos) {
         if (window.chartInstTarefaStatus) window.chartInstTarefaStatus.destroy();
-        var stCount = { 'Pendente': 0, 'Em Andamento': 0, 'Concluído': 0 };
-        Object.values(window.sysProjetos).forEach(function(list) {
-            list.forEach(function(p) { if(stCount[p.status] !== undefined) stCount[p.status]++; else stCount['Pendente']++; });
-        });
         window.chartInstTarefaStatus = new Chart(elChartTarefaStatus, {
             type: 'doughnut',
             data: {
-                labels: ['Pendente', 'Em Andamento', 'Concluído'],
-                datasets: [{ data: [stCount['Pendente'], stCount['Em Andamento'], stCount['Concluído']], backgroundColor: ['#ef4444', '#3b82f6', '#10b981'] }]
+                labels: ['Pendente', 'Em Andamento'],
+                datasets: [{ data: [tasksPendentes, tasksAndamento], backgroundColor: ['#ef4444', '#3b82f6'] }]
             },
-            options: { plugins: { title: { display: true, text: 'Status Geral das Tarefas', color: textColor }, legend: { labels: { color: textColor } } } }
+            options: { plugins: { title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, legend: { labels: { color: textColor } } } }
         });
     }
 
     if (elChartTarefaEquipe && window.sysProjetos) {
         if (window.chartInstTarefaEquipe) window.chartInstTarefaEquipe.destroy();
         var labels = Object.keys(window.sysProjetos).sort();
-        var dataValues = labels.map(function(l) { return window.sysProjetos[l].length; });
+        var dataValues = labels.map(function(l) { 
+            return window.sysProjetos[l].filter(function(p) { return (p.status || 'Pendente') !== 'Concluído'; }).length; 
+        });
         window.chartInstTarefaEquipe = new Chart(elChartTarefaEquipe, {
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: [{ label: 'Tarefas por Membro', data: dataValues, backgroundColor: '#8b5cf6' }]
+                datasets: [{ label: 'Tarefas Ativas por Membro', data: dataValues, backgroundColor: '#8b5cf6' }]
             },
             options: {
-                plugins: { title: { display: true, text: 'Distribuição por Membro da Equipe', color: textColor }, legend: { display: false } },
+                plugins: { title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor }, legend: { display: false } },
                 scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
             }
         });
