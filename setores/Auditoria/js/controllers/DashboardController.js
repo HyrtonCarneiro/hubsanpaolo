@@ -10,6 +10,11 @@ function getLojaRegional(nomeLoja) {
 }
 window.getLojaRegional = getLojaRegional;
 
+// Registrar plugin de labels globalmente
+if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+}
+
 window.renderDashboard = function () {
     var notasCache = window.notasCache || [];
 
@@ -85,7 +90,16 @@ window.renderDashboard = function () {
             },
             options: {
                 responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: {
+                        color: textColor,
+                        font: { weight: 'bold' },
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: function(value) { return value.toFixed(1); }
+                    }
+                },
                 scales: {
                     x: { min: 0, max: 10, grid: { color: gridColor }, ticks: { color: textColor } },
                     y: { grid: { display: false }, ticks: { color: textColor, font: { weight: '600' } } }
@@ -111,7 +125,16 @@ window.renderDashboard = function () {
             },
             options: {
                 responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    datalabels: {
+                        color: textColor,
+                        font: { weight: 'bold', size: 10 },
+                        anchor: 'end',
+                        align: 'end',
+                        formatter: function(value) { return value.toFixed(1); }
+                    }
+                },
                 scales: {
                     x: { min: 0, max: 10, grid: { color: gridColor }, ticks: { color: textColor } },
                     y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } }

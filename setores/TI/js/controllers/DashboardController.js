@@ -6,6 +6,11 @@ let chartInstRegiao = null;
 window.chartInstTarefaStatus = null;
 window.chartInstTarefaEquipe = null;
 
+// Registrar plugin de labels globalmente
+if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+}
+
 window.atualizarGraficos = function () {
     const l_metrics = DashboardLogic.processarMetricasLojas(window.lojasIniciais, window.sysLogs);
     const t_metrics = DashboardLogic.processarMetricasTarefasAtivas(window.sysProjetos);
@@ -29,6 +34,13 @@ window.atualizarGraficos = function () {
     var elChartTarefaStatus = document.getElementById('chartTarefaStatus');
     var elChartTarefaEquipe = document.getElementById('chartTarefaEquipe');
 
+    // Configuração padrão de labels
+    const baseLabels = {
+        color: textColor,
+        font: { weight: 'bold', size: 11 },
+        formatter: function(value) { return value > 0 ? value : ''; }
+    };
+
     if (elChartStatus) {
         if (chartInstStatus) chartInstStatus.destroy();
         var labelsLoja = Object.keys(l_metrics.lojaCallCount);
@@ -46,7 +58,8 @@ window.atualizarGraficos = function () {
             options: { 
                 plugins: { 
                     title: { display: true, text: 'Pendências por Unidade', color: textColor }, 
-                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } } 
+                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
+                    datalabels: baseLabels
                 } 
             }
         });
@@ -60,10 +73,14 @@ window.atualizarGraficos = function () {
             type: 'bar',
             data: {
                 labels: orderedStates,
-                datasets: [{ label: 'Total de Ocorrências', data: orderedValues, backgroundColor: '#3b82f6' }]
+                datasets: [{ label: 'Total de Ocorrências (Incl. Resolvidos)', data: orderedValues, backgroundColor: '#3b82f6' }]
             },
             options: {
-                plugins: { title: { display: true, text: 'Volume de Chamados por Estado', color: textColor }, legend: { labels: { color: textColor } } },
+                plugins: { 
+                    title: { display: true, text: 'Volume de Chamados por Estado', color: textColor }, 
+                    legend: { labels: { color: textColor } },
+                    datalabels: { ...baseLabels, anchor: 'end', align: 'top' }
+                },
                 scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
             }
         });
@@ -78,7 +95,13 @@ window.atualizarGraficos = function () {
                 labels: ['Pendente', 'Em Andamento'],
                 datasets: [{ data: [t_metrics.pendentes, t_metrics.andamento], backgroundColor: ['#ef4444', '#3b82f6'] }]
             },
-            options: { plugins: { title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, legend: { labels: { color: textColor } } } }
+            options: { 
+                plugins: { 
+                    title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, 
+                    legend: { labels: { color: textColor } },
+                    datalabels: baseLabels
+                } 
+            }
         });
     }
 
@@ -93,7 +116,11 @@ window.atualizarGraficos = function () {
                 datasets: [{ label: 'Tarefas Ativas por Membro', data: dataValues, backgroundColor: '#8b5cf6' }]
             },
             options: {
-                plugins: { title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor }, legend: { display: false } },
+                plugins: { 
+                    title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor }, 
+                    legend: { display: false },
+                    datalabels: { ...baseLabels, anchor: 'end', align: 'top' }
+                },
                 scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
             }
         });

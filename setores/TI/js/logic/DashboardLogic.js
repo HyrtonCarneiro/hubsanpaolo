@@ -23,13 +23,14 @@ const DashboardLogic = {
         lojas.forEach(loja => {
             const lgs = logs[loja.id] || [];
             lgs.forEach(l => {
+                // Contagem por estado (Todos os chamados, inclusive resolvidos)
+                if (loja.estado) {
+                    metrics.regiaoCount[loja.estado] = (metrics.regiaoCount[loja.estado] || 0) + 1;
+                }
+
                 if (!l.resolvido) {
                     metrics.totalPendentes++;
-                    // Região
-                    if (loja.estado) {
-                        metrics.regiaoCount[loja.estado] = (metrics.regiaoCount[loja.estado] || 0) + 1;
-                    }
-                    // Por Loja
+                    // Por Loja (Apenas pendências conforme KPI anterior)
                     if (loja.nome) {
                         metrics.lojaCallCount[loja.nome] = (metrics.lojaCallCount[loja.nome] || 0) + 1;
                     }

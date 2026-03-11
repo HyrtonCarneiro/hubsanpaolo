@@ -3,6 +3,11 @@
 
 let scatterChartInst = null;
 
+// Registrar plugin de labels globalmente
+if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+}
+
 window.renderizarGrafico = function () {
     var canvas = document.getElementById('cmvScatterChart');
     if (!canvas) return;
@@ -58,6 +63,14 @@ window.renderizarGrafico = function () {
                 },
                 legend: {
                     labels: { color: textColor }
+                },
+                datalabels: {
+                    color: textColor,
+                    align: 'top',
+                    anchor: 'end',
+                    offset: 4,
+                    font: { size: 10, weight: 'bold' },
+                    formatter: function(value) { return value.nome; }
                 }
             },
             scales: {

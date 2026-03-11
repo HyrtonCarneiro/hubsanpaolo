@@ -6,6 +6,11 @@
 let chartObrasStatusInst = null;
 let chartObrasTagsInst = null;
 
+// Registrar plugin de labels globalmente
+if (typeof ChartDataLabels !== 'undefined') {
+    Chart.register(ChartDataLabels);
+}
+
 window.DashboardController = {
     atualizarDashboard(obras) {
         try {
@@ -46,7 +51,18 @@ window.DashboardController = {
                             backgroundColor: ['#64748b', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#10b981']
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { position: 'right' },
+                            datalabels: {
+                                color: '#ffffff',
+                                font: { weight: 'bold' },
+                                formatter: function(value) { return value > 0 ? value : ''; }
+                            }
+                        } 
+                    }
                 });
             }
 
@@ -67,7 +83,20 @@ window.DashboardController = {
                             backgroundColor: ['#ef4444', '#0ea5e9', '#84cc16', '#f97316', '#a855f7']
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: {
+                            datalabels: {
+                                color: '#ffffff',
+                                anchor: 'end',
+                                align: 'top',
+                                font: { weight: 'bold' },
+                                formatter: function(value) { return value > 0 ? value : ''; }
+                            }
+                        },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } 
+                    }
                 });
             }
         } catch (e) {
