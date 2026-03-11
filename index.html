@@ -78,9 +78,12 @@
             <!-- Os cards são inseridos aqui pelo Javascript refatorado -->
         </div>
 
-        <div class="text-center mt-12 flex justify-center gap-4">
+        <div class="text-center mt-12 flex justify-center gap-4 flex-wrap">
             <button id="adminPanelBtn" class="hidden bg-brandOrange text-white hover:bg-[#b8430a] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.abrirModalAdmin()">
                 <i class="ph ph-wrench"></i> Gerenciar Usuários
+            </button>
+            <button id="userProfileBtn" class="bg-transparent text-mainText border border-border hover:bg-[rgba(86,51,27,0.05)] hover:border-[var(--sp-aoleite)] hover:text-[var(--sp-aoleite)] dark:text-[#f5f0e6] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.abrirModalPerfil()">
+                <i class="ph ph-user-gear"></i> Minha Conta
             </button>
             <button class="bg-transparent text-mainText border border-border hover:bg-[rgba(86,51,27,0.05)] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.logout()">
                 <i class="ph ph-sign-out"></i> Encerrar Sessão
@@ -110,6 +113,34 @@
             </div>
             <div id="adminUsersList" class="overflow-y-auto p-6 flex-1 bg-white">
                 <!-- Renderizado JS via Atom/Molecule Generators -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Minha Conta (Todos os Usuários) -->
+    <div id="modalPerfil" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white dark:bg-[#362011] rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-border dark:border-[#4a2815]">
+                <h2 class="text-xl font-bold text-mainText dark:text-white m-0 flex items-center gap-2"><i class="ph ph-user-gear text-[var(--sp-aoleite)]"></i> Minha Conta</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-mutedText hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalPerfil()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-black/20 rounded-lg border border-border dark:border-[#4a2815]">
+                    <div class="w-12 h-12 rounded-full bg-[var(--sp-aoleite)] flex items-center justify-center text-white text-xl font-bold"><i class="ph-fill ph-user"></i></div>
+                    <div>
+                        <div class="font-bold text-mainText dark:text-white text-lg" id="perfilUserName">...</div>
+                        <div class="text-sm text-mutedText dark:text-[#d4bda8]" id="perfilUserSetores">...</div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-mainText dark:text-white mb-2"><i class="ph ph-key mr-1"></i> Alterar Senha</label>
+                    <input type="password" id="perfilSenhaAtual" placeholder="Senha atual" class="w-full p-2.5 mb-3 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                    <input type="password" id="perfilNovaSenha" placeholder="Nova senha" class="w-full p-2.5 mb-3 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                    <input type="password" id="perfilConfirmarSenha" placeholder="Confirmar nova senha" class="w-full p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                </div>
+                <button class="w-full bg-[var(--sp-aoleite)] text-white hover:brightness-110 font-semibold px-4 py-2.5 rounded-md transition-all inline-flex items-center justify-center gap-2" onclick="window.salvarNovaSenha()">
+                    <i class="ph ph-floppy-disk"></i> Salvar Nova Senha
+                </button>
             </div>
         </div>
     </div>
