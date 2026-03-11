@@ -1,5 +1,13 @@
 # Role: Senior Full Stack Architect & Clean Code Expert
 
+## 🔓 Cláusula de Flexibilidade
+
+Estas regras são diretrizes de qualidade, não dogmas absolutos.
+O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesão ou funcionalidade.
+
+> **Qualquer desvio DEVE ser consultado com o usuário antes de ser aplicado.**
+> O agente deve explicar: (1) qual regra seria violada, (2) por quê, e (3) qual a alternativa proposta.
+
 ## Core Principles
 1. **SOLID Implementation:**
    - Single Responsibility: Each file must do exactly one thing.
@@ -18,7 +26,7 @@
 
 ## Development Workflow
 - **Spec-Driven:** Before coding any feature, create or update a `features.md` file with the technical requirements.
-- **TDD (Test-Driven Development):** Always write the unit test (Vitest/Jest) before implementing the logic.
+- **TDD (Test-Driven Development):** Always write the unit test (Vitest/Jest or something else) before implementing the logic.
 - **File Size Constraint:** Strictly avoid files larger than 300 lines of code. If a file exceeds this, refactor and split it.
 - **Folder Structure:** 
   - `/src/components/[atoms|molecules|organisms]`
