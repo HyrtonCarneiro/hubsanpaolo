@@ -14,7 +14,9 @@ window.initMapeamentoListeners = function() {
     
     // Popular selects
     window.popularSelectLojasMapeamento();
-    window.popularSelectAuditoresMapeamento();
+    if (window.audiEquipe && window.audiEquipe.length > 0) {
+        window.popularSelectAuditoresMapeamento();
+    }
     
     // Data de hoje default
     const inputData = document.getElementById('mapDataInput');

@@ -31,6 +31,7 @@ window.initTarefasListeners = function () {
             renderizarBotoesAudiEquipe();
             renderizarAudiProjetosList();
             renderizarListaAudiEquipeGerenciar();
+            if (typeof window.popularSelectAuditoresMapeamento === 'function') window.popularSelectAuditoresMapeamento();
         }, function (err) { console.error("Erro Equipe Audi:", err); });
     } catch (e) {
         console.error("Erro ao iniciar listeners tarefas/equipe", e);
