@@ -27,10 +27,28 @@ window.MapeamentoLogic = {
         if (!dataTentativa) return 1;
         const dataReferenciaISO = new Date(dataTentativa).toISOString().substring(0, 7); // "YYYY-MM"
 
-        const tentativasNoMes = historico.filter(h => {
-            const hISO = new Date(h.dataTentativa).toISOString().substring(0, 7);
-            return h.lojaId === lojaId && hISO === dataReferenciaISO;
-        });
+        // Filtrar histórico da loja no mesmo mês
+        const tentativasNoMes = historico
+            .filter(h => {
+                const hISO = new Date(h.dataTentativa).toISOString().substring(0, 7);
+                return h.lojaId === lojaId && hISO === dataReferenciaISO;
+            })
+            // Ordenar por data/timestamp para encontrar a última bem sucedida
+            .sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+        // Encontrar índice da última auditoria realizada com sucesso (SIM)
+        let lastSimIndex = -1;
+        for (let i = tentativasNoMes.length - 1; i >= 0; i--) {
+            if (tentativasNoMes[i].realizada === 'SIM') {
+                lastSimIndex = i;
+                break;
+            }
+        }
+
+        // Se encontrou um SIM, conta apenas o que vem depois dele
+        if (lastSimIndex !== -1) {
+            return (tentativasNoMes.length - 1 - lastSimIndex) + 1;
+        }
 
         return tentativasNoMes.length + 1;
     },

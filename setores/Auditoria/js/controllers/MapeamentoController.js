@@ -4,6 +4,7 @@
  */
 
 window.historicoMapeamento = [];
+window.mapSortConfig = { field: 'createdAt', direction: 'desc' }; // Padrão: Mais recentes primeiro
 
 window.initMapeamentoListeners = function() {
     window.MapeamentoService.initListeners((dados) => {
@@ -84,6 +85,10 @@ window.salvarTentativaMapeamento = async function() {
 
     const nTentativa = window.MapeamentoLogic.circularTentativa(lojaId, dataTentativa, window.historicoMapeamento);
     const sla = window.MapeamentoLogic.estaNoPrazo(dataTentativa);
+    
+    // Captura o horário atual para registro
+    const agora = new Date();
+    const horarioRegistro = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     const dados = {
         lojaId,
@@ -95,7 +100,8 @@ window.salvarTentativaMapeamento = async function() {
         auditor,
         notas,
         nTentativa,
-        sla
+        sla,
+        horario: horarioRegistro
     };
 
     const validacao = window.MapeamentoLogic.validarRegistro(dados);
@@ -123,10 +129,27 @@ window.renderizarMapeamento = function() {
 
     const searchTerm = document.getElementById('mapSearch').value.toLowerCase();
     
-    const filtrados = window.historicoMapeamento.filter(h => {
+    let filtrados = window.historicoMapeamento.filter(h => {
         return h.nomeLoja.toLowerCase().includes(searchTerm) || 
                h.estado.toLowerCase().includes(searchTerm) ||
-               (h.autor && h.autor.toLowerCase().includes(searchTerm));
+               (h.auditor && h.auditor.toLowerCase().includes(searchTerm));
+    });
+
+    // Aplicar Ordenação
+    const { field, direction } = window.mapSortConfig;
+    filtrados.sort((a, b) => {
+        let valA = a[field];
+        let valB = b[field];
+
+        // Caso especial para timestamps do Firebase (createdAt)
+        if (field === 'createdAt') {
+            valA = a.createdAt?.seconds || 0;
+            valB = b.createdAt?.seconds || 0;
+        }
+        
+        if (valA < valB) return direction === 'asc' ? -1 : 1;
+        if (valA > valB) return direction === 'asc' ? 1 : -1;
+        return 0;
     });
 
     if (filtrados.length === 0) {
@@ -147,7 +170,7 @@ window.renderizarMapeamento = function() {
             <tr class="hover:bg-black/5 transition-colors">
                 <td class="p-4 text-sm whitespace-nowrap">
                     <div class="font-bold">${new Date(h.dataTentativa).toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'})}</div>
-                    <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa}</div>
+                    <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa} ${h.horario || ''}</div>
                 </td>
                 <td class="p-4 text-center">
                     <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">${h.nTentativa}</div>
@@ -171,4 +194,14 @@ window.renderizarMapeamento = function() {
             </tr>
         `;
     }).join('');
+};
+
+window.sortMapeamento = function(field) {
+    if (window.mapSortConfig.field === field) {
+        window.mapSortConfig.direction = window.mapSortConfig.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        window.mapSortConfig.field = field;
+        window.mapSortConfig.direction = 'asc';
+    }
+    window.renderizarMapeamento();
 };
