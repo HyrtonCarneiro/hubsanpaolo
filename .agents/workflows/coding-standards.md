@@ -13,7 +13,17 @@ description: Padrões de código e regras de desenvolvimento do projeto San Paol
 2. Leia este workflow completo (`coding-standards.md`)
 3. Verifique a estrutura `js/controllers/` do setor se a alteração envolver um setor específico
 4. Se alguma regra não fizer sentido para a situação, **consulte o usuário antes de desviar**
-5. Só então prossiga com as alterações
+
+### Passo 5 — Verificar no navegador (Uso Interno)
+Após alterações, verifique internamente (sem gravar ou printar para o usuário, a menos que solicitado):
+- [ ] Console JS sem erros
+- [ ] Navegação entre views funciona
+- [ ] Dark mode continua funcionando
+- [ ] Funcionalidades alteradas OK
+
+### Passo 6 — Finalização
+1. Informe o usuário sobre as alterações concluídas.
+2. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
 
 ## Arquitetura
 - **Zero-build**: Projeto roda diretamente via `file://` no navegador, sem Node.js, sem bundler

@@ -292,3 +292,4 @@ window.exportarProjetosCSV = function () {
     document.body.removeChild(link);
     showToast("Download de tarefas iniciado");
 }
+
