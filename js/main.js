@@ -1,5 +1,7 @@
 // js/main.js
 import { db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from './firebase.js';
+import { Button } from './components/atoms/Button.js';
+import { SectorCard } from './components/molecules/SectorCard.js';
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 let allUsersCache = [];
@@ -88,17 +90,38 @@ function initApp() {
 
     document.getElementById('hub-container').style.display = 'block';
 
-    const allHubSectors = ["Diretoria", "TI", "Auditoria", "Controladoria", "Expansao", "Fiscal", "Financeiro", "Marketing", "Gente_Gestao", "Operacao", "Varejo"];
-    allHubSectors.forEach(sec => {
-        const card = document.getElementById('hub-card-' + sec);
-        if (card) {
-            if (sectors.includes(sec) || currentUser === 'admin') {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
+    const allHubSectors = [
+        { id: "Diretoria", title: "Painel Diretoria", icon: "ph-fill ph-crown", color: true },
+        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false },
+        { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false },
+        { id: "Controladoria", title: "Controladoria", icon: "ph-fill ph-chart-line-up", color: false },
+        { id: "Expansao", title: "Expansão", icon: "ph-fill ph-map-pin-line", color: false },
+        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false },
+        { id: "Financeiro", title: "Financeiro", icon: "ph-fill ph-bank", color: false },
+        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false },
+        { id: "Gente_Gestao", title: "Gente e Gestão", icon: "ph-fill ph-users-three", color: false },
+        { id: "Operacao", title: "Operação", icon: "ph-fill ph-gear", color: false },
+        { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
+    ];
+
+    const hubGrid = document.getElementById('hub-grid');
+    if (hubGrid) {
+        let gridHTML = '';
+        allHubSectors.forEach(sec => {
+            const isActive = sectors.includes(sec.id) || currentUser === 'admin';
+            if (isActive) {
+                gridHTML += SectorCard({
+                    id: sec.id,
+                    title: sec.title,
+                    icon: sec.icon,
+                    active: true,
+                    brandColor: sec.color,
+                    onClickDir: `window.goToSector('${sec.id}')`
+                });
             }
-        }
-    });
+        });
+        hubGrid.innerHTML = gridHTML;
+    }
 
     const adminBtn = document.getElementById('adminPanelBtn');
     if (adminBtn) {
@@ -162,7 +185,7 @@ function renderAdminUsersList() {
     let usuariosFiltrados = allUsersCache.filter(u => u.user.toLowerCase().includes(termo));
 
     if (usuariosFiltrados.length === 0) {
-        listHtml.innerHTML = '<p style="padding:20px; text-align:center;">Nenhum usuário encontrado.</p>';
+        listHtml.innerHTML = '<p class="text-center text-mutedText p-4">Nenhum usuário encontrado.</p>';
         return;
     }
 
@@ -173,38 +196,38 @@ function renderAdminUsersList() {
             const isChecked = currentPerms.includes(sec);
             const isAdminStr = u.user === 'admin' ? 'disabled' : '';
             return `
-                <label style="display:inline-flex; align-items:center; gap:5px; font-size:0.85rem; padding: 5px; background: var(--bg-color); border-radius: 4px; border: 1px solid var(--border);">
-                    <input type="checkbox" value="${sec}" class="chk-sector-${u.id}" ${isChecked ? 'checked' : ''} ${isAdminStr}> ${sec}
+                <label class="inline-flex items-center gap-2 text-sm p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-gray-100 transition-colors">
+                    <input type="checkbox" value="${sec}" class="chk-sector-${u.id} rounded text-brandOrange focus:ring-brandOrange" ${isChecked ? 'checked' : ''} ${isAdminStr}> 
+                    <span class="text-mainText">${sec}</span>
                 </label>
             `;
         }).join('');
 
         const d = document.createElement('div');
-        d.style.border = '1px solid var(--border)';
-        d.style.padding = '15px';
-        d.style.marginBottom = '15px';
-        d.style.borderRadius = '8px';
-        d.style.background = 'var(--panel-bg)';
+        d.className = 'border border-gray-200 p-4 mb-4 rounded-lg bg-white shadow-sm';
 
-        const adminBadge = u.user === 'admin' ? '<span class="badge" style="background:var(--primary); color:white;">Super Admin</span>' : '';
-        const btnAlterarSenha = `<button class="btn btn-outline" style="padding: 4px 8px; font-size: 0.8rem; margin-right: 5px;" onclick="window.alterarSenhaUsuario('${u.id}', '${u.user}')"><i class="ph ph-key"></i> Senha</button>`;
-        const btnDelete = u.user !== 'admin' ? `<button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="window.deletarUsuario('${u.id}', '${u.user}')"><i class="ph ph-trash"></i> Excluir</button>` : '';
+        const adminBadge = u.user === 'admin' ? '<span class="bg-brandOrange text-white text-xs px-2 py-1 rounded">Super Admin</span>' : '';
+        const btnAlterarSenha = Button({ text: "Senha", icon: "<i class='ph ph-key mr-1'></i>", variant: "outline", onClick: `window.alterarSenhaUsuario('${u.id}', '${u.user}')` });
+        const btnDelete = u.user !== 'admin' ? Button({ text: "Excluir", icon: "<i class='ph ph-trash mr-1'></i>", variant: "outline", onClick: `window.deletarUsuario('${u.id}', '${u.user}')` }) : '';
+        const btnSave = u.user !== 'admin' ? Button({ text: "Salvar Permissões", icon: "<i class='ph ph-floppy-disk mr-1'></i>", variant: "primary", onClick: `window.salvarPermissoesUsuario('${u.id}')` }) : '<p class="text-xs text-mutedText">Permissões de Super Admin não podem ser alteradas.</p>';
 
         d.innerHTML = `
-            <div style="font-weight:bold; margin-bottom:10px; font-size: 1.1rem; color: var(--text-main); display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span><i class="ph ph-user"></i> ${u.user}</span>
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center gap-2 text-lg font-bold text-mainText">
+                    <i class="ph ph-user"></i> ${u.user}
                     ${adminBadge}
                 </div>
-                <div>
+                <div class="flex gap-2 relative z-10">
                     ${btnAlterarSenha}
                     ${btnDelete}
                 </div>
             </div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap:10px; margin-bottom:15px;">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
                 ${checksHtml}
             </div>
-            ${u.user !== 'admin' ? `<button class="btn btn-primary" style="padding: 6px 12px; font-size:0.85rem;" onclick="window.salvarPermissoesUsuario('${u.id}')"><i class="ph ph-floppy-disk"></i> Salvar Permissões</button>` : '<p style="font-size:0.8rem; color:var(--text-muted);">Permissões de Super Admin não podem ser alteradas.</p>'}
+            <div class="mt-4 relative z-10">
+                ${btnSave}
+            </div>
         `;
         listHtml.appendChild(d);
     });
