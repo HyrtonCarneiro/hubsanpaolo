@@ -3,6 +3,8 @@
 
 let chartInstStatus = null;
 let chartInstRegiao = null;
+window.chartInstTarefaStatus = null;
+window.chartInstTarefaEquipe = null;
 
 window.atualizarGraficos = function () {
     var pendentes = 0;
@@ -58,6 +60,8 @@ window.atualizarGraficos = function () {
     var textColor = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
     var elChartStatus = document.getElementById('chartStatus');
     var elChartRegionais = document.getElementById('chartRegionais');
+    var elChartTarefaStatus = document.getElementById('chartTarefaStatus');
+    var elChartTarefaEquipe = document.getElementById('chartTarefaEquipe');
 
     if (elChartStatus) {
         if (chartInstStatus) chartInstStatus.destroy();
@@ -73,10 +77,8 @@ window.atualizarGraficos = function () {
 
     if (elChartRegionais) {
         if (chartInstRegiao) chartInstRegiao.destroy();
-
         var orderedStates = Object.keys(regiaoCount).sort(function (a, b) { return a.localeCompare(b); });
         var orderedValues = orderedStates.map(function (k) { return regiaoCount[k]; });
-
         chartInstRegiao = new Chart(elChartRegionais, {
             type: 'bar',
             data: {
@@ -84,17 +86,42 @@ window.atualizarGraficos = function () {
                 datasets: [{ label: 'Total de Ocorrências', data: orderedValues, backgroundColor: '#3b82f6' }]
             },
             options: {
-                plugins: {
-                    title: { display: true, text: 'Volume de Chamados por Estado', color: textColor },
-                    legend: { labels: { color: textColor } }
-                },
-                scales: {
-                    x: { ticks: { color: textColor } },
-                    y: {
-                        ticks: { color: textColor, stepSize: 1, precision: 0 },
-                        beginAtZero: true
-                    }
-                }
+                plugins: { title: { display: true, text: 'Volume de Chamados por Estado', color: textColor }, legend: { labels: { color: textColor } } },
+                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
+            }
+        });
+    }
+
+    // Novos Gráficos de Tarefas
+    if (elChartTarefaStatus && window.sysProjetos) {
+        if (window.chartInstTarefaStatus) window.chartInstTarefaStatus.destroy();
+        var stCount = { 'Pendente': 0, 'Em Andamento': 0, 'Concluído': 0 };
+        Object.values(window.sysProjetos).forEach(function(list) {
+            list.forEach(function(p) { if(stCount[p.status] !== undefined) stCount[p.status]++; else stCount['Pendente']++; });
+        });
+        window.chartInstTarefaStatus = new Chart(elChartTarefaStatus, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendente', 'Em Andamento', 'Concluído'],
+                datasets: [{ data: [stCount['Pendente'], stCount['Em Andamento'], stCount['Concluído']], backgroundColor: ['#ef4444', '#3b82f6', '#10b981'] }]
+            },
+            options: { plugins: { title: { display: true, text: 'Status Geral das Tarefas', color: textColor }, legend: { labels: { color: textColor } } } }
+        });
+    }
+
+    if (elChartTarefaEquipe && window.sysProjetos) {
+        if (window.chartInstTarefaEquipe) window.chartInstTarefaEquipe.destroy();
+        var labels = Object.keys(window.sysProjetos).sort();
+        var dataValues = labels.map(function(l) { return window.sysProjetos[l].length; });
+        window.chartInstTarefaEquipe = new Chart(elChartTarefaEquipe, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{ label: 'Tarefas por Membro', data: dataValues, backgroundColor: '#8b5cf6' }]
+            },
+            options: {
+                plugins: { title: { display: true, text: 'Distribuição por Membro da Equipe', color: textColor }, legend: { display: false } },
+                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
             }
         });
     }
