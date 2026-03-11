@@ -72,6 +72,9 @@
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('planejamento')" id="nav-planejamento">
                     <i class="ph ph-calendar-check text-xl"></i> Planejamento
                 </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('mapeamento')" id="nav-mapeamento">
+                    <i class="ph ph-map-trifold text-xl"></i> Mapeamento (Novo)
+                </div>
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('tarefas')" id="nav-tarefas">
                     <i class="ph ph-kanban text-xl"></i> Tarefas da Equipe
                 </div>
@@ -209,48 +212,83 @@
                 </div>
             </div>
 
-            <!-- PLANEJAMENTO DE AUDITORIAS -->
-            <div id="view-planejamento" style="display: none;">
+            <!-- MAPEAMENTO DE TENTATIVAS (Substitui Planilha) -->
+            <div id="view-mapeamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Planejamento de Auditoria</h1>
-                    </div>
-                    <div>
-                        <input type="text" id="pesquisaPlanejamento" placeholder="Buscar Loja ou Regional..."
-                            oninput="window.filtrarPlanejamento()"
-                            class="px-4 py-2.5 rounded-full border border-[var(--border)] w-[280px] bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapeamento de Auditorias</h1>
                     </div>
                 </div>
 
-                <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden mt-5 shadow-sm">
+                <!-- Formulário de Registro de Tentativa -->
+                <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
+                    <h3 class="mt-0 mb-5 text-[var(--text-main)] flex items-center gap-2 text-lg font-semibold">
+                        <i class="ph ph-calendar-plus text-[var(--primary)]"></i> Registrar Tentativa de Auditoria
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Unidade (Loja)</label>
+                            <select id="mapSelectLoja" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                                <!-- Preenchido dinamicamente -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Data da Tentativa</label>
+                            <input type="date" id="mapDataInput" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Realizada?</label>
+                            <select id="mapRealizadaSelect" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors" onchange="window.toggleMapJustificativa()">
+                                <option value="SIM">SIM</option>
+                                <option value="NÃO">NÃO</option>
+                            </select>
+                        </div>
+                        <div>
+                            <button class="w-full flex items-center justify-center gap-2 px-6 py-2.5 h-[46px] rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.salvarTentativaMapeamento()">
+                                <i class="ph ph-plus-circle text-lg"></i> Registrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="mapJustificativaContainer" class="mt-4 hidden animate-fade-in">
+                        <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Justificativa / Motivo (Obrigatório se NÃO realizada)</label>
+                        <select id="mapJustificativaSelect" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                            <option value="">Selecione um motivo...</option>
+                            <option value="Loja não atendeu a ligação">Loja não atendeu a ligação</option>
+                            <option value="Loja em manutenção">Loja em manutenção</option>
+                            <option value="Problemas técnicos no sistema">Problemas técnicos no sistema</option>
+                            <option value="Equipe da loja reduzida">Equipe da loja reduzida</option>
+                            <option value="Outro (Descrever nas notas)">Outro...</option>
+                        </select>
+                        <textarea id="mapNotas" placeholder="Observações adicionais..." class="w-full mt-2 border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors resize-none" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <!-- Filtros e Listagem -->
+                <div class="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)] mb-4 flex flex-wrap gap-4 items-center shadow-sm">
+                    <div class="flex-1 min-w-[200px] relative">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+                        <input type="text" id="mapSearch" placeholder="Filtrar por loja, regional ou auditor..." oninput="window.renderizarMapeamento()" class="w-full pl-10 pr-4 py-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--primary)]">
+                    </div>
+                </div>
+
+                <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm">
                     <div class="overflow-x-auto custom-scrollbar">
                         <table class="w-full border-collapse text-left">
-                            <thead>
-                                <tr class="bg-brandBlue/5 border-b-2 border-[var(--border)]">
-                                    <th onclick="window.sortPlanejamento('loja')"
-                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
-                                        Loja / Matriz <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
-                                    <th onclick="window.sortPlanejamento('regional')"
-                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
-                                        Regional <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
-                                    <th onclick="window.sortPlanejamento('ultima')"
-                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
-                                        Última Auditoria <i class="ph ph-caret-up-down text-[10px] align-middle"></i>
-                                    </th>
-                                    <th onclick="window.sortPlanejamento('proxima')"
-                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
-                                        Próxima Prevista <i class="ph ph-caret-up-down text-[10px] align-middle"></i>
-                                    </th>
-                                    <th onclick="window.sortPlanejamento('auditor')"
-                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
-                                        Auditor / Responsável <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
-                                    <th class="p-4 font-semibold text-sm text-[var(--text-muted)] text-center">Ações</th>
+                            <thead class="bg-black/5 dark:bg-black/20 border-b border-[var(--border)]">
+                                <tr>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Mês/Data</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Tentativa</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Regional/Loja</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-center">Realizada?</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Motivo/Notas</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-right">SLA</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-right">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="planejamentoTableBody" class="divide-y divide-[var(--border)]">
-                                <!-- JS monta as linhas -->
+                            <tbody id="mapHistoricoBody" class="divide-y divide-[var(--border)]">
+                                <tr><td colspan="7" class="p-10 text-center text-[var(--text-muted)]">Carregando dados...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -413,6 +451,9 @@
     <script src="../../js/firebase-init.js"></script>
     <script src="../../js/data.js"></script>
     <script src="js/controllers/AppController.js"></script>
+    <script src="js/logic/MapeamentoLogic.js"></script>
+    <script src="js/services/MapeamentoService.js"></script>
+    <script src="js/controllers/MapeamentoController.js"></script>
     <script src="js/controllers/AuditoriaOnlineController.js"></script>
     <script src="js/controllers/DashboardController.js"></script>
     <script src="js/controllers/PlanejamentoController.js"></script>
