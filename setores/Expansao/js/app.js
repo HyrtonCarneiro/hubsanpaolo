@@ -95,17 +95,17 @@ window.switchView = function (view) {
     try {
         const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt'];
         views.forEach(v => {
-            const el = document.getElementById(`view-\${v}`);
+            const el = document.getElementById('view-' + v);
             if (el) el.style.display = 'none';
-            const nav = document.getElementById(`nav-\${v}`);
+            const nav = document.getElementById('nav-' + v);
             if (nav) nav.classList.remove('active');
         });
 
-        const currView = document.getElementById(`view-\${view}`);
-        const currNav = document.getElementById(`nav-\${view}`);
+        const currView = document.getElementById('view-' + view);
+        const currNav = document.getElementById('nav-' + view);
 
         if (currView) currView.style.display = (view === 'obras' || view === 'tarefas' || view === 'gantt') ? 'flex' : 'block';
-        if (view === 'tarefas') currView.style.flexDirection = 'column';
+        if (view === 'tarefas' && currView) currView.style.flexDirection = 'column';
         if (currNav) currNav.classList.add('active');
 
         if (view === 'gantt') GanttController.renderGantt(obrasCache);

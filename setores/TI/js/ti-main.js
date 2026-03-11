@@ -908,20 +908,22 @@ function renderizarAtas() {
 
     sysAtas.forEach(a => {
         const div = document.createElement('div');
+        div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 mb-4 shadow-sm';
+        div.innerHTML = `
+            <div class="flex justify-between items-start mb-3">
                 <div>
                     <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: var(--text-main);">${a.titulo}</h3>
                     <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="ph ph-calendar"></i> Registrado em ${a.dataStr} por <strong>${a.autor}</strong></div>
                 </div>
                 <div>
-                    <button class="btn btn-danger" style="padding: 6px 10px; font-size: 0.8rem;" onclick="window.deletarAta('${a.firebaseId}')"><i class="ph ph-trash"></i> Excluir</button>
+                    <button class="px-2.5 py-1.5 bg-[#fef2f2] text-[var(--danger)] border border-[var(--danger)]/20 hover:bg-[var(--danger)] hover:text-white rounded-md text-sm transition-colors" onclick="window.deletarAta('${a.firebaseId}')"><i class="ph ph-trash"></i> Excluir</button>
                 </div>
             </div>
             <div style="white-space: pre-wrap; font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">${a.texto}</div>
         `;
-
-        div.innerHTML = header;
         container.appendChild(div);
     });
 }
 
-
+// Bootstrap the application
+if (currentUser) initApp();

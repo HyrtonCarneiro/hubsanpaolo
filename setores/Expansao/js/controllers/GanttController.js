@@ -118,7 +118,8 @@ window.GanttController = {
         finalBodyHtml += rowsHtml;
         finalBodyHtml += `<div class="absolute top-0 bottom-0 w-0.5 bg-[rgba(255,94,0,0.5)] z-[5] pointer-events-none shadow-[0_0_5px_rgba(255,94,0,0.5)] flex flex-col items-center" style="left: ${hojeLinePx + 250}px;" title="Hoje"><div class="absolute top-0 w-2 h-2 rounded-full bg-brandOrange shadow-[0_0_4px_rgba(255,94,0,0.8)]"></div></div></div>`;
 
-        wrapper.querySelector('.gantt-body').innerHTML = finalBodyHtml;
+        const ganttBody = document.getElementById('gantt-body-scroll');
+        if (ganttBody) ganttBody.innerHTML = finalBodyHtml;
 
         setTimeout(() => {
             const body = document.getElementById('gantt-body-scroll');

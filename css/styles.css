@@ -68,3 +68,18 @@ input:focus, select:focus, textarea:focus {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
 }
+
+/* Active nav item styling (used by switchView JS) */
+.active-nav,
+[id^="nav-"].active {
+    color: var(--primary) !important;
+    font-weight: 600 !important;
+    background: rgba(218, 13, 23, 0.08) !important;
+    border-left-color: var(--primary) !important;
+}
+
+body.dark-mode .active-nav,
+body.dark-mode [id^="nav-"].active {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
