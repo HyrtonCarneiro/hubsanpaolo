@@ -88,4 +88,9 @@ window.orderBy = function(field, direction) {
     return { _type: 'orderBy', field: field, direction: direction || 'asc' };
 };
 
+/** serverTimestamp() → firebase.firestore.FieldValue.serverTimestamp() */
+window.serverTimestamp = function() {
+    return firebase.firestore.FieldValue.serverTimestamp();
+};
+
 console.log("[Firebase] Inicializado com sucesso via Compat SDK.");

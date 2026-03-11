@@ -3,20 +3,18 @@
  * Comunicação com Firestore para a coleção 'mapeamento_auditoria'.
  */
 
-const { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc } = window;
-
 window.MapeamentoService = {
     registrarTentativa(dados) {
-        return addDoc(collection(db, "mapeamento_auditoria"), {
+        return window.addDoc(window.collection(window.db, "mapeamento_auditoria"), {
             ...dados,
             autor: window.currentUser,
-            createdAt: serverTimestamp()
+            createdAt: window.serverTimestamp()
         });
     },
 
     initListeners(callback) {
-        const q = query(collection(db, "mapeamento_auditoria"), orderBy("dataTentativa", "desc"));
-        return onSnapshot(q, (snapshot) => {
+        const q = window.query(window.collection(window.db, "mapeamento_auditoria"), window.orderBy("dataTentativa", "desc"));
+        return window.onSnapshot(q, (snapshot) => {
             const dados = [];
             snapshot.forEach(doc => {
                 dados.push({ id: doc.id, ...doc.data() });
@@ -27,6 +25,6 @@ window.MapeamentoService = {
 
     excluirRegistro(id) {
         if (!confirm("Deseja realmente excluir este registro?")) return;
-        return deleteDoc(doc(db, "mapeamento_auditoria", id));
+        return window.deleteDoc(window.doc(window.db, "mapeamento_auditoria", id));
     }
 };
