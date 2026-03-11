@@ -52,15 +52,15 @@ function initApp() {
         const loggedUserNameEl = document.getElementById('loggedUserName');
         if (loggedUserNameEl) loggedUserNameEl.innerText = currentUser;
 
-        document.querySelectorAll('.header-actions > div:first-child').forEach(container => {
-            if (container.querySelector('.btn-hub')) return;
+        document.querySelectorAll('h1').forEach(h1 => {
+            const container = h1.parentElement;
+            if (!container || container.querySelector('.btn-hub')) return;
             const btn = document.createElement('button');
-            btn.className = 'btn btn-outline btn-hub';
-            btn.style.padding = '6px 10px';
+            btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-border dark:border-[#4a2815] bg-transparent text-mainText dark:text-white hover:text-brandRed hover:border-brandRed transition-colors btn-hub';
             btn.title = 'Escolha de Setores';
-            btn.innerHTML = '<i class="ph ph-squares-four" style="font-size: 1.2rem;"></i>';
+            btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
             btn.onclick = () => window.location.href = '../../index.html?hub=1';
-            container.insertBefore(btn, container.querySelector('.page-title'));
+            container.insertBefore(btn, h1);
         });
 
         window.switchView('dashboard');

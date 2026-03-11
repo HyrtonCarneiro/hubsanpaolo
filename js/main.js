@@ -181,7 +181,7 @@ function renderAdminUsersList() {
     listHtml.innerHTML = '';
 
     const termo = document.getElementById('buscaUsuarioAdmin') ? document.getElementById('buscaUsuarioAdmin').value.toLowerCase().trim() : '';
-    const allSectors = ["Diretoria", "TI", "Auditoria", "Controladoria", "Expansao", "Fiscal", "Financeiro", "Marketing", "Gente_Gestao", "Operacao", "Varejo"];
+    const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
 
     let usuariosFiltrados = allUsersCache.filter(u => u.user.toLowerCase().includes(termo));
 
