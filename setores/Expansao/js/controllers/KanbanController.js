@@ -1,8 +1,6 @@
-import { KanbanCard } from '../components/molecules/KanbanCard.js';
-import { ExpansaoService } from '../services/ExpansaoService.js';
-import { DashboardController } from './DashboardController.js';
+// KanbanCard, ExpansaoService, DashboardController → window globals
 
-export const KanbanController = {
+window.KanbanController = {
     renderKanban(obras) {
         try {
             const columns = ['backlog', 'planejamento', 'fase1', 'fase2', 'fase3', 'concluido'];

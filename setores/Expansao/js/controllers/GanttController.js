@@ -1,4 +1,4 @@
-export const GanttController = {
+window.GanttController = {
     renderGantt(obrasCache) {
         const wrapper = document.getElementById('gantt-wrapper');
         if (!wrapper) return;

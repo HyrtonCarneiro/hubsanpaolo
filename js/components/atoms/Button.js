@@ -2,7 +2,7 @@
  * Button Atom
  * Generates an atomic HTML string for a stylized button
  */
-export const Button = ({ text, id, onClick, variant = 'primary', icon = '', fullWidth = false, type = 'button' }) => {
+window.Button = function({ text, id, onClick, variant = 'primary', icon = '', fullWidth = false, type = 'button' }) {
     const baseClass = "inline-flex items-center justify-center font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
     
     const variants = {

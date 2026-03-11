@@ -1,9 +1,9 @@
-import { db, collection, getDocs, addDoc, updateDoc, doc, deleteDoc, onSnapshot, query, orderBy } from '../../../js/firebase.js';
+// db, collection, getDocs, addDoc, updateDoc, doc, deleteDoc, onSnapshot, query, orderBy → from firebase-init.js
 
 /**
  * Service to handle all Firebase interactions for the Expansao sector.
  */
-export const ExpansaoService = {
+window.ExpansaoService = {
     // ---- Obras Kanban ----
     async getObras() {
         const obrasCollection = collection(db, "obras_expansao");

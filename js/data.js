@@ -1,10 +1,10 @@
 // js/data.js
-export const appConfig = {
+window.appConfig = {
     desenvolvedor: "Hyrtinho Ruindade Pura",
     versao: "1.1.0"
 };
 
-export const lojasIniciais = [
+window.lojasIniciais = [
     { id: 1, estado: 'SP', nome: 'PATIO PAULISTA' }, { id: 2, estado: 'SP', nome: 'CIDADE SÃO PAULO' }, { id: 3, estado: 'SP', nome: 'ELDORADO' },
     { id: 4, estado: 'PI', nome: 'RIVERSIDE' }, { id: 5, estado: 'PI', nome: 'RIO POTY' }, { id: 6, estado: 'PI', nome: 'DOM SEVERINO' }, { id: 7, estado: 'PI', nome: 'DIRCEU' },
     { id: 8, estado: 'CE', nome: 'DESEMBARGADOR MOREIRA' }, { id: 9, estado: 'CE', nome: 'RIOMAR FORTALEZA' }, { id: 10, estado: 'CE', nome: 'RIOMAR KENNEDY' },

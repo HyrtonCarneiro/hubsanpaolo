@@ -1,6 +1,6 @@
 // js/ti-main.js
-import { db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, where, orderBy } from '../../../js/firebase.js';
-import { lojasIniciais, appConfig } from '../../../js/data.js';
+// db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, where, orderBy → from firebase-init.js
+// lojasIniciais, appConfig → from data.js
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 let authMode = 'login';

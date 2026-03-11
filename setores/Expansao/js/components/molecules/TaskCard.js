@@ -2,7 +2,7 @@
  * TaskCard Molecule
  * Generates the HTML for a team task (Tarefas da Equipe).
  */
-export const TaskCard = (p) => {
+window.TaskCard = function(p) {
     return `
         <div class="bg-surface dark:bg-[#362011] p-4 rounded-xl border border-border dark:border-[#4a2815] mb-3 relative text-mainText dark:text-[#f5f0e6]">
             <h4 class="m-0 mb-2 font-bold text-[0.95rem] text-mainText dark:text-white">${p.descricao}</h4>

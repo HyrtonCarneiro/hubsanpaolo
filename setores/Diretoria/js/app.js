@@ -1,5 +1,5 @@
 // setores/Diretoria/js/app.js
-import { db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, orderBy } from '../../../js/firebase.js';
+// db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, orderBy -> from firebase-init.js (window globals)
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 let equipeCache = [];

@@ -13,6 +13,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Firebase Compat SDK (works on file:// protocol) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- Tailwind Scripts for Local Setup -->
@@ -592,7 +597,22 @@
     </div>
 
     <!-- Script Module Padrão igual TI -->
-    <script type="module" src="js/app.js"></script>
+    <!-- Firebase Init + Dependencies (loaded in order) -->
+    <script src="../../js/firebase-init.js"></script>
+    <script src="../../js/data.js"></script>
+    <!-- Molecules -->
+    <script src="js/components/molecules/KanbanCard.js"></script>
+    <script src="js/components/molecules/TaskCard.js"></script>
+    <!-- Services -->
+    <script src="js/services/ExpansaoService.js"></script>
+    <!-- Controllers -->
+    <script src="js/controllers/DashboardController.js"></script>
+    <script src="js/controllers/GanttController.js"></script>
+    <script src="js/controllers/KanbanController.js"></script>
+    <script src="js/controllers/ModalObraController.js"></script>
+    <script src="js/controllers/TarefasController.js"></script>
+    <!-- Main Orchestrator (must be last) -->
+    <script src="js/app.js"></script>
 
 </body>
 

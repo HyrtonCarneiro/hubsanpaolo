@@ -1,11 +1,9 @@
 // setores/Expansao/js/app.js
-import { lojasIniciais } from '../../../js/data.js';
-import { ExpansaoService } from './services/ExpansaoService.js';
-import { DashboardController } from './controllers/DashboardController.js';
-import { KanbanController } from './controllers/KanbanController.js';
-import { ModalObraController } from './controllers/ModalObraController.js';
-import { GanttController } from './controllers/GanttController.js';
-import { TarefasController } from './controllers/TarefasController.js';
+// All dependencies are window globals loaded via <script> tags in index.html:
+// lojasIniciais → data.js
+// ExpansaoService → services/ExpansaoService.js
+// DashboardController, KanbanController, ModalObraController, GanttController, TarefasController → controllers/
+// KanbanCard, TaskCard → components/molecules/
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 let obrasCache = [];

@@ -13,6 +13,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Firebase Compat SDK (works on file:// protocol) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- Tailwind Scripts for Local Setup -->
@@ -423,7 +428,9 @@
         </div>
     </div>
 
-    <script type="module" src="js/ti-main.js"></script>
+    <script src="../../js/firebase-init.js"></script>
+    <script src="../../js/data.js"></script>
+    <script src="js/ti-main.js"></script>
 
 </body>
 

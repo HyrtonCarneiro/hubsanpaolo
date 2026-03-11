@@ -1,7 +1,7 @@
 // js/main.js
-import { db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from './firebase.js';
-import { Button } from './components/atoms/Button.js';
-import { SectorCard } from './components/molecules/SectorCard.js';
+// db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where → from firebase-init.js (window globals)
+// Button → from js/components/atoms/Button.js (window global)
+// SectorCard → from js/components/molecules/SectorCard.js (window global)
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 let allUsersCache = [];

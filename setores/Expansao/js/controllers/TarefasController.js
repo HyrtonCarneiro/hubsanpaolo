@@ -1,7 +1,6 @@
-import { TaskCard } from '../components/molecules/TaskCard.js';
-import { ExpansaoService } from '../services/ExpansaoService.js';
+// TaskCard, ExpansaoService → window globals
 
-export const TarefasController = {
+window.TarefasController = {
     equipeExpCache: [],
     projetosExpCache: [],
     currentMemberExp: null,

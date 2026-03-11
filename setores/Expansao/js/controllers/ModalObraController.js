@@ -1,6 +1,6 @@
-import { ExpansaoService } from '../services/ExpansaoService.js';
+// ExpansaoService → window global
 
-export const ModalObraController = {
+window.ModalObraController = {
     cardAbertoId: null,
     checklistsCache: [],
     comentariosCache: [],

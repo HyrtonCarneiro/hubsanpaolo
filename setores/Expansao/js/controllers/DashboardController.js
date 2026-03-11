@@ -6,7 +6,7 @@
 let chartObrasStatusInst = null;
 let chartObrasTagsInst = null;
 
-export const DashboardController = {
+window.DashboardController = {
     atualizarDashboard(obras) {
         try {
             const totalEl = document.getElementById('statTotalObras');

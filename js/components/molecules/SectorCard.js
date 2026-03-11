@@ -2,7 +2,7 @@
  * SectorCard Molecule
  * Generates a grid card for a specific sector 
  */
-export const SectorCard = ({ title, id, icon, active, brandColor, onClickDir }) => {
+window.SectorCard = function({ title, id, icon, active, brandColor, onClickDir }) {
     if (!active) return '';
 
     const defaultStyles = "flex flex-col items-center justify-center p-6 border-2 rounded-xl transition-all cursor-pointer hover:-translate-y-1";

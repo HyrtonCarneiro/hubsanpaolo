@@ -2,7 +2,7 @@
  * KanbanCard Molecule
  * Generates the HTML for an obra card in the Kanban board.
  */
-export const KanbanCard = (obra) => {
+window.KanbanCard = function(obra) {
     let dataFim = obra.dataFim ? new Date(obra.dataFim) : null;
     let hoje = new Date();
     let isLate = dataFim && hoje > dataFim && obra.status !== 'concluido';
