@@ -36,6 +36,24 @@ window.atualizarGraficos = function () {
     var elPendentes = document.getElementById('statPendentes');
     if (elTotal) elTotal.innerText = lojasIniciais.length;
     if (elPendentes) elPendentes.innerText = pendentes;
+    
+    // Calcular KPIs de Tarefas/Projetos
+    var tarefasPendentesAndamento = 0;
+    var tarefasConcluidas = 0;
+    if (window.sysProjetos) {
+        Object.values(window.sysProjetos).forEach(function(projetosDoMembro) {
+            projetosDoMembro.forEach(function(p) {
+                var st = p.status || 'Pendente';
+                if (st === 'Concluído') tarefasConcluidas++;
+                else tarefasPendentesAndamento++; // Considera Em Andamento e Pendente
+            });
+        });
+    }
+
+    var elTarefasPendentes = document.getElementById('statTarefasPendentes');
+    var elTarefasConcluidas = document.getElementById('statTarefasConcluidas');
+    if (elTarefasPendentes) elTarefasPendentes.innerText = tarefasPendentesAndamento;
+    if (elTarefasConcluidas) elTarefasConcluidas.innerText = tarefasConcluidas;
 
     var textColor = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
     var elChartStatus = document.getElementById('chartStatus');

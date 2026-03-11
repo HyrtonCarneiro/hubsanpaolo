@@ -18,6 +18,7 @@ window.initProjetosEquipeListeners = function () {
                 window.sysProjetos[data.membroResponsavel].push(data);
             });
             renderizarProjetosList();
+            if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
         });
 
         var qEquipe = query(collection(db, "equipe"), orderBy("nome"));
