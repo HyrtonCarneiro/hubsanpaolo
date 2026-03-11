@@ -293,8 +293,14 @@
                             </select>
                         </div>
                         <div>
-                            <button class="w-full flex items-center justify-center gap-2 px-6 py-2.5 h-[46px] rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.salvarTentativaMapeamento()">
-                                <i class="ph ph-plus-circle text-lg"></i> Registrar
+                            <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Auditor Responsável</label>
+                            <select id="mapSelectAuditor" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                                <option value="">Selecione...</option>
+                            </select>
+                        </div>
+                        <div class="lg:col-span-4 flex justify-end">
+                            <button class="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-2.5 h-[46px] rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.salvarTentativaMapeamento()">
+                                <i class="ph ph-plus-circle text-lg"></i> Registrar Tentativa
                             </button>
                         </div>
                     </div>
@@ -340,6 +346,7 @@
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Tentativa</th>
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Regional/Loja</th>
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-center">Realizada?</th>
+                                    <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Auditor</th>
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase">Motivo/Notas</th>
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-right">SLA</th>
                                     <th class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase text-right">Ações</th>

@@ -42,6 +42,7 @@ window.MapeamentoLogic = {
     validarRegistro(dados) {
         if (!dados.lojaId) return { valid: false, msg: "Selecione uma loja." };
         if (!dados.dataTentativa) return { valid: false, msg: "Selecione a data." };
+        if (!dados.auditor) return { valid: false, msg: "Selecione o auditor responsável." };
         
         if (dados.realizada === "NÃO" && !dados.justificativa) {
             return { valid: false, msg: "Justificativa é obrigatória para auditorias não realizadas." };

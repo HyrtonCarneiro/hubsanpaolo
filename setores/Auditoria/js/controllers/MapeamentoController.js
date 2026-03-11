@@ -13,6 +13,7 @@ window.initMapeamentoListeners = function() {
     
     // Popular selects
     window.popularSelectLojasMapeamento();
+    window.popularSelectAuditoresMapeamento();
     
     // Data de hoje default
     const inputData = document.getElementById('mapDataInput');
@@ -46,6 +47,19 @@ window.popularSelectLojasMapeamento = function() {
     });
 };
 
+window.popularSelectAuditoresMapeamento = function() {
+    const select = document.getElementById('mapSelectAuditor');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Selecione...</option>';
+    window.audiEquipe.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.nome;
+        opt.textContent = m.nome;
+        select.appendChild(opt);
+    });
+};
+
 window.toggleMapJustificativa = function() {
     const realizada = document.getElementById('mapRealizadaSelect').value;
     const container = document.getElementById('mapJustificativaContainer');
@@ -65,6 +79,7 @@ window.salvarTentativaMapeamento = async function() {
     const dataTentativa = document.getElementById('mapDataInput').value;
     const realizada = document.getElementById('mapRealizadaSelect').value;
     const justificativa = document.getElementById('mapJustificativaSelect').value;
+    const auditor = document.getElementById('mapSelectAuditor').value;
     const notas = document.getElementById('mapNotas').value;
 
     const nTentativa = window.MapeamentoLogic.circularTentativa(lojaId, dataTentativa, window.historicoMapeamento);
@@ -77,6 +92,7 @@ window.salvarTentativaMapeamento = async function() {
         dataTentativa,
         realizada,
         justificativa: realizada === 'NÃO' ? justificativa : null,
+        auditor,
         notas,
         nTentativa,
         sla
@@ -92,6 +108,7 @@ window.salvarTentativaMapeamento = async function() {
         // Reset form
         document.getElementById('mapRealizadaSelect').value = "SIM";
         document.getElementById('mapJustificativaSelect').value = "";
+        document.getElementById('mapSelectAuditor').value = "";
         document.getElementById('mapNotas').value = "";
         window.toggleMapJustificativa();
     } catch (e) {
@@ -113,7 +130,7 @@ window.renderizarMapeamento = function() {
     });
 
     if (filtrados.length === 0) {
-        body.innerHTML = '<tr><td colspan="7" class="p-10 text-center text-[var(--text-muted)]">Nenhum registro encontrado.</td></tr>';
+        body.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-[var(--text-muted)]">Nenhum registro encontrado.</td></tr>';
         return;
     }
 
@@ -140,6 +157,7 @@ window.renderizarMapeamento = function() {
                     <div class="text-[10px] text-[var(--text-muted)]">${h.estado}</div>
                 </td>
                 <td class="p-4 text-center">${realizedBadge}</td>
+                <td class="p-4 text-sm font-semibold text-[var(--text-main)]">${h.auditor || '-'}</td>
                 <td class="p-4 text-sm max-w-[200px] truncate" title="${h.justificativa || ''} ${h.notas || ''}">
                     ${h.justificativa ? `<span class="italic text-[var(--sp-red)]">${h.justificativa}</span><br>` : ''}
                     <span class="text-[11px] text-[var(--text-muted)]">${h.notas || '-'}</span>
