@@ -22,9 +22,24 @@ window.initPlanejamentoListeners = function () {
 
 function getUltimaAuditoria(nomeLoja) {
     var notasCache = window.notasCache || [];
-    var historicoLoja = notasCache.filter(function (n) { return n.loja === nomeLoja; });
-    if (historicoLoja.length > 0) return historicoLoja[0].data;
-    return null;
+    var mapCache = window.historicoMapeamento || [];
+
+    // Datas da Auditoria Online (notas)
+    var historicoNotas = notasCache
+        .filter(function (n) { return n.loja === nomeLoja; })
+        .map(function(n) { return n.data; });
+
+    // Datas de Tentativas Realizadas (SIM) no Mapeamento
+    var historicoMap = mapCache
+        .filter(function(m) { return m.nomeLoja === nomeLoja && m.realizada === 'SIM'; })
+        .map(function(m) { return m.dataTentativa; });
+
+    // Consolidar e ordenar
+    var todasDatas = historicoNotas.concat(historicoMap);
+    if (todasDatas.length === 0) return null;
+
+    todasDatas.sort(function(a, b) { return b.localeCompare(a); }); // Decrescente (YYYY-MM-DD ou DD/MM/YYYY se for o caso, mas assumimos ISO)
+    return todasDatas[0];
 }
 
 window.renderizarTabelaPlanejamento = function () {
@@ -83,13 +98,38 @@ window.renderizarTabelaPlanejamento = function () {
         var proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span class="text-[var(--text-muted)] font-normal text-xs">Não agendado</span>';
         var audStr = r.auditor || '<span class="text-[var(--text-muted)] font-normal text-xs text-center border border-[var(--border)] rounded-full px-2 py-0.5">A Definir</span>';
 
+        // Lógica de Status Baseado no Mapeamento
+        var statusHtml = '';
+        if (r.proximaRaw) {
+            var mesProx = r.proximaRaw.substring(0, 7); // YYYY-MM
+            var realizadoNoMes = (window.historicoMapeamento || []).find(function(m) {
+                return m.nomeLoja === r.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesProx);
+            });
+
+            if (realizadoNoMes) {
+                var slaColor = realizadoNoMes.sla ? 'text-green-600' : 'text-orange-500';
+                var slaTxt = realizadoNoMes.sla ? 'No Prazo' : 'Fora do Prazo';
+                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full bg-green-500"></span><span class="text-[10px] font-bold uppercase ' + slaColor + '">Concluída (' + slaTxt + ')</span></div>';
+            } else {
+                var hoje = new Date().toISOString().substring(0, 10);
+                var isAtrasado = hoje > r.proximaRaw;
+                var dotColor = isAtrasado ? 'bg-red-500' : 'bg-gray-400';
+                var txtLabel = isAtrasado ? 'Atrasada' : 'Agendada';
+                var txtColor = isAtrasado ? 'text-red-500' : 'text-[var(--text-muted)]';
+                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full ' + dotColor + '"></span><span class="text-[10px] font-bold uppercase ' + txtColor + '">' + txtLabel + '</span></div>';
+            }
+        }
+
         var tr = document.createElement('tr');
         tr.className = 'border-b border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors group';
         tr.innerHTML =
             '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + r.nome + '</td>' +
             '<td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-md">' + r.regional + '</span></td>' +
             '<td class="p-4 text-sm font-medium text-[var(--text-main)]">' + ultimaStr + '</td>' +
-            '<td class="p-4 text-sm font-bold text-[var(--primary)]">' + proxStr + '</td>' +
+            '<td class="p-4 text-sm">' +
+                '<div class="font-bold text-[var(--primary)]">' + proxStr + '</div>' +
+                statusHtml +
+            '</td>' +
             '<td class="p-4 text-sm text-[var(--text-main)] flex items-center gap-1.5 h-full min-h-[53px]"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + audStr + '</td>' +
             '<td class="p-4 text-center">' +
                 '<button class="flex mx-auto items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/5 transition-colors text-xs font-semibold opacity-0 group-hover:opacity-100 focus:opacity-100" onclick="window.abrirModalEditPlanejamento(\'' + r.nome.replace(/'/g, "\\'") + '\')">' +

@@ -10,6 +10,9 @@ window.initMapeamentoListeners = function() {
     window.MapeamentoService.initListeners((dados) => {
         window.historicoMapeamento = dados;
         window.renderizarMapeamento();
+        if (typeof window.renderizarTabelaPlanejamento === 'function') {
+            window.renderizarTabelaPlanejamento();
+        }
     });
     
     // Popular selects
@@ -155,7 +158,7 @@ window.renderizarMapeamento = function() {
     });
 
     if (filtrados.length === 0) {
-        body.innerHTML = '<tr><td colspan="8" class="p-10 text-center text-[var(--text-muted)]">Nenhum registro encontrado.</td></tr>';
+        body.innerHTML = '<tr><td colspan="9" class="p-10 text-center text-[var(--text-muted)]">Nenhum registro encontrado.</td></tr>';
         return;
     }
 
@@ -178,8 +181,10 @@ window.renderizarMapeamento = function() {
                     <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">${h.nTentativa}</div>
                 </td>
                 <td class="p-4">
+                    <div class="font-medium text-[var(--text-main)] text-sm">${h.estado}</div>
+                </td>
+                <td class="p-4">
                     <div class="font-bold text-[var(--text-main)]">${h.nomeLoja}</div>
-                    <div class="text-[10px] text-[var(--text-muted)]">${h.estado}</div>
                 </td>
                 <td class="p-4 text-center">${realizedBadge}</td>
                 <td class="p-4 text-sm font-semibold text-[var(--text-main)]">${h.auditor || '-'}</td>
