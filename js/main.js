@@ -25,7 +25,7 @@ window.handleAuth = async function () {
 
         if (querySnapshot.empty) {
             if (user === 'admin' && pass === '$@np@010') {
-                const allSectors = ["Diretoria", "TI", "Auditoria", "Controladoria", "Expansao", "Fiscal", "Financeiro", "Marketing", "Gente_Gestao", "Operacao", "Varejo"];
+                const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
                 await addDoc(collection(db, "users"), { user: 'admin', pass: '$@np@010', setores_permitidos: allSectors });
                 sessionStorage.setItem('loggedUser', user);
                 sessionStorage.setItem('userSectors', JSON.stringify(allSectors));
@@ -49,7 +49,7 @@ window.handleAuth = async function () {
         if (userData.pass === pass) {
             let sectors = userData.setores_permitidos || ["TI"];
             if (user === 'admin') {
-                sectors = ["Diretoria", "TI", "Auditoria", "Controladoria", "Expansao", "Fiscal", "Financeiro", "Marketing", "Gente_Gestao", "Operacao", "Varejo"];
+                sectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
             }
             sessionStorage.setItem('userSectors', JSON.stringify(sectors));
             sessionStorage.setItem('loggedUser', user);
@@ -92,15 +92,16 @@ function initApp() {
 
     const allHubSectors = [
         { id: "Diretoria", title: "Painel Diretoria", icon: "ph-fill ph-crown", color: true },
-        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false },
         { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false },
+        { id: "Centro_Distribuicao", title: "Centro de Distribuição", icon: "ph-fill ph-package", color: false },
         { id: "Controladoria", title: "Controladoria", icon: "ph-fill ph-chart-line-up", color: false },
         { id: "Expansao", title: "Expansão", icon: "ph-fill ph-map-pin-line", color: false },
-        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false },
         { id: "Financeiro", title: "Financeiro", icon: "ph-fill ph-bank", color: false },
-        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false },
+        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false },
         { id: "Gente_Gestao", title: "Gente e Gestão", icon: "ph-fill ph-users-three", color: false },
+        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false },
         { id: "Operacao", title: "Operação", icon: "ph-fill ph-gear", color: false },
+        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false },
         { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
     ];
 
