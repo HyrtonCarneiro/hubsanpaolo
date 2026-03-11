@@ -36,7 +36,6 @@ window.logout = function () {
     window.location.href = '../../index.html';
 }
 
-
 function showToast(msg, type = 'success') {
     try {
         if (typeof Toastify !== 'undefined') {
@@ -83,15 +82,15 @@ function initApp() {
     }
 
     // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.header-actions > div:first-child').forEach(container => {
+    document.querySelectorAll('.flex.items-center.gap-3').forEach(container => {
+        if (!container.closest('.mb-8')) return; // Apenas no header
         if (container.querySelector('.btn-hub')) return;
         const btn = document.createElement('button');
-        btn.className = 'btn btn-outline btn-hub';
-        btn.style.padding = '6px 10px';
+        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub shadow-sm';
         btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four" style="font-size: 1.2rem;"></i>';
+        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
         btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        container.insertBefore(btn, container.querySelector('.page-title'));
+        container.insertBefore(btn, container.querySelector('h1'));
     });
 
     // Iniciar Listeners do Firebase
@@ -106,20 +105,21 @@ function initApp() {
 }
 
 window.switchView = function (view) {
-    document.getElementById('view-dashboard').style.display = 'none';
-    document.getElementById('view-auditoriaOnline').style.display = 'none';
-    document.getElementById('view-planejamento').style.display = 'none';
-    document.getElementById('view-tarefas').style.display = 'none';
-    document.getElementById('view-metapwr').style.display = 'none';
+    const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'tarefas', 'metapwr'];
 
-    document.getElementById('nav-dashboard').classList.remove('active');
-    document.getElementById('nav-auditoriaOnline').classList.remove('active');
-    document.getElementById('nav-planejamento').classList.remove('active');
-    document.getElementById('nav-tarefas').classList.remove('active');
-    document.getElementById('nav-metapwr').classList.remove('active');
+    views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        const nav = document.getElementById('nav-' + v);
 
-    document.getElementById(`view-${view}`).style.display = 'block';
-    document.getElementById(`nav-${view}`).classList.add('active');
+        if (el) el.style.display = 'none';
+        if (nav) nav.classList.remove('active-nav');
+    });
+
+    const currView = document.getElementById(`view-${view}`);
+    const currNav = document.getElementById(`nav-${view}`);
+
+    if (currView) currView.style.display = 'block';
+    if (currNav) currNav.classList.add('active-nav');
 
     if (window.innerWidth <= 768) {
         window.toggleSidebar();
@@ -134,8 +134,13 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById('appSidebar');
     const overlay = document.getElementById('sidebarOverlay');
     if (sidebar && overlay) {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
+        if (sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
     }
 }
 
@@ -323,7 +328,7 @@ function renderizarHistoricoNotas() {
 
     tbody.innerHTML = '';
     if (notasCache.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center; color: var(--text-muted);">Nenhuma avaliação registrada recente.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="p-5 text-center text-[var(--text-muted)]">Nenhuma avaliação registrada recente.</td></tr>';
         return;
     }
 
@@ -332,11 +337,11 @@ function renderizarHistoricoNotas() {
 
     relatorio.forEach(nota => {
         const tr = document.createElement('tr');
-        tr.style.borderBottom = "1px solid var(--border)";
+        tr.className = 'border-b border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors';
 
-        let colorNota = "var(--sp-pistache)";
-        if (nota.nota < 7) colorNota = "var(--sp-red)";
-        else if (nota.nota < 8.5) colorNota = "var(--sp-laranja)";
+        let colorClass = "text-spPistache";
+        if (nota.nota < 7) colorClass = "text-spRed";
+        else if (nota.nota < 8.5) colorClass = "text-spLaranja";
 
         // Data Formatter
         let displayData = nota.data;
@@ -346,10 +351,10 @@ function renderizarHistoricoNotas() {
         }
 
         tr.innerHTML = `
-            <td style="padding: 15px; font-size: 0.9rem;">${displayData}</td>
-            <td style="padding: 15px; font-weight: 600; font-size: 0.9rem;">${nota.loja}</td>
-            <td style="padding: 15px; font-size: 0.9rem; color: var(--text-muted);"><i class="ph ph-user"></i> ${nota.auditor}</td>
-            <td style="padding: 15px; font-weight: 700; font-size: 1.1rem; text-align: right; color: ${colorNota};">${nota.nota.toFixed(1)}</td>
+            <td class="p-4 text-sm text-[var(--text-main)]">${displayData}</td>
+            <td class="p-4 text-sm font-semibold text-[var(--text-main)]">${nota.loja}</td>
+            <td class="p-4 text-sm text-[var(--text-muted)]"><i class="ph ph-user"></i> ${nota.auditor}</td>
+            <td class="p-4 text-lg font-bold text-right ${colorClass}">${nota.nota.toFixed(1)}</td>
         `;
         tbody.appendChild(tr);
     });
@@ -412,20 +417,20 @@ window.renderizarTabelaPlanejamento = function () {
 
     rows.forEach(r => {
         const ultimaStr = r.ultimaRaw ? r.ultimaRaw.split('-').reverse().join('/') : 'Nunca';
-        const proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span style="color:var(--text-muted)">Não agendado</span>';
-        const audStr = r.auditor || '<span style="color:var(--text-muted)">A Definir</span>';
+        const proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span class="text-[var(--text-muted)] font-normal text-xs">Não agendado</span>';
+        const audStr = r.auditor || '<span class="text-[var(--text-muted)] font-normal text-xs text-center border border-[var(--border)] rounded-full px-2 py-0.5">A Definir</span>';
 
         const tr = document.createElement('tr');
-        tr.style.borderBottom = "1px solid var(--border)";
+        tr.className = 'border-b border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors group';
         tr.innerHTML = `
-            <td style="padding: 15px; font-weight: 600; font-size: 0.9rem; color: var(--text-main);">${r.nome}</td>
-            <td style="padding: 15px; font-size: 0.85rem; color: var(--secondary);"><span style="background: rgba(38,93,124,0.1); padding: 4px 8px; border-radius: 4px;">${r.regional}</span></td>
-            <td style="padding: 15px; font-size: 0.85rem; font-weight: 500;">${ultimaStr}</td>
-            <td style="padding: 15px; font-size: 0.85rem; font-weight: 600;">${proxStr}</td>
-            <td style="padding: 15px; font-size: 0.85rem; color: var(--text-main);"><i class="ph ph-user"></i> ${audStr}</td>
-            <td style="padding: 15px; text-align: center;">
-                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.abrirModalEditPlanejamento('${r.nome}')">
-                    <i class="ph ph-pencil-simple"></i> Editar
+            <td class="p-4 text-sm font-semibold text-[var(--text-main)]">${r.nome}</td>
+            <td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-md">${r.regional}</span></td>
+            <td class="p-4 text-sm font-medium text-[var(--text-main)]">${ultimaStr}</td>
+            <td class="p-4 text-sm font-bold text-[var(--primary)]">${proxStr}</td>
+            <td class="p-4 text-sm text-[var(--text-main)] flex items-center gap-1.5 h-full min-h-[53px]"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ${audStr}</td>
+            <td class="p-4 text-center">
+                <button class="flex mx-auto items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/5 transition-colors text-xs font-semibold opacity-0 group-hover:opacity-100 focus:opacity-100" onclick="window.abrirModalEditPlanejamento('${r.nome}')">
+                    <i class="ph ph-pencil-simple text-sm"></i> Editar
                 </button>
             </td>
         `;
@@ -534,7 +539,7 @@ function renderDashboard() {
     const media = somaNotas / notasCache.length;
     const elMedia = document.getElementById('kpiMediaRede');
     elMedia.textContent = media.toFixed(1);
-    elMedia.style.color = media >= 8.5 ? 'var(--sp-pistache)' : (media >= 7 ? 'var(--sp-laranja)' : 'var(--sp-red)');
+    elMedia.className = media >= 8.5 ? 'text-3xl font-bold mt-1.5 text-spPistache' : (media >= 7 ? 'text-3xl font-bold mt-1.5 text-spLaranja' : 'text-3xl font-bold mt-1.5 text-spRed');
 
     // KPI: Menor Nota (da última auditoria de cada loja)
     // Pegar a nota mais recente de cada loja
@@ -635,7 +640,9 @@ function renderizarBotoesAudiEquipe() {
     container.innerHTML = '';
     audiEquipe.forEach(m => {
         const btn = document.createElement('button');
-        btn.className = m.nome === audiCurrentMember ? 'btn btn-primary' : 'btn btn-outline';
+        btn.className = m.nome === audiCurrentMember 
+            ? 'px-4 py-2 rounded-full font-semibold transition-colors bg-[var(--primary)] text-white shadow-sm border border-[var(--primary)]' 
+            : 'px-4 py-2 rounded-full font-semibold transition-colors bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm';
         btn.innerText = m.nome;
         btn.onclick = () => window.switchAudiMember(m.nome);
         container.appendChild(btn);
@@ -694,58 +701,61 @@ function renderizarAudiProjetosList() {
     container.innerHTML = '';
 
     if (projs.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="width: 100%;"><i class="ph ph-kanban"></i><h2>Nenhum registro para ${audiCurrentMember || 'esta equipe'}</h2></div>`;
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-10 w-full bg-[var(--surface)] rounded-xl border border-[var(--border)] border-dashed text-center">
+                <i class="ph ph-kanban text-4xl text-[var(--primary)] mb-3 opacity-50"></i>
+                <h2 class="text-lg font-bold text-[var(--text-main)] m-0">Nenhum registro para ${audiCurrentMember || 'esta equipe'}</h2>
+                <p class="text-sm text-[var(--text-muted)] mt-1">Clique e registre uma nova demanda acima para começar a preencher o quadro.</p>
+            </div>`;
         return;
     }
 
     const colunas = [
-        { id: 'Pendente', titulo: 'Pendentes', classBadge: 'status-badge-pendente' },
-        { id: 'Em Andamento', titulo: 'Em Andamento', classBadge: 'status-badge-andamento' },
-        { id: 'Concluído', titulo: 'Concluídos', classBadge: 'status-badge-concluido' }
+        { id: 'Pendente', titulo: 'Pendentes', badgeBg: 'bg-red-50 text-red-700 border border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-900', iconColor: 'text-red-500' },
+        { id: 'Em Andamento', titulo: 'Em Andamento', badgeBg: 'bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-900', iconColor: 'text-yellow-500' },
+        { id: 'Concluído', titulo: 'Concluídos', badgeBg: 'bg-green-50 text-green-700 border border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-900', iconColor: 'text-green-500' }
     ];
 
     colunas.forEach(col => {
         const projsNestaColuna = projs.filter(p => (p.status || 'Pendente') === col.id);
         const colDiv = document.createElement('div');
-        colDiv.className = 'kanban-col';
+        colDiv.className = 'flex flex-col flex-1 min-w-[300px] bg-black/5 dark:bg-white/5 rounded-xl border border-[var(--border)] overflow-hidden';
         colDiv.innerHTML = `
-            <div class="kanban-col-header">
-                <h3>${col.titulo}</h3>
-                <span class="kanban-col-count">${projsNestaColuna.length}</span>
+            <div class="px-4 py-3 flex justify-between items-center border-b border-[var(--border)] bg-[var(--surface)]">
+                <h3 class="m-0 font-bold text-[var(--text-main)] text-sm flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-current ${col.iconColor}"></div> ${col.titulo}</h3>
+                <span class="bg-[var(--bg-color)] text-[var(--text-muted)] text-xs font-bold px-2.5 py-1 rounded-full border border-[var(--border)]">${projsNestaColuna.length}</span>
             </div>
-            <div class="kanban-items"></div>
+            <div class="kanban-items p-3 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-3 min-h-[300px]"></div>
         `;
         const itemsContainer = colDiv.querySelector('.kanban-items');
 
         projsNestaColuna.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'comment-item';
-            div.style.marginBottom = '12px';
-            div.style.borderLeftColor = 'transparent';
+            div.className = 'bg-[var(--surface)] border-l-4 border-transparent hover:border-[var(--primary)] p-4 rounded-lg border border-[var(--border)] shadow-sm hover:shadow-md transition-all group flex flex-col gap-2 relative';
 
             let actionBtns = '';
-            actionBtns += `<button class="btn btn-outline" style="padding: 6px; margin-right: 5px;" onclick="window.abrirModalEditAudiProj('${p.firebaseId}')"><i class="ph ph-pencil"></i></button>`;
-            actionBtns += `<button class="btn btn-danger" style="padding: 6px;" onclick="window.deletarAudiProjeto('${p.firebaseId}')"><i class="ph ph-trash"></i></button>`;
+            actionBtns += `<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Editar" onclick="window.abrirModalEditAudiProj('${p.firebaseId}')"><i class="ph ph-pencil-simple text-sm"></i></button>`;
+            actionBtns += `<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Remover" onclick="window.deletarAudiProjeto('${p.firebaseId}')"><i class="ph ph-trash text-sm"></i></button>`;
 
             let urlBadge = '';
             if (p.anexoUrl) {
                 const isImg = p.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
                 if (isImg) {
-                    urlBadge = `<a href="${p.anexoUrl}" target="_blank"><img src="${p.anexoUrl}" style="max-height: 40px; border-radius: 4px; border: 1px solid var(--border); vertical-align: middle;"></a>`;
+                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="block w-full mt-2 rounded-lg border border-[var(--border)] overflow-hidden hover:brightness-95 transition-all"><img src="${p.anexoUrl}" class="w-full h-24 object-cover" alt="Anexo"></a>`;
                 } else {
-                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="badge" style="background:#e2e8f0; color:#0f172a; text-decoration:none;"><i class="ph ph-link"></i> Ver Link</a>`;
+                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="inline-flex mt-2 items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[var(--bg-color)] text-[var(--text-main)] text-xs font-medium border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"><i class="ph ph-link"></i> Abrir Link Anexo</a>`;
                 }
             }
 
             div.innerHTML = `
-                <div class="comment-meta">
-                    <span class="badge ${col.classBadge}"><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
-                    <div>${actionBtns}</div>
+                <div class="flex justify-between items-start gap-2">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold ${col.badgeBg}"><i class="ph ph-calendar-blank"></i> ${p.dataAtv}</span>
+                    <div class="flex items-center gap-1 bg-[var(--surface)] rounded-lg shadow-sm border border-[var(--border)] ml-auto absolute top-2 right-2 p-0.5 pointer-events-none group-hover:pointer-events-auto">${actionBtns}</div>
                 </div>
-                <h4 style="margin: 10px 0; font-size: 0.95rem; font-weight: 600; line-height: 1.4; word-break: break-word;">${p.desc}</h4>
-                <div style="color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>Dmd: <strong>${p.demandante}</strong></span>
-                    ${urlBadge}
+                <h4 class="mt-2 mb-1 font-semibold text-sm text-[var(--text-main)] leading-relaxed break-words">${p.desc}</h4>
+                ${urlBadge ? `<div>${urlBadge}</div>` : ''}
+                <div class="mt-3 pt-3 border-t border-dashed border-[var(--border)] flex justify-between items-center text-xs text-[var(--text-muted)]">
+                    <span class="flex items-center gap-1" title="Demandante"><i class="ph-fill ph-user-circle text-lg"></i> <span class="font-medium text-[var(--text-main)] truncate max-w-[120px]">${p.demandante}</span></span>
                 </div>
             `;
             itemsContainer.appendChild(div);
@@ -846,12 +856,18 @@ function renderizarListaAudiEquipeGerenciar() {
     const container = document.getElementById('listaAudiEquipeGerenciar');
     if (!container) return;
     container.innerHTML = '';
+    
+    if (audiEquipe.length === 0) {
+        container.innerHTML = '<p class="text-[var(--text-muted)] text-sm text-center py-4">Nenhum membro.</p>';
+        return;
+    }
+
     audiEquipe.forEach(m => {
         const div = document.createElement('div');
-        div.style = "display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border);";
+        div.className = 'flex justify-between items-center py-2.5 px-3 mb-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] group hover:border-[var(--primary)] transition-colors';
         div.innerHTML = `
-            <span>${m.nome}</span>
-            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="window.removerAudiMembro('${m.firebaseId}', '${m.nome}')">
+            <span class="font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors"></i> ${m.nome}</span>
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100" onclick="window.removerAudiMembro('${m.firebaseId}', '${m.nome}')">
                 <i class="ph ph-trash"></i>
             </button>
         `;

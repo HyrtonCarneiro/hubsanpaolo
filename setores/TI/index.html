@@ -15,46 +15,68 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
+    <!-- Tailwind Scripts for Local Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#da5513',
+                        brandRed: '#da0d17',
+                        brandBlue: '#265d7c',
+                        brandGreen: '#4f7039',
+                        mainText: '#56331b',
+                        mutedText: '#786d68',
+                        surface: '#ffffff',
+                        border: '#d1c8b4',
+                        background: '#e8e1d0'
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="../../css/styles.css">
 </head>
 
-<body>
+<body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
 
-    <div id="main-app" style="display: block;">
-        <div id="sidebarOverlay" class="sidebar-overlay" onclick="window.toggleSidebar()"></div>
-        <aside class="sidebar" id="appSidebar">
-            <div class="brand">
-                <i class="ph-fill ph-hard-drives"></i> San Paolo TI
+    <div id="main-app" class="flex h-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-main)] transition-colors duration-300">
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
+        <aside class="w-64 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0" id="appSidebar">
+            <div class="p-6 font-bold text-xl text-[var(--primary)] flex items-center gap-3 border-b border-[var(--border)]">
+                <i class="ph-fill ph-hard-drives text-2xl"></i> San Paolo TI
             </div>
-            <div class="nav-menu">
-                <div class="nav-item active" onclick="window.switchView('analytics')" id="nav-analytics">
-                    <i class="ph ph-chart-pie-slice"></i> Dashboard
+            <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-3">
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active-nav" onclick="window.switchView('analytics')" id="nav-analytics">
+                    <i class="ph ph-chart-pie-slice text-xl"></i> <span class="font-medium">Dashboard</span>
                 </div>
-                <div class="nav-item" onclick="window.switchView('lojas')" id="nav-lojas">
-                    <i class="ph ph-storefront"></i> Lojas e Chamados
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('lojas')" id="nav-lojas">
+                    <i class="ph ph-storefront text-xl"></i> <span class="font-medium">Lojas e Chamados</span>
                 </div>
-                <div class="nav-item" onclick="window.switchView('projetos')" id="nav-projetos">
-                    <i class="ph ph-kanban"></i> Tarefas da Equipe
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('projetos')" id="nav-projetos">
+                    <i class="ph ph-kanban text-xl"></i> <span class="font-medium">Tarefas da Equipe</span>
                 </div>
-                <div class="nav-item" onclick="window.switchView('atas')" id="nav-atas">
-                    <i class="ph ph-file-text"></i> Ata de Reunião
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('atas')" id="nav-atas">
+                    <i class="ph ph-file-text text-xl"></i> <span class="font-medium">Ata de Reunião</span>
                 </div>
-                <div class="nav-item" onclick="window.switchView('metapwr')" id="nav-metapwr">
-                    <i class="ph ph-target"></i> Meta PWR
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('metapwr')" id="nav-metapwr">
+                    <i class="ph ph-target text-xl"></i> <span class="font-medium">Meta PWR</span>
                 </div>
-                <div class="nav-item" onclick="window.switchView('bi')" id="nav-bi">
-                    <i class="ph ph-presentation-chart"></i> Power BI da TI
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('bi')" id="nav-bi">
+                    <i class="ph ph-presentation-chart text-xl"></i> <span class="font-medium">Power BI da TI</span>
                 </div>
             </div>
-            <div class="user-section">
-                <div style="margin-bottom: 10px; color: var(--text-muted);">Logado como: <strong id="loggedUserName"
-                        style="color: var(--text-main);">...</strong></div>
-                <div style="display: flex; gap: 10px; flex-direction: column;">
-                    <button class="btn btn-outline" style="width: 100%; justify-content: center;"
+            <div class="p-5 border-t border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <div class="mb-3 text-[var(--text-muted)] text-sm">Logado como: <strong id="loggedUserName"
+                        class="text-[var(--text-main)]">...</strong></div>
+                <div class="flex flex-col gap-2">
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]"
                         onclick="window.toggleDarkMode()">
                         <i class="ph ph-moon"></i> Tema Escuro
                     </button>
-                    <button class="btn btn-outline" style="width: 100%; justify-content: center;"
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]"
                         onclick="window.logout()">
                         <i class="ph ph-sign-out"></i> Sair
                     </button>
@@ -62,74 +84,76 @@
             </div>
         </aside>
 
-        <main class="main-content">
+        <main class="flex-1 h-screen overflow-y-auto p-4 md:p-8 relative">
             <div id="view-analytics">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Visão Geral</h1>
+            <div id="view-analytics">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Visão Geral</h1>
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-outline" onclick="window.abrirModalEquipe()">
+                    <div class="flex gap-3">
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.abrirModalEquipe()">
                             <i class="ph ph-users"></i> Gerenciar Equipe
                         </button>
-                        <button class="btn btn-primary" onclick="window.switchView('lojas')">
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.switchView('lojas')">
                             <i class="ph ph-plus"></i> Novo Chamado
                         </button>
                     </div>
                 </div>
-                <div class="analytics-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon blue"><i class="ph ph-buildings"></i></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(38,93,124,0.1)] text-[var(--sp-aoleite)] dark:bg-[rgba(38,93,124,0.2)] dark:text-blue-400"><i class="ph ph-buildings"></i></div>
                         <div>
-                            <p class="stat-value" id="statTotalLojas">0</p>
-                            <p class="stat-label">Lojas Monitoradas</p>
+                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statTotalLojas">0</p>
+                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0">Lojas Monitoradas</p>
                         </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon red"><i class="ph ph-warning-circle"></i></div>
+                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(218,13,23,0.1)] text-[var(--sp-red)] dark:bg-[rgba(218,13,23,0.2)] dark:text-red-400"><i class="ph ph-warning-circle"></i></div>
                         <div>
-                            <p class="stat-value" id="statPendentes">0</p>
-                            <p class="stat-label">Ocorrências Pendentes</p>
+                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
+                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0">Ocorrências Pendentes</p>
                         </div>
                     </div>
                 </div>
-                <div class="analytics-grid">
-                    <div class="chart-container">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
                         <canvas id="chartStatus"></canvas>
                     </div>
-                    <div class="chart-container">
+                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
                         <canvas id="chartRegionais"></canvas>
                     </div>
                 </div>
             </div>
 
             <div id="view-lojas" style="display: none;">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Monitoramento de Lojas</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Monitoramento de Lojas</h1>
                     </div>
-                    <button class="btn btn-outline" onclick="window.exportarCSV()">
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarCSV()">
                         <i class="ph ph-download-simple"></i> Exportar Relatório
                     </button>
                 </div>
 
-                <div class="toolbar">
-                    <div class="search-wrapper">
-                        <i class="ph ph-magnifying-glass"></i>
+                <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
+                    <div class="relative w-full md:flex-1 max-w-lg">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
                         <input type="text" id="searchInput" placeholder="Buscar por loja ou estado..."
+                            class="w-full pl-10 pr-4 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg transition-colors focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(var(--primary-rgb),0.1)] outline-none"
                             oninput="window.renderizarLojas()">
                     </div>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <select id="statusFilter" onchange="window.renderizarLojas()">
+                    <div class="flex gap-2 flex-wrap w-full md:w-auto">
+                        <select id="statusFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
                             <option value="todos">Todos os Status</option>
                             <option value="pendente">Apenas Pendentes</option>
                             <option value="resolvido">Apenas Resolvidos</option>
                         </select>
-                        <select id="tagFilter" onchange="window.renderizarLojas()">
+                        <select id="tagFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
                             <option value="todas">Todas as Tags</option>
                             <option value="Hardware">Hardware</option>
                             <option value="Software">Software</option>
@@ -138,7 +162,7 @@
                             <option value="3S">3S</option>
                             <option value="POS">POS</option>
                         </select>
-                        <select id="setorFilter" onchange="window.renderizarLojas()">
+                        <select id="setorFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
                             <option value="todos">Todos os Setores</option>
                             <option value="Financeiro">Financeiro</option>
                             <option value="Fiscal">Fiscal</option>
@@ -150,7 +174,7 @@
                             <option value="Operação">Operação</option>
                             <option value="CD">CD</option>
                         </select>
-                        <select id="sortOrder" onchange="window.renderizarLojas()">
+                        <select id="sortOrder" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm font-semibold text-[var(--primary)]" onchange="window.renderizarLojas()">
                             <option value="pendentes-topo">Prioridade (Pendentes p/ Topo)</option>
                             <option value="recentes">Atualizações Recentes</option>
                             <option value="loja-az">Lojas (A-Z)</option>
@@ -159,37 +183,37 @@
                     </div>
                 </div>
 
-                <div id="lojas-container"></div>
+                <div id="lojas-container" class="flex flex-col gap-6"></div>
             </div>
 
             <div id="view-projetos" style="display: none;">
 
-                <div class="header-actions" style="margin-bottom: 24px;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Tarefas e Projetos</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
-                    <button class="btn btn-outline" onclick="window.exportarProjetosCSV()">
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosCSV()">
                         <i class="ph ph-download-simple"></i> Exportar Relatório
                     </button>
                 </div>
 
                 <div id="membrosEquipeContainer"
-                    style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+                    class="flex gap-2 mb-6 flex-wrap">
                     <!-- Carregado via JS -->
                 </div>
-                <div class="chart-container" style="margin-bottom: 24px;">
+                <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
                     <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="margin-top: 0; margin-bottom: 0;">Registrar Nova Demanda</h3>
+                        class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Registrar Nova Demanda</h3>
                     </div>
                     <input type="text" id="projDesc" placeholder="Descrição da tarefa ou projeto"
-                        style="margin-bottom: 12px;">
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
-                        <input type="text" id="projDemand" placeholder="Demandante" style="flex: 2; min-width: 150px;">
-                        <input type="date" id="projDate" style="flex: 1; min-width: 120px;">
-                        <select id="projStatus" style="flex: 1; min-width: 120px;">
+                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none">
+                    <div class="flex flex-wrap gap-3 mb-3">
+                        <input type="text" id="projDemand" placeholder="Demandante" class="flex-2 min-w-[150px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        <input type="date" id="projDate" class="flex-1 min-w-[120px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        <select id="projStatus" class="flex-1 min-w-[120px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
                             <option value="Pendente">Pendente</option>
                             <option value="Em Andamento">Em Andamento</option>
                             <option value="Concluído">Concluído</option>
@@ -197,94 +221,137 @@
                     </div>
                     <!-- Link para a tarefa -->
                     <input type="url" id="projAnexo" placeholder="Link para visualização/anexo (Opcional)"
-                        style="margin-bottom: 12px; width: 100%;">
+                        class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none">
 
-                    <button class="btn btn-primary" onclick="window.salvarProjeto()">
-                        <i class="ph ph-floppy-disk"></i> Salvar Registro
+                    <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarProjeto()">
+                        <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
                     </button>
                 </div>
 
-                <div class="kanban-board" id="projetos-list">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden" id="projetos-list">
                     <!-- Kanban JS -->
                 </div>
             </div>
 
             <div id="view-atas" style="display: none;">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Ata de Reuniões Semanais</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Ata de Reuniões Semanais</h1>
                     </div>
                 </div>
-                <div class="chart-container" style="margin-bottom: 24px;">
-                    <h3 style="margin-top: 0; margin-bottom: 12px;"><i class="ph ph-file-text"></i> Nova Ata Documentada
+                <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
+                    <h3 class="text-lg font-bold text-[var(--text-main)] m-0 mb-4 flex items-center gap-2"><i class="ph ph-file-text text-[var(--primary)] text-xl"></i> Nova Ata Documentada
                     </h3>
                     <input type="text" id="ataTitulo" placeholder="Título / Assunto Principal"
-                        style="width: 100%; margin-bottom: 10px; font-weight: bold;">
+                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none font-bold">
                     <textarea id="ataTexto" rows="5" placeholder="Descreva os tópicos abordados nesta reunião..."
-                        style="width: 100%; margin-bottom: 15px;"></textarea>
-                    <button class="btn btn-primary" onclick="window.salvarAta()">
-                        <i class="ph ph-floppy-disk"></i> Registrar Ata
+                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[120px]"></textarea>
+                    <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarAta()">
+                        <i class="ph ph-floppy-disk text-lg"></i> Registrar Ata
                     </button>
                 </div>
-                <div id="listaAtasContainer">
+                <div id="listaAtasContainer" class="flex flex-col gap-4">
                     <!-- Populado JS -->
                 </div>
             </div>
 
             <div id="view-metapwr" style="display: none;">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Meta PWR</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Meta PWR</h1>
                     </div>
                 </div>
-                <div style="padding: 40px; text-align: center; margin-top: 50px;">
-                    <i class="ph ph-target" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h2>Área em Desenvolvimento</h2>
-                    <p style="color: var(--text-muted); max-width: 500px; margin: 10px auto;">Acompanhamento das Metas
+                <div class="p-10 text-center mt-12">
+                    <i class="ph ph-target text-[4rem] text-[var(--primary)] mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--text-main)]">Área em Desenvolvimento</h2>
+                    <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">Acompanhamento das Metas
                         PWR da Tecnologia (TI) será liberado em breve.</p>
                 </div>
             </div>
 
             <div id="view-bi" style="display: none; height: 100%;">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
-                        <h1 class="page-title">Power BI da TI</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Power BI da TI</h1>
                     </div>
                 </div>
                 <div
-                    style="width: 100%; height: calc(100vh - 120px); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    class="w-full h-[calc(100vh-120px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)]">
                     <iframe title="Power BI da TI" width="100%" height="100%"
                         src="https://app.powerbi.com/view?r=eyJrIjoiY2NkNzdmYmQtMWMwNS00NzU0LWFmMGMtNWViM2Q3NzBkZWRjIiwidCI6IjE3ZmUxNDY1LWZlNjEtNGVmMy1hYThlLWZhOWU5YzY1MGJiOSJ9"
-                        frameborder="0" allowFullScreen="true" style="border: none;"></iframe>
+                        frameborder="0" allowFullScreen="true" class="border-none w-full h-full"></iframe>
                 </div>
             </div>
 
         </main>
     </div>
 
-    <div id="modalLoja" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
+    <div id="modalLoja" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[650px] max-w-full max-h-[90vh] flex flex-col rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 z-10">
                 <div>
-                    <h2 id="modalTitle">Nome da Loja</h2>
-                    <span id="modalEstado" class="badge" style="margin-top: 5px; display: inline-block;"></span>
+                    <h2 id="modalTitle" class="text-xl font-bold text-[var(--text-main)] m-0">Nome da Loja</h2>
+                    <span id="modalEstado" class="inline-block px-2.5 py-1 mt-1 rounded-md text-xs font-bold bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] dark:bg-[rgba(var(--primary-rgb),0.2)]"></span>
                 </div>
-                <button class="btn btn-outline" style="padding: 8px;" onclick="window.fecharModal()"><i
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModal()"><i
                         class="ph ph-x"></i></button>
             </div>
-            <div style="margin-bottom: 24px;">
-                <textarea id="novoComentario" rows="3"
-                    placeholder="Descreva a ocorrência ou atualização técnica..."></textarea>
-                <input type="url" id="anexoComentario" placeholder="Link de imagem/anexo (Opcional)"
-                    style="margin-top: 10px; margin-bottom: 5px; width: 100%;">
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <select id="tagComentario" style="flex: 1;">
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
+                <div class="mb-6">
+                    <textarea id="novoComentario" rows="3"
+                        placeholder="Descreva a ocorrência ou atualização técnica..." class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[80px]"></textarea>
+                    <input type="url" id="anexoComentario" placeholder="Link de imagem/anexo (Opcional)"
+                        class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none">
+                    <div class="flex gap-3 mt-2 flex-wrap sm:flex-nowrap">
+                        <select id="tagComentario" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                            <option value="Hardware">Hardware</option>
+                            <option value="Software">Software</option>
+                            <option value="Degust">Degust</option>
+                            <option value="Athenas">Athenas</option>
+                            <option value="3S">3S</option>
+                            <option value="POS">POS</option>
+                        </select>
+                        <select id="setorComentario" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                            <option value="">Setor (Opcional)</option>
+                            <option value="Financeiro">Financeiro</option>
+                            <option value="Fiscal">Fiscal</option>
+                            <option value="Auditoria">Auditoria</option>
+                            <option value="TI">TI</option>
+                            <option value="Controladoria">Controladoria</option>
+                            <option value="Gente e Gestão">Gente e Gestão</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operação">Operação</option>
+                            <option value="CD">CD</option>
+                        </select>
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110 sm:w-auto w-full" onclick="window.salvarComentario()">
+                            <i class="ph ph-paper-plane-right"></i> Registrar
+                        </button>
+                    </div>
+                </div>
+
+                <div id="listaComentarios" class="flex flex-col gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEditLog" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[500px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Editar Chamado</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEditLog()"><i
+                        class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6">
+                <input type="hidden" id="editLogId">
+                <textarea id="editLogTexto" rows="3" class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[80px]"></textarea>
+                <div class="flex gap-3 mb-5">
+                    <select id="editLogTag" class="flex-1 px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
                         <option value="Hardware">Hardware</option>
                         <option value="Software">Software</option>
                         <option value="Degust">Degust</option>
@@ -292,7 +359,7 @@
                         <option value="3S">3S</option>
                         <option value="POS">POS</option>
                     </select>
-                    <select id="setorComentario" style="flex: 1;">
+                    <select id="editLogSetor" class="flex-1 px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
                         <option value="">Setor (Opcional)</option>
                         <option value="Financeiro">Financeiro</option>
                         <option value="Fiscal">Fiscal</option>
@@ -304,90 +371,55 @@
                         <option value="Operação">Operação</option>
                         <option value="CD">CD</option>
                     </select>
-                    <button class="btn btn-primary" onclick="window.salvarComentario()">
-                        <i class="ph ph-paper-plane-right"></i> Registrar
-                    </button>
                 </div>
+                <button class="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110"
+                    onclick="window.confirmarEdicaoLog()">Salvar Alterações</button>
             </div>
-
-            <div id="listaComentarios"></div>
         </div>
     </div>
 
-    <div id="modalEditLog" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Editar Chamado</h2>
-                <button class="btn btn-outline" style="padding: 8px;" onclick="window.fecharModalEditLog()"><i
+    <div id="modalEditProj" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[600px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Editar Tarefa</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEditProj()"><i
                         class="ph ph-x"></i></button>
             </div>
-            <input type="hidden" id="editLogId">
-            <textarea id="editLogTexto" rows="3" style="margin-bottom: 10px;"></textarea>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <select id="editLogTag" style="flex: 1;">
-                    <option value="Hardware">Hardware</option>
-                    <option value="Software">Software</option>
-                    <option value="Degust">Degust</option>
-                    <option value="Athenas">Athenas</option>
-                    <option value="3S">3S</option>
-                    <option value="POS">POS</option>
-                </select>
-                <select id="editLogSetor" style="flex: 1;">
-                    <option value="">Setor (Opcional)</option>
-                    <option value="Financeiro">Financeiro</option>
-                    <option value="Fiscal">Fiscal</option>
-                    <option value="Auditoria">Auditoria</option>
-                    <option value="TI">TI</option>
-                    <option value="Controladoria">Controladoria</option>
-                    <option value="Gente e Gestão">Gente e Gestão</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Operação">Operação</option>
-                    <option value="CD">CD</option>
-                </select>
+            <div class="p-6">
+                <input type="hidden" id="editProjId">
+                <input type="text" id="editProjDesc" class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none" placeholder="Descrição da tarefa">
+                <div class="flex flex-wrap gap-3 mb-5">
+                    <input type="text" id="editProjDemand" class="flex-2 min-w-[150px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none" placeholder="Demandante">
+                    <input type="date" id="editProjDate" class="flex-1 min-w-[120px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                    <select id="editProjMember" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                        <!-- Populado JS -->
+                    </select>
+                    <select id="editProjStatus" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                    </select>
+                </div>
+                <button class="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110"
+                    onclick="window.confirmarEdicaoProj()">Salvar Alterações</button>
             </div>
-            <button class="btn btn-primary" style="width: 100%; justify-content: center;"
-                onclick="window.confirmarEdicaoLog()">Salvar Alterações</button>
         </div>
     </div>
 
-    <div id="modalEditProj" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Editar Tarefa</h2>
-                <button class="btn btn-outline" style="padding: 8px;" onclick="window.fecharModalEditProj()"><i
+    <div id="modalEquipe" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Gerenciar Equipe</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEquipe()"><i
                         class="ph ph-x"></i></button>
             </div>
-            <input type="hidden" id="editProjId">
-            <input type="text" id="editProjDesc" style="margin-bottom: 12px;" placeholder="Descrição da tarefa">
-            <div style="display: flex; gap: 12px; margin-bottom: 15px;">
-                <input type="text" id="editProjDemand" style="flex: 2;" placeholder="Demandante">
-                <input type="date" id="editProjDate" style="flex: 1;">
-                <select id="editProjMember" style="flex: 1.5;">
-                    <!-- Populado JS -->
-                </select>
-                <select id="editProjStatus" style="flex: 1.2;">
-                    <option value="Pendente">Pendente</option>
-                    <option value="Em Andamento">Em Andamento</option>
-                    <option value="Concluído">Concluído</option>
-                </select>
+            <div class="p-6">
+                <div class="flex gap-3 mb-5">
+                    <input type="text" id="novoMembroNome" placeholder="Nome do novo membro" class="flex-1 px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.adicionarMembro()">Adicionar</button>
+                </div>
+                <div id="listaEquipeGerenciar" class="flex flex-col gap-2"></div>
             </div>
-            <button class="btn btn-primary" style="width: 100%; justify-content: center;"
-                onclick="window.confirmarEdicaoProj()">Salvar Alterações</button>
-        </div>
-    </div>
-
-    <div id="modalEquipe" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Gerenciar Equipe</h2>
-                <button class="btn btn-outline" style="padding: 8px;" onclick="window.fecharModalEquipe()"><i
-                        class="ph ph-x"></i></button>
-            </div>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="novoMembroNome" placeholder="Nome do novo membro">
-                <button class="btn btn-primary" onclick="window.adicionarMembro()">Adicionar</button>
-            </div>
-            <div id="listaEquipeGerenciar"></div>
         </div>
     </div>
 

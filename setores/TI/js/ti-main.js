@@ -166,34 +166,40 @@ window.toggleSidebar = function () {
 function criarCardLojaHTML(loja, logs) {
     const pendentes = logs.filter(l => !l.resolvido);
     const temPendente = pendentes.length > 0;
-    const statusClass = logs.length > 0 ? (temPendente ? 'status-pendente' : 'status-resolvido') : '';
+    const statusColor = logs.length > 0 ? (temPendente ? 'var(--sp-red)' : 'var(--success)') : 'var(--border)';
+    const statusBg = logs.length > 0 ? (temPendente ? 'rgba(218,13,23,0.1)' : 'rgba(16,185,129,0.1)') : 'var(--bg-color)';
+    const darkStatusBg = logs.length > 0 ? (temPendente ? 'rgba(218,13,23,0.2)' : 'rgba(16,185,129,0.2)') : 'transparent';
+    
     const card = document.createElement('div');
-    card.className = `card-loja ${statusClass}`;
+    card.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer relative overflow-hidden group';
+    // Style left border color dynamically
+    card.style.borderLeftColor = statusColor;
+    card.style.borderLeftWidth = '4px';
     card.onclick = () => abrirModal(loja.id, loja.nome, loja.estado);
 
-    let preview = `<div class="log-preview"><div class="empty-state" style="padding:10px;"><i class="ph ph-check-circle" style="font-size:1.5rem; margin:0;"></i><p style="margin:5px 0 0; font-size:0.8rem;">Sistema operando normalmente</p></div></div>`;
+    let preview = `<div class="mt-4"><div class="flex flex-col items-center justify-center p-4 text-center text-[var(--text-muted)] bg-[var(--bg-color)] rounded-lg border border-dashed border-[var(--border)]"><i class="ph ph-check-circle text-2xl mb-2"></i><p class="m-0 text-sm font-medium">Sistema operando normalmente</p></div></div>`;
 
     if (logs.length > 0) {
         let logsExibidos = temPendente ? pendentes : [logs[0]];
         let logsHtml = '';
 
         logsExibidos.forEach((logItem, index) => {
-            const iconStatus = logItem.resolvido ? '<i class="ph-fill ph-check-circle" style="color:var(--success)"></i>' : '<i class="ph-fill ph-warning-circle" style="color:var(--danger)"></i>';
-            const marginStyle = index < logsExibidos.length - 1 ? 'margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px;' : '';
+            const iconStatus = logItem.resolvido ? '<i class="ph-fill ph-check-circle text-[var(--success)]"></i>' : '<i class="ph-fill ph-warning-circle text-[var(--danger)]"></i>';
+            const marginStyle = index < logsExibidos.length - 1 ? 'mb-3 pb-3 border-b border-[var(--border)]' : '';
             logsHtml += `
-                <div style="${marginStyle}">
-                    <div class="log-meta">
-                        <span>${iconStatus} ${logItem.dataStr}</span>
-                        <span><i class="ph ph-user"></i> ${logItem.autor}</span>
+                <div class="${marginStyle}">
+                    <div class="flex justify-between items-center text-xs text-[var(--text-muted)] mb-2 font-semibold">
+                        <span class="flex items-center gap-1.5">${iconStatus} ${logItem.dataStr}</span>
+                        <span class="flex items-center gap-1"><i class="ph ph-user"></i> ${logItem.autor}</span>
                     </div>
-                    <div class="log-text">${logItem.texto}</div>
-                    <span class="badge badge-tag" style="margin-top:8px; display:inline-block;">${logItem.tag || 'Geral'}</span>
+                    <div class="text-sm text-[var(--text-main)] leading-relaxed line-clamp-2">${logItem.texto}</div>
+                    <span class="inline-block px-2 py-0.5 mt-2 rounded-md text-xs font-bold bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] dark:bg-[rgba(var(--primary-rgb),0.2)] dark:text-blue-400 border border-[var(--primary)]/20">${logItem.tag || 'Geral'}</span>
                 </div>`;
         });
 
         preview = `
-            <div class="log-preview" style="max-height: 200px; overflow-y: auto;">
-                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; font-weight: bold; padding-bottom: 4px; border-bottom: 1px solid var(--border);">
+            <div class="mt-4 bg-[var(--bg-color)] rounded-lg p-3 border border-[var(--border)] max-h-[200px] overflow-y-auto overflow-x-hidden custom-scrollbar">
+                <div class="text-[0.75rem] text-[var(--text-muted)] mb-2 font-bold pb-1 border-b border-[var(--border)]">
                     ${temPendente ? (pendentes.length + ' ocorrência(s) pendente(s)') : 'Última ocorrência:'}
                 </div>
                 ${logsHtml}
@@ -201,9 +207,10 @@ function criarCardLojaHTML(loja, logs) {
     }
 
     card.innerHTML = `
-        <div class="card-header">
-            <h3 class="card-title">${loja.nome}</h3>
-            <span class="badge">${loja.estado}</span>
+        <div class="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-[${statusBg}] dark:from-[${darkStatusBg}] to-transparent opacity-50 group-hover:opacity-100 transition-opacity"></div>
+        <div class="flex justify-between items-start mb-1 relative z-10">
+            <h3 class="text-lg font-bold text-[var(--text-main)] m-0 group-hover:text-[var(--primary)] transition-colors">${loja.nome}</h3>
+            <span class="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-[var(--bg-color)] text-[var(--text-main)] border border-[var(--border)] shadow-sm">${loja.estado}</span>
         </div>
         ${preview}
     `;
@@ -241,7 +248,7 @@ window.renderizarLojas = function () {
     });
 
     if (lojasProcessadas.length === 0) {
-        container.innerHTML = `<div class="empty-state"><i class="ph ph-magnifying-glass"></i><h2>Nenhum resultado encontrado</h2></div>`;
+        container.innerHTML = `<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-xl border border-dashed border-[var(--border)]"><i class="ph ph-magnifying-glass text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum resultado encontrado</h2></div>`;
         return;
     }
 
@@ -249,9 +256,10 @@ window.renderizarLojas = function () {
         const estadosUnicos = [...new Set(lojasProcessadas.map(lp => lp.loja.estado))].sort();
         estadosUnicos.forEach(est => {
             const section = document.createElement('div');
-            section.innerHTML = `<h2 class="section-title">Regional ${est}</h2>`;
+            section.className = 'mb-8';
+            section.innerHTML = `<h2 class="text-xl font-bold text-[var(--primary)] mb-4 border-b border-[var(--border)] pb-2">Regional ${est}</h2>`;
             const grid = document.createElement('div');
-            grid.className = 'grid-lojas';
+            grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5';
 
             lojasProcessadas.filter(lp => lp.loja.estado === est)
                 .sort((a, b) => a.loja.nome.localeCompare(b.loja.nome))
@@ -262,7 +270,7 @@ window.renderizarLojas = function () {
         });
     } else {
         const grid = document.createElement('div');
-        grid.className = 'grid-lojas';
+        grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5';
 
         if (sortOrder === 'recentes') {
             lojasProcessadas.sort((a, b) => {
@@ -364,49 +372,58 @@ function renderizarComentarios(hist) {
     container.innerHTML = '';
 
     if (hist.length === 0) {
-        container.innerHTML = '<p style="text-align:center; color:var(--text-muted); padding:20px;">Nenhum histórico.</p>';
+        container.innerHTML = '<p class="text-center text-[var(--text-muted)] p-5">Nenhum histórico.</p>';
         return;
     }
 
     hist.forEach(c => {
         const div = document.createElement('div');
-        div.className = `comment-item ${c.resolvido ? 'resolvido' : 'pendente'}`;
+        const resolveColor = c.resolvido ? 'var(--success)' : 'var(--sp-red)';
+        const resolveBg = c.resolvido ? 'rgba(16,185,129,0.05)' : 'rgba(218,13,23,0.05)';
+        
+        div.className = `p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-color)] shadow-sm relative overflow-hidden`;
+        div.style.borderLeftColor = resolveColor;
+        div.style.borderLeftWidth = '4px';
 
         let htmlButtons = '';
-        htmlButtons += `<button class="btn btn-outline" style="margin-right: 8px;" onclick="window.abrirModalEditLog('${c.firebaseId}')"><i class="ph ph-pencil"></i> Editar</button>`;
-        htmlButtons += `<button class="btn btn-danger" onclick="window.deletarComentario('${c.firebaseId}')"><i class="ph ph-trash"></i> Apagar</button>`;
+        htmlButtons += `<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-transparent border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors mr-2" onclick="window.abrirModalEditLog('${c.firebaseId}')"><i class="ph ph-pencil"></i> Editar</button>`;
+        htmlButtons += `<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-[rgba(218,13,23,0.1)] text-red-600 dark:text-red-400 border border-transparent hover:border-red-600/30 transition-colors" onclick="window.deletarComentario('${c.firebaseId}')"><i class="ph ph-trash"></i> Apagar</button>`;
 
         let resolveSection = '';
         if (!c.resolvido) {
-            resolveSection = `<button class="btn btn-primary" onclick="window.resolverComentario('${c.firebaseId}')"><i class="ph ph-check"></i> Resolver</button>`;
+            resolveSection = `<button class="inline-flex items-center justify-center gap-1.5 px-4 py-2 mt-2 sm:mt-0 font-semibold rounded-lg bg-[var(--success)] text-white shadow hover:brightness-110 transition-all sm:w-auto w-full" onclick="window.resolverComentario('${c.firebaseId}')"><i class="ph ph-check font-bold"></i> Resolver</button>`;
         } else {
-            resolveSection = `<span style="color: var(--success); font-weight: 500; font-size: 0.85rem;"><i class="ph-fill ph-check-circle"></i> Resolvido por ${c.autorResolucao} em ${c.dataResolucao}</span>`;
+            resolveSection = `<span class="text-[var(--success)] font-bold text-sm flex items-center gap-1"><i class="ph-fill ph-check-circle text-lg"></i> Resolvido por ${c.autorResolucao} em ${c.dataResolucao}</span>`;
         }
 
-        const setorBadge = c.setor ? `<span class="badge" style="background: var(--surface); border: 1px solid var(--border); margin-left: 5px;">📍 ${c.setor}</span>` : '';
+        const setorBadge = c.setor ? `<span class="inline-block px-2 py-0.5 rounded-md text-xs font-bold bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] ml-1">📍 ${c.setor}</span>` : '';
 
         let anexoHtml = '';
         if (c.anexoUrl) {
             const isImg = c.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
             if (isImg) {
-                anexoHtml = `<div style="margin-top: 10px;"><a href="${c.anexoUrl}" target="_blank"><img src="${c.anexoUrl}" style="max-width: 100%; max-height: 200px; border-radius: 4px; border: 1px solid var(--border);"></a></div>`;
+                anexoHtml = `<div class="mt-3"><a href="${c.anexoUrl}" target="_blank"><img src="${c.anexoUrl}" class="max-w-full max-h-[200px] rounded-lg border border-[var(--border)] object-cover shadow-sm"></a></div>`;
             } else {
-                anexoHtml = `<div style="margin-top: 10px;"><a href="${c.anexoUrl}" target="_blank" class="badge" style="background:#e2e8f0; color:#0f172a; text-decoration:none; display:inline-flex; align-items:center; gap:5px;"><i class="ph ph-link"></i> Ver Link/Anexo</a></div>`;
+                anexoHtml = `<div class="mt-3"><a href="${c.anexoUrl}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface)] text-[var(--text-main)] text-sm font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline"><i class="ph ph-link"></i> Ver Link/Anexo</a></div>`;
             }
         }
 
         div.innerHTML = `
-            <div class="comment-meta">
-                <span><strong><i class="ph ph-user"></i> ${c.autor}</strong> em ${c.dataStr}</span>
-                <div>
-                    <span class="badge badge-tag">${c.tag || 'Geral'}</span>
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[${resolveBg}] to-transparent pointer-events-none"></div>
+            <div class="flex justify-between items-start mb-3 relative z-10 flex-wrap gap-2">
+                <div class="flex flex-col">
+                    <span class="font-bold text-[var(--text-main)] flex items-center gap-1.5"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ${c.autor}</span>
+                    <span class="text-xs text-[var(--text-muted)] mt-0.5">${c.dataStr}</span>
+                </div>
+                <div class="flex flex-wrap gap-1 items-center">
+                    <span class="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] dark:bg-[rgba(var(--primary-rgb),0.2)] dark:text-blue-400 border border-[var(--primary)]/20">${c.tag || 'Geral'}</span>
                     ${setorBadge}
                 </div>
             </div>
-            <div style="line-height: 1.5; margin: 10px 0;">${c.texto}${anexoHtml}</div>
-            <div class="comment-actions">
+            <div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10">${c.texto}${anexoHtml}</div>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-[var(--border)] gap-3 relative z-10">
                 ${resolveSection}
-                <div>${htmlButtons}</div>
+                <div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end">${htmlButtons}</div>
             </div>
         `;
         container.appendChild(div);
@@ -567,7 +584,9 @@ function renderizarBotoesEquipe() {
     container.innerHTML = '';
     membrosEquipe.forEach(m => {
         const btn = document.createElement('button');
-        btn.className = m.nome === currentMember ? 'btn btn-primary' : 'btn btn-outline';
+        btn.className = m.nome === currentMember 
+            ? 'px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all text-sm' 
+            : 'px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] text-sm';
         btn.innerText = m.nome;
         btn.onclick = () => window.switchMember(m.nome);
         container.appendChild(btn);
@@ -627,56 +646,57 @@ function renderizarProjetosList() {
     const projs = sysProjetos[currentMember] || [];
     container.innerHTML = '';
 
-    if (projs.length === 0) return container.innerHTML = `<div class="empty-state" style="width: 100%;"><i class="ph ph-kanban"></i><h2>Nenhum registro para ${currentMember || 'esta equipe'}</h2></div>`;
+    if (projs.length === 0) return container.innerHTML = `<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] col-span-1 lg:col-span-3 rounded-xl border border-dashed border-[var(--border)] w-full"><i class="ph ph-kanban text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum registro para ${currentMember || 'esta equipe'}</h2></div>`;
 
     const colunas = [
-        { id: 'Pendente', titulo: 'Pendentes', classBadge: 'status-badge-pendente' },
-        { id: 'Em Andamento', titulo: 'Em Andamento', classBadge: 'status-badge-andamento' },
-        { id: 'Concluído', titulo: 'Concluídos', classBadge: 'status-badge-concluido' }
+        { id: 'Pendente', titulo: 'Pendentes', classBadge: 'bg-[rgba(218,13,23,0.1)] text-[var(--sp-red)] dark:bg-[rgba(218,13,23,0.2)] dark:text-red-400 border-[var(--sp-red)]/20', borderColor: 'var(--sp-red)' },
+        { id: 'Em Andamento', titulo: 'Em Andamento', classBadge: 'bg-[rgba(38,93,124,0.1)] text-[var(--sp-aoleite)] dark:bg-[rgba(38,93,124,0.2)] dark:text-blue-400 border-[var(--sp-aoleite)]/20', borderColor: 'var(--sp-aoleite)' },
+        { id: 'Concluído', titulo: 'Concluídos', classBadge: 'bg-[rgba(16,185,129,0.1)] text-[var(--success)] dark:bg-[rgba(16,185,129,0.2)] dark:text-emerald-400 border-[var(--success)]/20', borderColor: 'var(--success)' }
     ];
 
     colunas.forEach(col => {
         const projsNestaColuna = projs.filter(p => (p.status || 'Pendente') === col.id);
 
         const colDiv = document.createElement('div');
-        colDiv.className = 'kanban-col';
+        colDiv.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl flex flex-col h-full overflow-hidden shadow-sm';
         colDiv.innerHTML = `
-            <div class="kanban-col-header">
-                <h3>${col.titulo}</h3>
-                <span class="kanban-col-count">${projsNestaColuna.length}</span>
+            <div class="px-5 py-4 border-b border-[var(--border)] flex justify-between items-center bg-black/5 dark:bg-black/20" style="border-top: 3px solid ${col.borderColor}">
+                <h3 class="text-lg font-bold text-[var(--text-main)] m-0 flex items-center gap-2">
+                    <div class="w-2.5 h-2.5 rounded-full" style="background-color: ${col.borderColor}"></div>
+                    ${col.titulo}
+                </h3>
+                <span class="bg-[var(--bg-color)] px-2.5 py-1 rounded-md text-xs font-bold text-[var(--text-main)] border border-[var(--border)] shadow-sm">${projsNestaColuna.length}</span>
             </div>
-            <div class="kanban-items"></div>
+            <div class="flex-1 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-3 kanban-items bg-[var(--bg-color)]/50"></div>
         `;
         const itemsContainer = colDiv.querySelector('.kanban-items');
 
         projsNestaColuna.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'comment-item';
-            div.style.marginBottom = '12px';
-            div.style.borderLeftColor = 'transparent';
+            div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-move group relative';
 
             let actionBtns = '';
-            actionBtns += `<button class="btn btn-outline" style="padding: 6px; margin-right: 5px;" onclick="window.abrirModalEditProj('${p.firebaseId}')"><i class="ph ph-pencil"></i></button>`;
-            actionBtns += `<button class="btn btn-danger" style="padding: 6px;" onclick="window.deletarProjeto('${p.firebaseId}')"><i class="ph ph-trash"></i></button>`;
+            actionBtns += `<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" onclick="window.abrirModalEditProj('${p.firebaseId}')"><i class="ph ph-pencil"></i></button>`;
+            actionBtns += `<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto('${p.firebaseId}')"><i class="ph ph-trash"></i></button>`;
 
             let urlBadge = '';
             if (p.anexoUrl) {
                 const isImg = p.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
                 if (isImg) {
-                    urlBadge = `<a href="${p.anexoUrl}" target="_blank"><img src="${p.anexoUrl}" style="max-height: 40px; border-radius: 4px; border: 1px solid var(--border); vertical-align: middle;"></a>`;
+                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="shrink-0"><img src="${p.anexoUrl}" class="h-6 rounded border border-[var(--border)] object-cover shadow-sm hover:opacity-80 transition-opacity"></a>`;
                 } else {
-                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="badge" style="background:#e2e8f0; color:#0f172a; text-decoration:none;"><i class="ph ph-link"></i> Ver Link</a>`;
+                    urlBadge = `<a href="${p.anexoUrl}" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--bg-color)] text-[var(--text-main)] text-xs font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline shrink-0"><i class="ph ph-link"></i> Link</a>`;
                 }
             }
 
             div.innerHTML = `
-                <div class="comment-meta">
-                    <span class="badge ${col.classBadge}"><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
-                    <div>${actionBtns}</div>
+                <div class="flex justify-between items-start mb-3">
+                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ${col.classBadge}"><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
+                    <div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">${actionBtns}</div>
                 </div>
-                <h4 style="margin: 10px 0; font-size: 0.95rem; font-weight: 600; line-height: 1.4; word-break: break-word;">${p.desc}</h4>
-                <div style="color: var(--text-muted); font-size: 0.8rem; border-top: 1px solid var(--border); padding-top: 8px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <span>Dmd: <strong>${p.demandante}</strong></span>
+                <h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">${p.desc}</h4>
+                <div class="flex justify-between items-center pt-3 border-t border-[var(--border)]">
+                    <span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate pr-2" title="Demandante: ${p.demandante}"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">${p.demandante}</span></span>
                     ${urlBadge}
                 </div>
             `;
@@ -815,14 +835,16 @@ function renderizarListaEquipeGerenciar() {
     const container = document.getElementById('listaEquipeGerenciar');
     if (!container) return;
     container.innerHTML = '';
+    if (membrosEquipe.length === 0) {
+        container.innerHTML = '<p class="text-[var(--text-muted)] text-sm text-center">Nenhum membro.</p>';
+        return;
+    }
     membrosEquipe.forEach(m => {
         const div = document.createElement('div');
-        div.style = "display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border);";
+        div.className = 'flex justify-between items-center py-2.5 px-3 mb-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] group hover:border-[var(--primary)] transition-colors';
         div.innerHTML = `
-            <span>${m.nome}</span>
-            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="window.removerMembro('${m.firebaseId}', '${m.nome}')">
-                <i class="ph ph-trash"></i>
-            </button>
+            <span class="font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors"></i> ${m.nome}</span>
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100" onclick="window.removerMembro('${m.firebaseId}', '${m.nome}')"><i class="ph ph-trash"></i></button>
         `;
         container.appendChild(div);
     });
@@ -880,19 +902,12 @@ function renderizarAtas() {
     container.innerHTML = '';
 
     if (sysAtas.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="ph ph-file-dashed"></i><p>Nenhuma ata registrada ainda.</p></div>';
+        container.innerHTML = `<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-xl border border-dashed border-[var(--border)]"><i class="ph ph-file-text text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhuma ata registrada</h2></div>`;
         return;
     }
 
     sysAtas.forEach(a => {
         const div = document.createElement('div');
-        div.className = 'card-loja';
-        div.style.marginBottom = '20px';
-        div.style.padding = '20px';
-        div.style.cursor = 'default';
-
-        let header = `
-            <div style="display: flex; justify-content: space-between; align-items:flex-start; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
                 <div>
                     <h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: var(--text-main);">${a.titulo}</h3>
                     <div style="font-size: 0.8rem; color: var(--text-muted);"><i class="ph ph-calendar"></i> Registrado em ${a.dataStr} por <strong>${a.autor}</strong></div>

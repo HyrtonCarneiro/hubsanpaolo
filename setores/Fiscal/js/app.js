@@ -40,15 +40,15 @@ function initApp() {
     document.getElementById('loggedUserName').innerText = currentUser;
 
     // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.header-actions > div:first-child').forEach(container => {
+    document.querySelectorAll('.flex.items-center.gap-3').forEach(container => {
+        if (!container.closest('.mb-8')) return; // Apenas no header
         if (container.querySelector('.btn-hub')) return;
         const btn = document.createElement('button');
-        btn.className = 'btn btn-outline btn-hub';
-        btn.style.padding = '6px 10px';
+        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
         btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four" style="font-size: 1.2rem;"></i>';
+        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
         btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        container.insertBefore(btn, container.querySelector('.page-title'));
+        container.insertBefore(btn, container.querySelector('h1'));
     });
 
     // Iniciar listener de equipe
@@ -75,12 +75,12 @@ window.switchView = function (view) {
     document.getElementById('view-tarefas').style.display = 'none';
     document.getElementById('view-metapwr').style.display = 'none';
 
-    document.getElementById('nav-dashboard').classList.remove('active');
-    document.getElementById('nav-tarefas').classList.remove('active');
-    document.getElementById('nav-metapwr').classList.remove('active');
+    document.getElementById('nav-dashboard').classList.remove('active-nav');
+    document.getElementById('nav-tarefas').classList.remove('active-nav');
+    document.getElementById('nav-metapwr').classList.remove('active-nav');
 
     document.getElementById(`view-${view}`).style.display = 'block';
-    document.getElementById(`nav-${view}`).classList.add('active');
+    document.getElementById(`nav-${view}`).classList.add('active-nav');
 
     if (window.innerWidth <= 768) {
         window.toggleSidebar();
@@ -91,8 +91,13 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById('appSidebar');
     const overlay = document.getElementById('sidebarOverlay');
     if (sidebar && overlay) {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
+        if (sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('hidden');
+        }
     }
 }
 
@@ -136,14 +141,16 @@ function renderizarListaEquipeGerenciar() {
     const container = document.getElementById('listaEquipeGerenciar');
     if (!container) return;
     container.innerHTML = '';
+    if (equipeCache.length === 0) {
+        container.innerHTML = '<p class="text-[var(--text-muted)] text-sm text-center">Nenhum membro.</p>';
+        return;
+    }
     equipeCache.forEach(m => {
         const div = document.createElement('div');
-        div.style = "display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--border);";
+        div.className = 'flex justify-between items-center py-2.5 px-3 mb-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] group hover:border-[var(--primary)] transition-colors';
         div.innerHTML = `
-            <span>${m.nome}</span>
-            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="window.removerMembro('${m.firebaseId}', '${m.nome}')">
-                <i class="ph ph-trash"></i>
-            </button>
+            <span class="font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors"></i> ${m.nome}</span>
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100" onclick="window.removerMembro('${m.firebaseId}', '${m.nome}')"><i class="ph ph-trash"></i></button>
         `;
         container.appendChild(div);
     });

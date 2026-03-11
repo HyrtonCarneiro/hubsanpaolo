@@ -9,177 +9,194 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- Tailwind Scripts for Local Setup -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#da5513',
+                        brandRed: '#da0d17',
+                        brandBlue: '#265d7c',
+                        brandGreen: '#4f7039',
+                        mainText: '#56331b',
+                        mutedText: '#786d68',
+                        surface: '#ffffff',
+                        border: '#d1c8b4',
+                        background: '#e8e1d0',
+                        spLaranja: '#da5513',
+                        spRed: '#da0d17',
+                        spPistache: '#8db56b',
+                        spMorango: '#f2a6a6',
+                        spAoleite: '#4a2f1d'
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="../../css/styles.css">
 </head>
 
-<body>
+<body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
 
-    <button class="btn-menu-toggle" onclick="window.toggleSidebar()"
-        style="position: fixed; top: 15px; left: 15px; z-index: 1100;">
-        <i class="ph ph-list"></i>
-    </button>
+    <div id="main-app" class="flex h-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-main)] transition-colors duration-300">
+        
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
+        
+        <aside class="w-64 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0" id="appSidebar">
+            <!-- Logotipo Exclusivo C-Level -->
+            <div class="p-6 font-bold text-xl text-[var(--primary)] flex items-center justify-center gap-2 border-b-2 border-spLaranja pb-4">
+                <i class="ph-fill ph-crown text-spLaranja text-2xl"></i>
+                <span class="text-spRed font-extrabold text-2xl">Diretoria</span>
+            </div>
 
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="window.toggleSidebar()"></div>
+            <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-3">
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active-nav" onclick="window.switchView('visao')" id="nav-visao">
+                    <i class="ph ph-chart-polar text-xl"></i> Visão Executiva
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('ranking')" id="nav-ranking">
+                    <i class="ph ph-medal text-xl"></i> Ranking de Lojas
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('atos')" id="nav-atos">
+                    <i class="ph ph-megaphone text-xl"></i> Sala de Atos
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('cofre')" id="nav-cofre">
+                    <i class="ph ph-vault text-xl"></i> Cofre de Arquivos
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('inovacao')" id="nav-inovacao">
+                    <i class="ph ph-lightbulb-filament text-xl"></i> Radar de Inovação
+                </div>
+            </div>
 
-    <div class="sidebar" id="appSidebar">
-        <!-- Logotipo Exclusivo C-Level -->
-        <div class="brand" style="justify-content: center; gap: 8px; border-bottom: 2px solid var(--sp-laranja);">
-            <i class="ph-fill ph-crown" style="color: var(--sp-laranja); font-size: 1.5rem;"></i>
-            <span style="color: var(--sp-red); font-weight: 800;">Diretoria</span>
-        </div>
+            <div class="p-6 border-t border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <div class="mb-4 text-sm text-[var(--text-muted)] flex flex-col gap-1">Acessando como Direção:</div>
+                <div class="flex items-center justify-between font-semibold mb-4">
+                    <span id="loggedUserName" class="text-[var(--primary)] truncate">User</span>
+                    <i class="ph-fill ph-moon cursor-pointer text-xl text-[var(--text-muted)] hover:text-spLaranja transition-colors" onclick="window.toggleDarkMode()" title="Alternar Tema"></i>
+                </div>
+                <div class="flex flex-col gap-2.5">
+                    <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] w-full text-sm shadow-sm" onclick="window.logout()">
+                        <i class="ph ph-sign-out text-lg"></i> Voltar / Sair
+                    </button>
+                    <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-spLaranja hover:text-spLaranja w-full text-sm shadow-sm" onclick="window.abrirModalEquipe()">
+                        <i class="ph ph-users text-lg"></i> Gerenciar Equipe
+                    </button>
+                </div>
+            </div>
+        </aside>
 
-        <div class="nav-menu">
-            <div class="nav-item active" onclick="window.switchView('visao')" id="nav-visao">
-                <i class="ph ph-chart-polar"></i> Visão Executiva
-            </div>
-            <div class="nav-item" onclick="window.switchView('ranking')" id="nav-ranking">
-                <i class="ph ph-medal"></i> Ranking de Lojas
-            </div>
-            <div class="nav-item" onclick="window.switchView('atos')" id="nav-atos">
-                <i class="ph ph-megaphone"></i> Sala de Atos
-            </div>
-            <div class="nav-item" onclick="window.switchView('cofre')" id="nav-cofre">
-                <i class="ph ph-vault"></i> Cofre de Arquivos
-            </div>
-            <div class="nav-item" onclick="window.switchView('inovacao')" id="nav-inovacao">
-                <i class="ph ph-lightbulb-filament"></i> Radar de Inovação
-            </div>
-        </div>
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[var(--bg-color)] p-4 md:p-8 custom-scrollbar relative">
+            
+            <button class="md:hidden fixed top-4 left-4 z-40 p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm focus:outline-none" onclick="window.toggleSidebar()">
+                <i class="ph ph-list text-2xl"></i>
+            </button>
 
-        <div class="user-section">
-            <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 5px;">Acessando como Direção:</div>
-            <div style="font-weight: 600; display: flex; align-items: center; justify-content: space-between;">
-                <span id="loggedUserName" style="color: var(--primary);">User</span>
-                <i class="ph-fill ph-moon" style="cursor: pointer; font-size: 1.2rem; color: var(--text-muted);"
-                    onclick="window.toggleDarkMode()" title="Alternar Tema"></i>
+            <!-- Visão Executiva -->
+            <div id="view-visao">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-12 md:mt-0 header-actions">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-main)] page-title m-0">C-Level Dashboard</h1>
+                </div>
+                <div class="p-10 text-center mt-8 bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] shadow-sm">
+                    <i class="ph ph-chart-polar text-[5rem] text-spLaranja mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--primary)]">Módulo Executivo Global</h2>
+                    <p class="text-[var(--text-muted)] max-w-2xl mx-auto mt-4 text-lg">
+                        Termômetro holístico consolidando os pilares de Faturamento, Custos Gerais e Turn-over Global de
+                        todas as regionais em um mapa de calor D-1.
+                    </p>
+                    <span class="inline-block mt-6 bg-[#f2a6a6] text-[#8F0810] px-5 py-2 rounded-full text-sm font-semibold tracking-wide">Em Desenvolvimento (Breve)</span>
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div class="main-content">
+            <!-- Ranking Lojas -->
+            <div id="view-ranking" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-12 md:mt-0 header-actions">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-main)] page-title m-0">Performance: Ranking</h1>
+                </div>
+                <div class="p-10 text-center mt-8 bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] shadow-sm">
+                    <i class="ph ph-medal text-[5rem] text-spPistache mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--primary)]">Ranking Gamificado de Lojas</h2>
+                    <p class="text-[var(--text-muted)] max-w-2xl mx-auto mt-4 text-lg">
+                        Lista de Top 5 ganhadoras da Meta PWR e Bottom 5 para pontos de atenção. Mural de premiação e visões
+                        gamificadas instantâneas.
+                    </p>
+                    <span class="inline-block mt-6 bg-[#f2a6a6] text-[#8F0810] px-5 py-2 rounded-full text-sm font-semibold tracking-wide">Em Desenvolvimento (Breve)</span>
+                </div>
+            </div>
 
-        <!-- Visão Executiva -->
-        <div id="view-visao">
-            <div class="header-actions" style="display: flex; justify-content: space-between; align-items: center;">
-                <h1 class="page-title">C-Level Dashboard</h1>
-                <button class="btn btn-outline" onclick="window.abrirModalEquipe()">
-                    <i class="ph ph-users"></i> Gerenciar Equipe
-                </button>
+            <!-- Sala de Atos -->
+            <div id="view-atos" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-12 md:mt-0 header-actions">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-main)] page-title m-0">Sala de Atos & Flash Reports</h1>
+                </div>
+                <div class="p-10 text-center mt-8 bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] shadow-sm">
+                    <i class="ph ph-megaphone text-[5rem] text-spAoleite mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--primary)]">Comunicados Institucionais</h2>
+                    <p class="text-[var(--text-muted)] max-w-2xl mx-auto mt-4 text-lg">
+                        Centro de emissão de flash reports da Diretoria para toda a frota de lojas. Alertas imediatos
+                        automáticos quando métricas saem do trilho de segurança.
+                    </p>
+                    <span class="inline-block mt-6 bg-[#f2a6a6] text-[#8F0810] px-5 py-2 rounded-full text-sm font-semibold tracking-wide">Em Desenvolvimento (Breve)</span>
+                </div>
             </div>
-            <div
-                style="padding: 60px; text-align: center; margin-top: 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);">
-                <i class="ph ph-chart-polar"
-                    style="font-size: 4.5rem; color: var(--sp-laranja); margin-bottom: 20px;"></i>
-                <h2 style="color: var(--primary);">Módulo Executivo Global</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 15px auto; font-size: 1.1rem;">
-                    Termômetro holístico consolidando os pilares de Faturamento, Custos Gerais e Turn-over Global de
-                    todas as regionais em um mapa de calor D-1.
-                </p>
-                <span class="badge badge-tag"
-                    style="background: var(--sp-morango); color: #8F0810; padding: 6px 16px; font-size: 0.9rem;">Em
-                    Desenvolvimento (Breve)</span>
-            </div>
-        </div>
 
-        <!-- Ranking Lojas -->
-        <div id="view-ranking" style="display: none;">
-            <div class="header-actions">
-                <h1 class="page-title">Performance: Ranking</h1>
+            <!-- Cofre de Documentos -->
+            <div id="view-cofre" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-12 md:mt-0 header-actions">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-main)] page-title m-0">Cofre de Arquivos Administrativos</h1>
+                </div>
+                <div class="p-10 text-center mt-8 bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] shadow-sm">
+                    <i class="ph ph-vault text-[5rem] text-[var(--text-main)] mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--primary)]">Repositório de Políticas</h2>
+                    <p class="text-[var(--text-muted)] max-w-2xl mx-auto mt-4 text-lg">
+                        Ambiente seguro e assinado com os documentos restritos de C-Level Corporativo (DREs, Demonstrativos,
+                        Atas).
+                    </p>
+                    <span class="inline-block mt-6 bg-[#f2a6a6] text-[#8F0810] px-5 py-2 rounded-full text-sm font-semibold tracking-wide">Em Desenvolvimento (Breve)</span>
+                </div>
             </div>
-            <div
-                style="padding: 60px; text-align: center; margin-top: 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);">
-                <i class="ph ph-medal" style="font-size: 4.5rem; color: var(--sp-pistache); margin-bottom: 20px;"></i>
-                <h2 style="color: var(--primary);">Ranking Gamificado de Lojas</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 15px auto; font-size: 1.1rem;">
-                    Lista de Top 5 ganhadoras da Meta PWR e Bottom 5 para pontos de atenção. Mural de premiação e visões
-                    gamificadas instantâneas.
-                </p>
-                <span class="badge badge-tag"
-                    style="background: var(--sp-morango); color: #8F0810; padding: 6px 16px; font-size: 0.9rem;">Em
-                    Desenvolvimento (Breve)</span>
-            </div>
-        </div>
 
-        <!-- Sala de Atos -->
-        <div id="view-atos" style="display: none;">
-            <div class="header-actions">
-                <h1 class="page-title">Sala de Atos & Flash Reports</h1>
+            <!-- Radar Inovação -->
+            <div id="view-inovacao" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-12 md:mt-0 header-actions">
+                    <h1 class="text-3xl font-extrabold text-[var(--text-main)] page-title m-0">Radar de Inovação & Ideias Externas</h1>
+                </div>
+                <div class="p-10 text-center mt-8 bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] shadow-sm">
+                    <i class="ph ph-lightbulb-filament text-[5rem] text-spLaranja mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--primary)]">Ouvidoria de Ideias San Paolo</h2>
+                    <p class="text-[var(--text-muted)] max-w-2xl mx-auto mt-4 text-lg">
+                        Caixa de sugestões e ouvidoria blindada para colaboradores compartilharem melhorias essenciais
+                        vindas direto da balança e do balcão para a diretoria.
+                    </p>
+                    <span class="inline-block mt-6 bg-[#f2a6a6] text-[#8F0810] px-5 py-2 rounded-full text-sm font-semibold tracking-wide">Em Desenvolvimento (Breve)</span>
+                </div>
             </div>
-            <div
-                style="padding: 60px; text-align: center; margin-top: 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);">
-                <i class="ph ph-megaphone"
-                    style="font-size: 4.5rem; color: var(--sp-aoleite); margin-bottom: 20px;"></i>
-                <h2 style="color: var(--primary);">Comunicados Institucionais</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 15px auto; font-size: 1.1rem;">
-                    Centro de emissão de flash reports da Diretoria para toda a frota de lojas. Alertas imediatos
-                    automáticos quando métricas saem do trilho de segurança.
-                </p>
-                <span class="badge badge-tag"
-                    style="background: var(--sp-morango); color: #8F0810; padding: 6px 16px; font-size: 0.9rem;">Em
-                    Desenvolvimento (Breve)</span>
-            </div>
-        </div>
 
-        <!-- Cofre de Documentos -->
-        <div id="view-cofre" style="display: none;">
-            <div class="header-actions">
-                <h1 class="page-title">Cofre de Arquivos Administrativos</h1>
-            </div>
-            <div
-                style="padding: 60px; text-align: center; margin-top: 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);">
-                <i class="ph ph-vault" style="font-size: 4.5rem; color: var(--text-main); margin-bottom: 20px;"></i>
-                <h2 style="color: var(--primary);">Repositório de Políticas</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 15px auto; font-size: 1.1rem;">
-                    Ambiente seguro e assinado com os documentos restritos de C-Level Corporativo (DREs, Demonstrativos,
-                    Atas).
-                </p>
-                <span class="badge badge-tag"
-                    style="background: var(--sp-morango); color: #8F0810; padding: 6px 16px; font-size: 0.9rem;">Em
-                    Desenvolvimento (Breve)</span>
-            </div>
-        </div>
-
-        <!-- Radar Inovação -->
-        <div id="view-inovacao" style="display: none;">
-            <div class="header-actions">
-                <h1 class="page-title">Radar de Inovação & Ideias Externas</h1>
-            </div>
-            <div
-                style="padding: 60px; text-align: center; margin-top: 20px; border: 2px dashed var(--border); border-radius: 12px; background: var(--surface);">
-                <i class="ph ph-lightbulb-filament"
-                    style="font-size: 4.5rem; color: var(--sp-laranja); margin-bottom: 20px;"></i>
-                <h2 style="color: var(--primary);">Ouvidoria de Ideias San Paolo</h2>
-                <p style="color: var(--text-muted); max-width: 600px; margin: 15px auto; font-size: 1.1rem;">
-                    Caixa de sugestões e ouvidoria blindada para colaboradores compartilharem melhorias essenciais
-                    vindas direto da balança e do balcão para a diretoria.
-                </p>
-                <span class="badge badge-tag"
-                    style="background: var(--sp-morango); color: #8F0810; padding: 6px 16px; font-size: 0.9rem;">Em
-                    Desenvolvimento (Breve)</span>
-            </div>
-        </div>
-
+        </main>
     </div>
 
     <script type="module" src="js/app.js"></script>
 
     <!-- MODAL EQUIPE -->
-    <div id="modalEquipe" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Gerenciar Equipe</h2>
-                <button class="btn btn-outline" style="padding: 8px;" onclick="window.fecharModalEquipe()"><i
-                        class="ph ph-x"></i></button>
+    <div id="modalEquipe" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content flex flex-col">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Gerenciar Equipe C-Level</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEquipe()"><i class="ph ph-x"></i></button>
             </div>
-            <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="novoMembroNome" placeholder="Nome do novo membro">
-                <button class="btn btn-primary" onclick="window.adicionarMembro()">Adicionar</button>
+            <div class="p-6">
+                <div class="flex gap-3 mb-5">
+                    <input type="text" id="novoMembroNome" placeholder="Nome do executivo" class="flex-1 px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.adicionarMembro()">Adicionar</button>
+                </div>
+                <div id="listaEquipeGerenciar" class="flex flex-col gap-2"></div>
             </div>
-            <div id="listaEquipeGerenciar"></div>
         </div>
     </div>
 </body>
