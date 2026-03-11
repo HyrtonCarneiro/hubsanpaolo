@@ -14,7 +14,7 @@ window.lojasIniciais = [
     { id: 21, estado: 'CE', nome: 'PARANGABA' }, { id: 22, estado: 'CE', nome: 'AQUIRAZ' }, { id: 23, estado: 'CE', nome: 'CAUCAIA/OUTLET' }, { id: 24, estado: 'CE2', nome: 'AMONTADA/ICARAI' },
     { id: 25, estado: 'CE2', nome: 'JERI' }, { id: 26, estado: 'CE2', nome: 'PREA' }, { id: 27, estado: 'CE2', nome: 'SOBRAL' }, { id: 28, estado: 'CE3', nome: 'JUAZEIRO' },
     { id: 29, estado: 'CE3', nome: 'DABLIO MALL' }, { id: 30, estado: 'BA', nome: 'SHOPPING DA BAHIA' }, { id: 31, estado: 'BA', nome: 'SALVADOR SHOPPING' },
-    { id: 32, estado: 'BA', nome: 'PITUBA' }, { id: 33, estado: 'BA', nome: 'AEROPORTO LOJA' }, { id: 34, estado: 'BA', nome: 'AEROPORTO QUIOSQUE' }, { id: 35, estado: 'BA', nome: 'HORTO FLORESTAL' },
+    { id: 32, estado: 'BA', nome: 'PITUBA' }, { id: 33, estado: 'BA', nome: 'AEROPORTO LOJA SALVADOR' }, { id: 34, estado: 'BA', nome: 'AEROPORTO QUIOSQUE SALVADOR' }, { id: 35, estado: 'BA', nome: 'HORTO FLORESTAL' },
     { id: 36, estado: 'BA', nome: 'VILLAS' }, { id: 37, estado: 'BA', nome: 'PARALELA' }, { id: 38, estado: 'BA', nome: 'PRAIA DO FORTE' }, { id: 39, estado: 'MA', nome: 'SHOPPING DA ILHA' },
     { id: 40, estado: 'MA', nome: 'SAO LUIS SHOPPING' }, { id: 41, estado: 'PE', nome: 'GUARARAPES' }, { id: 42, estado: 'PE', nome: 'BOA VIAGEM' }, { id: 43, estado: 'PE', nome: 'AMELIA' },
     { id: 44, estado: 'PE', nome: 'RIOMAR RECIFE' }, { id: 45, estado: 'PE', nome: 'CASA FORTE/ORIGENS' }, { id: 46, estado: 'PE', nome: 'SHOPPING RECIFE' }, { id: 47, estado: 'PE', nome: 'TACARUNA' },
