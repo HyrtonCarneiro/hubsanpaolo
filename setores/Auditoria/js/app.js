@@ -410,6 +410,13 @@ window.renderizarTabelaPlanejamento = function () {
             case 'auditor': va = a.auditor; vb = b.auditor; break;
             default: va = a.nome; vb = b.nome;
         }
+        // Para colunas de data/auditor, valores vazios vão sempre para o final
+        const isDateOrAuditorCol = ['proxima', 'ultima', 'auditor'].includes(planejamentoSortCol);
+        if (isDateOrAuditorCol) {
+            if (!va && !vb) return 0;
+            if (!va) return 1;  // 'a' sem valor vai pro final
+            if (!vb) return -1; // 'b' sem valor vai pro final
+        }
         if (va < vb) return planejamentoSortAsc ? -1 : 1;
         if (va > vb) return planejamentoSortAsc ? 1 : -1;
         return 0;
