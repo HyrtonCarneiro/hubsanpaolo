@@ -213,6 +213,54 @@
             </div>
 
             <!-- MAPEAMENTO DE TENTATIVAS (Substitui Planilha) -->
+            <!-- PLANEJAMENTO DE AUDITORIAS -->
+            <div id="view-planejamento" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Planejamento de Auditoria</h1>
+                    </div>
+                    <div>
+                        <input type="text" id="pesquisaPlanejamento" placeholder="Buscar Loja ou Regional..."
+                            oninput="window.filtrarPlanejamento()"
+                            class="px-4 py-2.5 rounded-full border border-[var(--border)] w-[280px] bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
+                    </div>
+                </div>
+
+                <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden mt-5 shadow-sm">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full border-collapse text-left">
+                            <thead>
+                                <tr class="bg-brandBlue/5 border-b-2 border-[var(--border)]">
+                                    <th onclick="window.sortPlanejamento('loja')"
+                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
+                                        Loja / Matriz <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
+                                    <th onclick="window.sortPlanejamento('regional')"
+                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
+                                        Regional <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
+                                    <th onclick="window.sortPlanejamento('ultima')"
+                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
+                                        Última Auditoria <i class="ph ph-caret-up-down text-[10px] align-middle"></i>
+                                    </th>
+                                    <th onclick="window.sortPlanejamento('proxima')"
+                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
+                                        Próxima Prevista <i class="ph ph-caret-up-down text-[10px] align-middle"></i>
+                                    </th>
+                                    <th onclick="window.sortPlanejamento('auditor')"
+                                        class="p-4 font-semibold text-sm text-[var(--text-muted)] cursor-pointer select-none hover:text-[var(--text-main)] transition-colors">
+                                        Auditor / Responsável <i class="ph ph-caret-up-down text-[10px] align-middle"></i></th>
+                                    <th class="p-4 font-semibold text-sm text-[var(--text-muted)] text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="planejamentoTableBody" class="divide-y divide-[var(--border)]">
+                                <!-- JS monta as linhas -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-mapeamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
