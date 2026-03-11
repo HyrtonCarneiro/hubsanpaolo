@@ -38,21 +38,21 @@
 <body>
 
     <div id="login-container" class="min-h-screen bg-gray-100 flex items-center justify-center p-4" style="background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-            <h2 id="authTitle" class="text-2xl font-bold text-center mb-6 text-mainText">Acesso ao Sistema</h2>
+        <div class="bg-surface p-10 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] w-full max-w-md border border-border">
+            <h2 id="authTitle" class="text-2xl font-bold text-center mb-6 text-mainText m-0">Acesso ao Sistema</h2>
             
             <div class="flex flex-col mb-4">
                 <label class="mb-2 font-medium text-sm text-mainText">Usuário</label>
-                <input type="text" id="userInput" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brandOrange">
+                <input type="text" id="userInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
             </div>
             
             <div class="flex flex-col mb-6">
                 <label class="mb-2 font-medium text-sm text-mainText">Senha</label>
-                <input type="password" id="passInput" class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brandOrange">
+                <input type="password" id="passInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
             </div>
             
             <div class="mt-4">
-                <button class="w-full bg-brandOrange text-white hover:bg-orange-700 font-medium py-3 rounded transition-colors"
+                <button class="w-full bg-brandOrange text-white hover:bg-[#b8430a] font-medium py-2 px-4 rounded-md transition-colors"
                     onclick="window.handleAuth()">Entrar no Sistema</button>
             </div>
 
@@ -74,10 +74,10 @@
         </div>
 
         <div class="text-center mt-12 flex justify-center gap-4">
-            <button id="adminPanelBtn" class="hidden bg-brandOrange text-white hover:bg-orange-700 font-medium px-6 py-3 rounded transition-colors inline-flex items-center gap-2" onclick="window.abrirModalAdmin()">
+            <button id="adminPanelBtn" class="hidden bg-brandOrange text-white hover:bg-[#b8430a] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.abrirModalAdmin()">
                 <i class="ph ph-wrench"></i> Gerenciar Usuários
             </button>
-            <button class="bg-white text-mainText border border-gray-300 hover:bg-gray-50 font-medium px-6 py-3 rounded transition-colors inline-flex items-center gap-2" onclick="window.logout()">
+            <button class="bg-transparent text-mainText border border-border hover:bg-[rgba(86,51,27,0.05)] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.logout()">
                 <i class="ph ph-sign-out"></i> Encerrar Sessão
             </button>
         </div>
@@ -86,21 +86,21 @@
     <!-- Modal de Gerenciamento de Usuários (Apenas Admin) -->
     <div id="modalAdminUsers" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="flex justify-between items-center p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-mainText">Gerenciar Permissões de Usuários</h2>
-                <button class="bg-white text-mainText border border-gray-300 hover:bg-gray-50 font-medium px-3 py-1 rounded transition-colors" onclick="window.fecharModalAdmin()">
+            <div class="flex justify-between items-center p-6 border-b border-border">
+                <h2 class="text-2xl font-bold text-mainText m-0">Gerenciar Permissões de Usuários</h2>
+                <button class="bg-transparent text-mainText border border-border hover:bg-[rgba(86,51,27,0.05)] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors" onclick="window.fecharModalAdmin()">
                     <i class="ph ph-x"></i>
                 </button>
             </div>
-            <div class="p-6 pb-2 border-b border-gray-200 bg-gray-50">
+            <div class="p-6 pb-2 border-b border-border bg-gray-50 dark:bg-black/20">
                 <div class="flex flex-col sm:flex-row gap-3 items-end mb-4">
-                    <input type="text" id="novoUsuarioAdmin" placeholder="Novo Usuário" class="flex-1 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brandOrange">
-                    <input type="password" id="novaSenhaAdmin" placeholder="Senha" class="flex-1 w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brandOrange">
-                    <button class="bg-brandOrange text-white hover:bg-orange-700 font-medium px-4 py-2 rounded transition-colors" onclick="window.criarUsuarioAdmin()">
+                    <input type="text" id="novoUsuarioAdmin" placeholder="Novo Usuário" class="flex-1 w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                    <input type="password" id="novaSenhaAdmin" placeholder="Senha" class="flex-1 w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                    <button class="bg-brandOrange text-white hover:bg-[#b8430a] font-medium px-4 py-2 rounded-md transition-colors" onclick="window.criarUsuarioAdmin()">
                         <i class="ph ph-plus"></i> Adicionar
                     </button>
                 </div>
-                <input type="text" id="buscaUsuarioAdmin" placeholder="Buscar usuário..." class="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-brandOrange"
+                <input type="text" id="buscaUsuarioAdmin" placeholder="Buscar usuário..." class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
                     oninput="window.renderAdminUsersList()">
             </div>
             <div id="adminUsersList" class="overflow-y-auto p-6 flex-1 bg-white">
