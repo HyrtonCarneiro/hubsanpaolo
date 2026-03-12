@@ -192,7 +192,6 @@ window.renderDashboard = function () {
             options: {
                 responsive: true, maintainAspectRatio: false, cutout: '60%',
                 plugins: {
-                    title: { display: true, text: 'Status das Tarefas Ativas', color: textColor, font: { size: 14, weight: 'bold' } },
                     legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
                     datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: (v) => v > 0 ? v : '' }
                 }
@@ -215,7 +214,6 @@ window.renderDashboard = function () {
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: {
-                    title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor, font: { size: 14, weight: 'bold' } },
                     legend: { display: false },
                     datalabels: { anchor: 'end', align: 'top', color: textColor, font: { weight: 'bold' } }
                 },
