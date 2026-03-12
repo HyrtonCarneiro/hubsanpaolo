@@ -13,6 +13,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <!-- Firebase Compat SDK (works on file:// protocol) -->
@@ -162,8 +163,8 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Monitoramento de Lojas</h1>
                     </div>
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarCSV()">
-                        <i class="ph ph-download-simple"></i> Exportar Relatório
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarLojasExcel()">
+                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                     </button>
                 </div>
 
@@ -221,8 +222,8 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosCSV()">
-                        <i class="ph ph-download-simple"></i> Exportar Relatório
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosExcel()">
+                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                     </button>
                 </div>
 
@@ -458,6 +459,7 @@
     <script src="js/controllers/DashboardController.js"></script>
     <script src="js/controllers/ProjetosEquipeController.js"></script>
     <script src="js/controllers/AtasController.js"></script>
+    <script src="js/controllers/ExportController.js"></script>
     <script src="js/ti-main.js"></script>
 
 </body>
