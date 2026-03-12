@@ -40,6 +40,41 @@ window.salvarAuditoriaOnline = async function () {
             timestamp: new Date().toISOString()
         });
         showToast("Auditoria registrada!", "success");
+
+        // --- INTEGRAÇÃO 3-WAY: Criar sucesso automático no Mapeamento ---
+        if (window.MapeamentoLogic && window.MapeamentoService) {
+            const mapCache = window.historicoMapeamento || [];
+            const mesAtualISO = data.substring(0, 7); // YYYY-MM
+            
+            const jaExisteSucesso = mapCache.find(m => 
+                m.lojaId === loja && 
+                m.realizada === 'SIM' && 
+                m.dataTentativa.startsWith(mesAtualISO)
+            );
+
+            if (!jaExisteSucesso) {
+                // Se não existe sucesso no mês, cria um automático
+                const nTentativa = window.MapeamentoLogic.circularTentativa(loja, data, mapCache);
+                const sla = window.MapeamentoLogic.estaNoPrazo(data);
+                const dadosMapAuto = {
+                    lojaId: loja,
+                    nomeLoja: (window.lojasIniciais.find(l => l.id === loja) || {}).nome || loja,
+                    estado: (window.lojasIniciais.find(l => l.id === loja) || {}).estado || '-',
+                    dataTentativa: data,
+                    realizada: 'SIM',
+                    justificativa: null,
+                    auditor: currentUser || 'Sistema',
+                    notas: "Registrado automaticamente via Auditoria Online",
+                    nTentativa: nTentativa,
+                    sla: sla,
+                    horario: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                };
+                await window.MapeamentoService.registrarTentativa(dadosMapAuto);
+                showToast("Mapeamento atualizado automaticamente!", "info");
+            }
+        }
+        // -------------------------------------------------------------
+
         document.getElementById('audiSelectLoja').value = "";
         document.getElementById('audiNotaInput').value = "";
     } catch (e) {

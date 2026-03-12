@@ -171,6 +171,17 @@ window.renderizarMapeamento = function() {
             '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-[10px] font-bold">SIM</span>' : 
             '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-[10px] font-bold">NÃO</span>';
 
+        // Verifica se já existe nota para esta loja/mês
+        const dataMes = h.dataTentativa.substring(0, 7);
+        const jaTemNota = (window.notasCache || []).find(n => n.loja === h.lojaId && n.data.startsWith(dataMes));
+
+        const actionNota = h.realizada === 'SIM' ? 
+            `<button onclick="window.navegarParaLancarNota('${h.lojaId}')" 
+                class="p-1.5 ${jaTemNota ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-500'} rounded-lg transition-colors" 
+                title="${jaTemNota ? 'Nota já lançada: ' + jaTemNota.nota : 'Lançar Nota'}">
+                <i class="ph ${jaTemNota ? 'ph-check-circle' : 'ph-scroll'}"></i>
+            </button>` : '';
+
         return `
             <tr class="hover:bg-black/5 transition-colors">
                 <td class="p-4 text-sm whitespace-nowrap">
@@ -194,9 +205,12 @@ window.renderizarMapeamento = function() {
                 </td>
                 <td class="p-4 text-right text-xs">${slaLabel}</td>
                 <td class="p-4 text-right">
-                    <button onclick="window.MapeamentoService.excluirRegistro('${h.id}')" class="p-1.5 text-red-400 hover:text-red-600 transition-colors">
-                        <i class="ph ph-trash"></i>
-                    </button>
+                    <div class="flex items-center justify-end gap-1">
+                        ${actionNota}
+                        <button onclick="window.MapeamentoService.excluirRegistro('${h.id}')" class="p-1.5 text-red-400 hover:text-red-600 transition-colors" title="Excluir">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -211,4 +225,20 @@ window.sortMapeamento = function(field) {
         window.mapSortConfig.direction = 'asc';
     }
     window.renderizarMapeamento();
+};
+
+window.navegarParaLancarNota = function(lojaId) {
+    // 1. Mudar para a aba de Auditoria Online
+    window.switchView('online');
+    
+    // 2. Pré-selecionar a loja
+    const select = document.getElementById('audiSelectLoja');
+    if (select) {
+        select.value = lojaId;
+        // Scroll para o formulário
+        select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Pequeno destaque visual
+        select.classList.add('ring-2', 'ring-[var(--primary)]');
+        setTimeout(() => select.classList.remove('ring-2', 'ring-[var(--primary)]'), 2000);
+    }
 };

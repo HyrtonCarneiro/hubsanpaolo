@@ -11,7 +11,10 @@ window.initPlanejamentoListeners = function () {
         onSnapshot(collection(db, "auditoria_planejamento"), function (snapshot) {
             window.planejamentoCache = [];
             snapshot.forEach(function (docSnap) {
-                window.planejamentoCache.push({ docId: docSnap.id, ...docSnap.data() });
+                var data = docSnap.data();
+                // Tenta achar o ID da loja pelo nome para facilitar navegação
+                var lojaId = (window.lojasIniciais.find(l => l.nome === data.loja) || {}).id;
+                window.planejamentoCache.push({ docId: docSnap.id, lojaId: lojaId, ...data });
             });
             window.renderizarTabelaPlanejamento();
         }, function (err) { console.error("Erro Planejamento:", err); });
@@ -60,7 +63,8 @@ window.renderizarTabelaPlanejamento = function () {
             ultimaRaw: ultimaRaw || '',
             proximaRaw: cfg.dataProxima || '',
             auditor: cfg.auditor || '',
-            docId: cfg.docId || null
+            docId: cfg.docId || null,
+            lojaId: (window.lojasIniciais.find(l => l.nome === lojaBase.nome) || {}).id
         };
     });
 
@@ -122,6 +126,21 @@ window.renderizarTabelaPlanejamento = function () {
 
         var tr = document.createElement('tr');
         tr.className = 'border-b border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors group';
+        
+        var actionButtons = `
+            <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="window.navegarParaMapear('${r.lojaId}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Mapear Visita">
+                    <i class="ph ph-map-trifold text-lg"></i>
+                </button>
+                <button onclick="window.navegarParaLancarNota('${r.lojaId}')" class="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition-colors" title="Lançar Nota">
+                    <i class="ph ph-scroll text-lg"></i>
+                </button>
+                <button onclick="window.abrirModalEditPlanejamento('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-lg transition-colors" title="Editar Agendamento">
+                    <i class="ph ph-pencil-simple text-lg"></i>
+                </button>
+            </div>
+        `;
+
         tr.innerHTML =
             '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + r.nome + '</td>' +
             '<td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-md">' + r.regional + '</span></td>' +
@@ -131,14 +150,21 @@ window.renderizarTabelaPlanejamento = function () {
                 statusHtml +
             '</td>' +
             '<td class="p-4 text-sm text-[var(--text-main)] flex items-center gap-1.5 h-full min-h-[53px]"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + audStr + '</td>' +
-            '<td class="p-4 text-center">' +
-                '<button class="flex mx-auto items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/5 transition-colors text-xs font-semibold opacity-0 group-hover:opacity-100 focus:opacity-100" onclick="window.abrirModalEditPlanejamento(\'' + r.nome.replace(/'/g, "\\'") + '\')">' +
-                    '<i class="ph ph-pencil-simple text-sm"></i> Editar' +
-                '</button>' +
-            '</td>';
+            '<td class="p-4 text-center">' + actionButtons + '</td>';
         tbody.appendChild(tr);
     });
 }
+
+window.navegarParaMapear = function(lojaId) {
+    window.switchView('mapeamento');
+    const select = document.getElementById('mapSelectLoja');
+    if (select && lojaId) {
+        select.value = lojaId;
+        select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        select.classList.add('ring-2', 'ring-[var(--primary)]');
+        setTimeout(() => select.classList.remove('ring-2', 'ring-[var(--primary)]'), 2000);
+    }
+};
 
 window.sortPlanejamento = function (col) {
     if (planejamentoSortCol === col) {
