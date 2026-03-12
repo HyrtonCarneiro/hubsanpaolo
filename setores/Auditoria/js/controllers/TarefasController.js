@@ -18,6 +18,7 @@ window.initTarefasListeners = function () {
                 window.audiProjetos[data.membroResponsavel].push(data);
             });
             renderizarAudiProjetosList();
+            if (typeof window.renderDashboard === 'function') window.renderDashboard();
         }, function (err) { console.error("Erro Projetos Audi:", err); });
 
         // Listener de Equipe

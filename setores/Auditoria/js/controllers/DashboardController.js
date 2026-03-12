@@ -1,6 +1,8 @@
 let chartMediaRegionalInst = null;
 let chartRankingLojasInst = null;
 let chartStatusPlanejamentoInst = null;
+let chartTarefaStatusInst = null;
+let chartTarefaEquipeInst = null;
 
 function getLojaRegional(nomeLoja) {
     const l = lojasIniciais.find(function (x) { return x.nome === nomeLoja; });
@@ -150,6 +152,78 @@ window.renderDashboard = function () {
                 datasets: [{ data: ranking.map(n => n.nota), backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), borderRadius: 4, barThickness: 15 }]
             },
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { x: { min: 0, max: 10, ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } } } } }
+        });
+    }
+
+    // --- INDICADORES DE TAREFAS (Igual ao TI) ---
+    var tasks = window.audiProjetos || {};
+    var taskStatusCounts = { 'Pendente': 0, 'Em Andamento': 0, 'Concluído': 0 };
+    var taskDistrib = {};
+
+    Object.keys(tasks).forEach(membro => {
+        taskDistrib[membro] = 0;
+        tasks[membro].forEach(p => {
+            if (p.status === 'Concluído') {
+                taskStatusCounts['Concluído']++;
+            } else if (p.status === 'Em Andamento') {
+                taskStatusCounts['Em Andamento']++;
+                taskDistrib[membro]++;
+            } else {
+                taskStatusCounts['Pendente']++;
+                taskDistrib[membro]++;
+            }
+        });
+    });
+
+    // Gráfico 4: Status das Tarefas Ativas
+    var canvasTaskStatus = document.getElementById('chartTarefaStatus');
+    if (canvasTaskStatus) {
+        if (chartTarefaStatusInst) chartTarefaStatusInst.destroy();
+        chartTarefaStatusInst = new Chart(canvasTaskStatus, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pendente', 'Em Andamento'],
+                datasets: [{
+                    data: [taskStatusCounts['Pendente'], taskStatusCounts['Em Andamento']],
+                    backgroundColor: ['#DA0D17', '#3b82f6'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, cutout: '60%',
+                plugins: {
+                    title: { display: true, text: 'Status das Tarefas Ativas', color: textColor, font: { size: 14, weight: 'bold' } },
+                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
+                    datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: (v) => v > 0 ? v : '' }
+                }
+            }
+        });
+    }
+
+    // Gráfico 5: Distribuição por Membro
+    var canvasTaskEquipe = document.getElementById('chartTarefaEquipe');
+    if (canvasTaskEquipe) {
+        var membros = Object.keys(taskDistrib).sort();
+        var qtds = membros.map(m => taskDistrib[m]);
+        if (chartTarefaEquipeInst) chartTarefaEquipeInst.destroy();
+        chartTarefaEquipeInst = new Chart(canvasTaskEquipe, {
+            type: 'bar',
+            data: {
+                labels: membros,
+                datasets: [{ label: 'Tarefas Ativas', data: qtds, backgroundColor: '#8b5cf6', borderRadius: 6, barThickness: 25 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor, font: { size: 14, weight: 'bold' } },
+                    legend: { display: false },
+                    datalabels: { anchor: 'end', align: 'top', color: textColor, font: { weight: 'bold' } }
+                },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, stepSize: 1 } },
+                    x: { grid: { display: false }, ticks: { color: textColor } }
+                }
+            }
         });
     }
 }
