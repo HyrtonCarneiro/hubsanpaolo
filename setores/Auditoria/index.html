@@ -113,39 +113,63 @@
                 </div>
 
                 <!-- KPIs -->
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-5 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <!-- Cards de Auditoria Online (Existentes) -->
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Total Auditorias</div>
-                        <div id="kpiTotalAuditorias" class="text-3xl font-bold text-[var(--primary)] mt-1.5">0</div>
-                    </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Média da Rede</div>
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Média da Rede</div>
                         <div id="kpiMediaRede" class="text-3xl font-bold text-spPistache mt-1.5">-</div>
                     </div>
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Menor Nota</div>
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Menor Nota (Mês)</div>
                         <div id="kpiMenorNota" class="text-3xl font-bold text-spRed mt-1.5">-</div>
                         <div id="kpiMenorNotaLoja" class="text-xs text-[var(--text-muted)] mt-0.5"></div>
                     </div>
+                    
+                    <!-- Cards de Planejamento e Mapeamento (Novos) -->
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">
-                            Auditorias (Mês)</div>
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Cobertura do Mês</div>
+                        <div id="kpiCoberturaMes" class="text-3xl font-bold text-brandBlue mt-1.5">0%</div>
+                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Lojas planejadas visitadas</div>
+                    </div>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Índice de SLA</div>
+                        <div id="kpiSlaGlobal" class="text-3xl font-bold text-green-500 mt-1.5">0%</div>
+                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Visitas no prazo (até dia 20)</div>
+                    </div>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Eficiência de Visita</div>
+                        <div id="kpiMediaTentativas" class="text-3xl font-bold text-spLaranja mt-1.5">0.0</div>
+                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Média de tentativas por loja</div>
+                    </div>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Visitas Atrasadas</div>
+                        <div id="kpiLojasAtrasadas" class="text-3xl font-bold text-red-600 mt-1.5">0</div>
+                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Fora do prazo agendado</div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Total Auditorias (Geral)</div>
+                        <div id="kpiTotalAuditorias" class="text-3xl font-bold text-[var(--primary)] mt-1.5">0</div>
+                    </div>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Lançamentos (Mês)</div>
                         <div id="kpiAuditoriaMes" class="text-3xl font-bold text-secondary mt-1.5">0</div>
                     </div>
                 </div>
 
                 <!-- Gráficos -->
-                <div class="grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
                         <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-chart-bar text-[var(--primary)]"></i> Média por Regional</h3>
-                        <div class="min-h-[300px]"><canvas id="chartMediaRegional"></canvas></div>
+                        <div class="h-[300px]"><canvas id="chartMediaRegional"></canvas></div>
                     </div>
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
-                        <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-ranking text-spLaranja"></i> Ranking Últimas Notas por Loja</h3>
-                        <div class="min-h-[300px]"><canvas id="chartRankingLojas"></canvas></div>
+                        <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-calendar-check text-secondary"></i> Status do Planejamento (Mês)</h3>
+                        <div class="h-[300px]"><canvas id="chartStatusPlanejamento"></canvas></div>
+                    </div>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+                        <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-ranking text-spLaranja"></i> Ranking Notas (Top 15 Loja)</h3>
+                        <div class="h-[300px]"><canvas id="chartRankingLojas"></canvas></div>
                     </div>
                 </div>
             </div>

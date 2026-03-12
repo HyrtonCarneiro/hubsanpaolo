@@ -13,6 +13,9 @@ window.initMapeamentoListeners = function() {
         if (typeof window.renderizarTabelaPlanejamento === 'function') {
             window.renderizarTabelaPlanejamento();
         }
+        if (typeof window.renderDashboard === 'function') {
+            window.renderDashboard();
+        }
     });
     
     // Popular selects

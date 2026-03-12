@@ -1,8 +1,6 @@
-// js/controllers/DashboardController.js — KPIs e gráficos do dashboard
-// Depends on: firebase-init.js, data.js, AuditoriaOnlineController.js (notasCache)
-
 let chartMediaRegionalInst = null;
 let chartRankingLojasInst = null;
+let chartStatusPlanejamentoInst = null;
 
 function getLojaRegional(nomeLoja) {
     const l = lojasIniciais.find(function (x) { return x.nome === nomeLoja; });
@@ -17,129 +15,141 @@ if (typeof ChartDataLabels !== 'undefined') {
 
 window.renderDashboard = function () {
     var notasCache = window.notasCache || [];
+    var planeCache = window.planejamentoCache || [];
+    var mapCache = window.historicoMapeamento || [];
 
-    if (notasCache.length === 0) {
-        var el;
-        el = document.getElementById('kpiTotalAuditorias'); if (el) el.textContent = '0';
-        el = document.getElementById('kpiMediaRede'); if (el) el.textContent = '-';
-        el = document.getElementById('kpiMenorNota'); if (el) el.textContent = '-';
-        el = document.getElementById('kpiMenorNotaLoja'); if (el) el.textContent = '';
-        el = document.getElementById('kpiAuditoriaMes'); if (el) el.textContent = '0';
-        return;
-    }
-
-    // KPI: Total de Auditorias
-    document.getElementById('kpiTotalAuditorias').textContent = notasCache.length;
-
-    // KPI: Média da Rede
-    var somaNotas = notasCache.reduce(function (acc, n) { return acc + n.nota; }, 0);
-    var media = somaNotas / notasCache.length;
-    var elMedia = document.getElementById('kpiMediaRede');
-    if (elMedia) {
-        elMedia.textContent = media.toFixed(1);
-        elMedia.className = media >= 8.5 ? 'text-3xl font-bold mt-1.5 text-spPistache' : (media >= 7 ? 'text-3xl font-bold mt-1.5 text-spLaranja' : 'text-3xl font-bold mt-1.5 text-spRed');
-    }
-
-    // KPI: Menor Nota (da última auditoria de cada loja)
-    var ultimaPorLoja = {};
-    notasCache.forEach(function (n) {
-        if (!ultimaPorLoja[n.loja] || n.data > ultimaPorLoja[n.loja].data) {
-            ultimaPorLoja[n.loja] = n;
-        }
-    });
-    var todasUltimas = Object.values(ultimaPorLoja);
-    var menor = todasUltimas.reduce(function (min, n) { return n.nota < min.nota ? n : min; }, todasUltimas[0]);
-    var elMenorNota = document.getElementById('kpiMenorNota');
-    if (elMenorNota) elMenorNota.textContent = menor.nota.toFixed(1);
-    var elMenorNotaLoja = document.getElementById('kpiMenorNotaLoja');
-    if (elMenorNotaLoja) elMenorNotaLoja.textContent = menor.loja;
-
-    // KPI: Auditorias neste mês
     var hoje = new Date();
     var mesAtual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
-    var doMes = notasCache.filter(function (n) { return n.data && n.data.startsWith(mesAtual); });
-    var elMes = document.getElementById('kpiAuditoriaMes');
-    if (elMes) elMes.textContent = doMes.length;
+    var hojeISO = hoje.toISOString().split('T')[0];
 
-    // Tema
+    // --- KPI: Auditoria Online (Media e Notas) ---
+    if (notasCache.length === 0) {
+        document.getElementById('kpiTotalAuditorias').textContent = '0';
+        document.getElementById('kpiMediaRede').textContent = '-';
+        document.getElementById('kpiMenorNota').textContent = '-';
+        document.getElementById('kpiMenorNotaLoja').textContent = '';
+        document.getElementById('kpiAuditoriaMes').textContent = '0';
+    } else {
+        document.getElementById('kpiTotalAuditorias').textContent = notasCache.length;
+        var somaNotas = notasCache.reduce(function (acc, n) { return acc + n.nota; }, 0);
+        var media = somaNotas / notasCache.length;
+        var elMedia = document.getElementById('kpiMediaRede');
+        if (elMedia) {
+            elMedia.textContent = media.toFixed(1);
+            elMedia.className = media >= 8.5 ? 'text-3xl font-bold mt-1.5 text-spPistache' : (media >= 7 ? 'text-3xl font-bold mt-1.5 text-spLaranja' : 'text-3xl font-bold mt-1.5 text-spRed');
+        }
+        var ultimaPorLoja = {};
+        notasCache.forEach(function (n) { if (!ultimaPorLoja[n.loja] || n.data > ultimaPorLoja[n.loja].data) ultimaPorLoja[n.loja] = n; });
+        var todasUltimas = Object.values(ultimaPorLoja);
+        var menor = todasUltimas.reduce(function (min, n) { return n.nota < min.nota ? n : min; }, todasUltimas[0]);
+        if (document.getElementById('kpiMenorNota')) document.getElementById('kpiMenorNota').textContent = menor.nota.toFixed(1);
+        if (document.getElementById('kpiMenorNotaLoja')) document.getElementById('kpiMenorNotaLoja').textContent = menor.loja;
+        var doMesNotas = notasCache.filter(function (n) { return n.data && n.data.startsWith(mesAtual); });
+        if (document.getElementById('kpiAuditoriaMes')) document.getElementById('kpiAuditoriaMes').textContent = doMesNotas.length;
+    }
+
+    // --- INTEGRACAO 3-WAY: KPIs Dinamicos ---
+    
+    // 1. Cobertura do Mês
+    var planeMes = planeCache.filter(p => (p.dataProxima || '').startsWith(mesAtual));
+    var visitasSucessoMes = mapCache.filter(m => m.realizada === 'SIM' && m.dataTentativa.startsWith(mesAtual));
+    
+    var cobertura = 0;
+    if (planeMes.length > 0) {
+        var concluidas = planeMes.filter(p => visitasSucessoMes.some(m => m.nomeLoja === p.loja)).length;
+        cobertura = (concluidas / planeMes.length) * 100;
+    }
+    document.getElementById('kpiCoberturaMes').textContent = Math.round(cobertura) + '%';
+
+    // 2. Índice de SLA
+    var slaGlobal = 0;
+    if (visitasSucessoMes.length > 0) {
+        var noPrazo = visitasSucessoMes.filter(m => m.sla).length;
+        slaGlobal = (noPrazo / visitasSucessoMes.length) * 100;
+    }
+    document.getElementById('kpiSlaGlobal').textContent = Math.round(slaGlobal) + '%';
+
+    // 3. Eficiência de Visita
+    var totalTentativas = visitasSucessoMes.reduce((acc, m) => acc + (m.nTentativa || 1), 0);
+    var mediaTentativas = visitasSucessoMes.length > 0 ? (totalTentativas / visitasSucessoMes.length).toFixed(1) : '0.0';
+    document.getElementById('kpiMediaTentativas').textContent = mediaTentativas;
+
+    // 4. Lojas Atrasadas e Status Chart
+    var statusCounts = { concluida: 0, atrasada: 0, pendente: 0 };
+    planeMes.forEach(p => {
+        var temSucesso = visitasSucessoMes.some(m => m.nomeLoja === p.loja);
+        if (temSucesso) {
+            statusCounts.concluida++;
+        } else {
+            if (hojeISO > p.dataProxima) statusCounts.atrasada++;
+            else statusCounts.pendente++;
+        }
+    });
+    document.getElementById('kpiLojasAtrasadas').textContent = statusCounts.atrasada;
+
+    // --- GRAFICOS ---
     var isDark = document.body.classList.contains('dark-mode');
     var textColor = isDark ? '#f8fafc' : '#0f172a';
     var gridColor = isDark ? '#334155' : '#e2e8f0';
 
-    // ---- GRÁFICO 1: Média por Regional ----
-    var mediaPorRegional = {};
-    var countPorRegional = {};
-    todasUltimas.forEach(function (n) {
-        var reg = getLojaRegional(n.loja);
-        if (!mediaPorRegional[reg]) { mediaPorRegional[reg] = 0; countPorRegional[reg] = 0; }
-        mediaPorRegional[reg] += n.nota;
-        countPorRegional[reg]++;
-    });
-    var regionais = Object.keys(mediaPorRegional).sort();
-    var mediasRegionais = regionais.map(function (r) { return +(mediaPorRegional[r] / countPorRegional[r]).toFixed(1); });
-    var coresBarras = mediasRegionais.map(function (m) { return m >= 8.5 ? '#4F7039' : (m >= 7 ? '#DA5513' : '#DA0D17'); });
-
+    // Gráfico 1: Média Regional (Existente)
     var canvasRegional = document.getElementById('chartMediaRegional');
-    if (canvasRegional) {
+    if (canvasRegional && todasUltimas) {
+        var mediaPorRegional = {};
+        var countPorRegional = {};
+        todasUltimas.forEach(n => {
+            var reg = getLojaRegional(n.loja);
+            if (!mediaPorRegional[reg]) { mediaPorRegional[reg] = 0; countPorRegional[reg] = 0; }
+            mediaPorRegional[reg] += n.nota; countPorRegional[reg]++;
+        });
+        var regionais = Object.keys(mediaPorRegional).sort();
+        var mediasRegionais = regionais.map(r => +(mediaPorRegional[r] / countPorRegional[r]).toFixed(1));
+        var coresBarras = mediasRegionais.map(m => m >= 8.5 ? '#4F7039' : (m >= 7 ? '#DA5513' : '#DA0D17'));
         if (chartMediaRegionalInst) chartMediaRegionalInst.destroy();
         chartMediaRegionalInst = new Chart(canvasRegional, {
             type: 'bar',
+            data: { labels: regionais, datasets: [{ label: 'Média', data: mediasRegionais, backgroundColor: coresBarras, borderRadius: 6, barThickness: 25 }] },
+            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { color: textColor, font: { weight: 'bold' }, anchor: 'end', align: 'end' }}, scales: { x: { min: 0, max: 10, ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
+        });
+    }
+
+    // Gráfico 2: Status do Planejamento (Novo)
+    var canvasStatus = document.getElementById('chartStatusPlanejamento');
+    if (canvasStatus) {
+        if (chartStatusPlanejamentoInst) chartStatusPlanejamentoInst.destroy();
+        chartStatusPlanejamentoInst = new Chart(canvasStatus, {
+            type: 'doughnut',
             data: {
-                labels: regionais,
-                datasets: [{ label: 'Média', data: mediasRegionais, backgroundColor: coresBarras, borderRadius: 6, barThickness: 30 }]
+                labels: ['Concluída', 'Atrasada', 'Pendente'],
+                datasets: [{
+                    data: [statusCounts.concluida, statusCounts.atrasada, statusCounts.pendente],
+                    backgroundColor: ['#4F7039', '#DA0D17', '#94a3b8'],
+                    borderWidth: 0
+                }]
             },
             options: {
-                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                plugins: { 
-                    legend: { display: false },
-                    datalabels: {
-                        color: textColor,
-                        font: { weight: 'bold' },
-                        anchor: 'end',
-                        align: 'end',
-                        formatter: function(value) { return value.toFixed(1); }
-                    }
-                },
-                scales: {
-                    x: { min: 0, max: 10, grid: { color: gridColor }, ticks: { color: textColor } },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { weight: '600' } } }
+                responsive: true, maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: textColor, padding: 20, font: { size: 12 } } },
+                    datalabels: { color: '#fff', font: { weight: 'bold' }, formatter: (v) => v > 0 ? v : '' }
                 }
             }
         });
     }
 
-    // ---- GRÁFICO 2: Ranking das últimas notas por loja (top 15) ----
-    var ranking = todasUltimas.slice().sort(function (a, b) { return a.nota - b.nota; }).slice(0, 15);
-    var labelsRanking = ranking.map(function (n) { return n.loja; });
-    var valoresRanking = ranking.map(function (n) { return n.nota; });
-    var coresRanking = valoresRanking.map(function (v) { return v >= 8.5 ? '#4F7039' : (v >= 7 ? '#DA5513' : '#DA0D17'); });
-
+    // Gráfico 3: Ranking (Refinado top 15)
     var canvasRanking = document.getElementById('chartRankingLojas');
-    if (canvasRanking) {
+    if (canvasRanking && todasUltimas) {
+        var ranking = notasCache.slice().sort((a,b) => a.nota - b.nota).slice(0, 15);
         if (chartRankingLojasInst) chartRankingLojasInst.destroy();
         chartRankingLojasInst = new Chart(canvasRanking, {
             type: 'bar',
             data: {
-                labels: labelsRanking,
-                datasets: [{ label: 'Nota', data: valoresRanking, backgroundColor: coresRanking, borderRadius: 6, barThickness: 18 }]
+                labels: ranking.map(n => n.loja),
+                datasets: [{ data: ranking.map(n => n.nota), backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), borderRadius: 4, barThickness: 15 }]
             },
-            options: {
-                responsive: true, maintainAspectRatio: false, indexAxis: 'y',
-                plugins: { 
-                    legend: { display: false },
-                    datalabels: {
-                        color: textColor,
-                        font: { weight: 'bold', size: 10 },
-                        anchor: 'end',
-                        align: 'end',
-                        formatter: function(value) { return value.toFixed(1); }
-                    }
-                },
-                scales: {
-                    x: { min: 0, max: 10, grid: { color: gridColor }, ticks: { color: textColor } },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { size: 11 } } }
-                }
-            }
+            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { x: { min: 0, max: 10, ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } } } } }
         });
     }
 }

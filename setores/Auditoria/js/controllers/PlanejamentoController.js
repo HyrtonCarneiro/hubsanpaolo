@@ -17,6 +17,7 @@ window.initPlanejamentoListeners = function () {
                 window.planejamentoCache.push({ docId: docSnap.id, lojaId: lojaId, ...data });
             });
             window.renderizarTabelaPlanejamento();
+            if (typeof window.renderDashboard === 'function') window.renderDashboard();
         }, function (err) { console.error("Erro Planejamento:", err); });
     } catch (e) {
         console.error("Erro ao iniciar listener planejamento", e);
