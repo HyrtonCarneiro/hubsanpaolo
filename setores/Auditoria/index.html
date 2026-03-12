@@ -182,6 +182,9 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Auditoria Online</h1>
                     </div>
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarNotasPowerBI()">
+                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar PowerBI
+                    </button>
                 </div>
 
                 <!-- Formulário de Nova Nota -->
@@ -245,7 +248,10 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Planejamento de Auditoria</h1>
                     </div>
-                    <div>
+                    <div class="flex items-center gap-3">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarPlanejamentoPowerBI()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar PowerBI
+                        </button>
                         <input type="text" id="pesquisaPlanejamento" placeholder="Buscar Loja ou Regional..."
                             oninput="window.filtrarPlanejamento()"
                             class="px-4 py-2.5 rounded-full border border-[var(--border)] w-[280px] bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
@@ -291,6 +297,9 @@
                         <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapeamento de Auditorias</h1>
                     </div>
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarMapeamentoPowerBI()">
+                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar PowerBI
+                    </button>
                 </div>
 
                 <!-- Formulário de Registro de Tentativa -->
@@ -393,9 +402,16 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarAudiProjetosCSV()">
-                        <i class="ph ph-download-simple text-lg"></i> Exportar Relatório
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <div class="hidden md:flex items-center gap-3">
+                            <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarTarefasPowerBI()">
+                                <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> PowerBI (.xlsx)
+                            </button>
+                            <button class="flex items-center justify-center gap-2 px-2 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Exportar CSV Antigo" onclick="window.exportarAudiProjetosCSV()">
+                                <i class="ph ph-download-simple"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="audiMembrosEquipeContainer" class="flex gap-2.5 mb-6 flex-wrap"></div>
@@ -545,6 +561,8 @@
     <script src="js/services/MapeamentoService.js"></script>
     <script src="js/controllers/MapeamentoController.js"></script>
     <script src="js/controllers/AuditoriaOnlineController.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="js/controllers/ExportController.js"></script>
     <script src="js/controllers/DashboardController.js"></script>
     <script src="js/controllers/PlanejamentoController.js"></script>
     <script src="js/controllers/TarefasController.js"></script>
