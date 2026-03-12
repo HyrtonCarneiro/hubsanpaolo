@@ -132,7 +132,7 @@ window.renderizarTabelaPlanejamento = function () {
                 <button onclick="window.navegarParaMapear('${r.lojaId}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Mapear Visita">
                     <i class="ph ph-map-trifold text-lg"></i>
                 </button>
-                <button onclick="window.navegarParaLancarNota('${r.lojaId}')" class="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition-colors" title="Lançar Nota">
+                <button onclick="window.navegarParaLancarNota('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition-colors" title="Lançar Nota">
                     <i class="ph ph-scroll text-lg"></i>
                 </button>
                 <button onclick="window.abrirModalEditPlanejamento('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-lg transition-colors" title="Editar Agendamento">

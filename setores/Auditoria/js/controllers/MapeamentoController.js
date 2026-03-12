@@ -173,10 +173,10 @@ window.renderizarMapeamento = function() {
 
         // Verifica se já existe nota para esta loja/mês
         const dataMes = h.dataTentativa.substring(0, 7);
-        const jaTemNota = (window.notasCache || []).find(n => n.loja === h.lojaId && n.data.startsWith(dataMes));
+        const jaTemNota = (window.notasCache || []).find(n => n.loja === h.nomeLoja && n.data.startsWith(dataMes));
 
         const actionNota = h.realizada === 'SIM' ? 
-            `<button onclick="window.navegarParaLancarNota('${h.lojaId}')" 
+            `<button onclick="window.navegarParaLancarNota('${h.nomeLoja}')" 
                 class="p-1.5 ${jaTemNota ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-500'} rounded-lg transition-colors" 
                 title="${jaTemNota ? 'Nota já lançada: ' + jaTemNota.nota : 'Lançar Nota'}">
                 <i class="ph ${jaTemNota ? 'ph-check-circle' : 'ph-scroll'}"></i>
@@ -227,14 +227,14 @@ window.sortMapeamento = function(field) {
     window.renderizarMapeamento();
 };
 
-window.navegarParaLancarNota = function(lojaId) {
+window.navegarParaLancarNota = function(lojaIdentificador) {
     // 1. Mudar para a aba de Auditoria Online
-    window.switchView('online');
+    window.switchView('auditoriaOnline');
     
-    // 2. Pré-selecionar a loja
+    // 2. Pré-selecionar a loja (tenta por nome primeiro, que é o padrão do select)
     const select = document.getElementById('audiSelectLoja');
     if (select) {
-        select.value = lojaId;
+        select.value = lojaIdentificador;
         // Scroll para o formulário
         select.scrollIntoView({ behavior: 'smooth', block: 'center' });
         // Pequeno destaque visual
