@@ -3,27 +3,22 @@
 O robô foi simplificado para funcionar sem nenhuma instalação externa. Ele processa PDFs nativos (documentos digitais onde o texto é selecionável).
 
 ## 1. Como Usar
-1. Baixe o arquivo `classificador.exe` no Hub San Paolo.
-2. Coloque todos os PDFs que deseja classificar **na mesma pasta** do arquivo baixado.
-3. Dê dois cliques no `classificador.exe`.
+1. Baixe o arquivo `Classificador.rar` no Hub San Paolo.
+2. Extraia o conteúdo completo para uma pasta. **Atenção:** O arquivo `classificador.exe` precisa estar na mesma pasta que a pasta `_internal` para funcionar.
+3. Coloque todos os PDFs que deseja classificar **na mesma pasta** do executável.
+4. Dê dois cliques no `classificador.exe`.
 
-## 2. Para Gerar o EXE (TI / Admin)
-Se o arquivo `.exe` ainda não estiver disponível para download, execute estes comandos no terminal do Windows (na pasta do robô):
+## 2. Para Gerar o Pacote (TI / Admin)
+Se precisar gerar o pacote novamente, use o modo `--onedir` do PyInstaller:
 
 ```powershell
-# Vá para a pasta correta (forçando mudança de disco se necessário)
+# 1. Entre na pasta do robô
 cd /d "G:\Meu Drive\SANPAOLO\Dev\hubsanpaolo\setores\Fiscal\robo"
 
-# 1. Instalar as ferramentas (Tente um destes 3 comandos se o primeiro falhar)
-pip install pymupdf pyinstaller
-python -m pip install pymupdf pyinstaller
-py -m pip install pymupdf pyinstaller
-
-# 2. Gerar o executável (Tente 'pyinstaller' ou 'python -m PyInstaller')
-pyinstaller --onefile classificador.py
-python -m PyInstaller --onefile classificador.py
+# 2. Gere o pacote (EXE + Pasta _internal)
+python -m PyInstaller --onedir classificador.py
 ```
-O arquivo será criado dentro de uma nova pasta chamada `dist`. Mova o `classificador.exe` para a pasta principal do robô.
+Ao terminar, compacte o conteúdo da pasta `dist/classificador` (o `.exe` e a pasta `_internal`) em um arquivo chamado `Classificador.rar` e coloque na pasta `robo` do site.
 
 ## 2. O que ele fará?
 - O robô lerá cada PDF.
