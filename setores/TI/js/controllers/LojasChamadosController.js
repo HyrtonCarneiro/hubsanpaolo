@@ -153,10 +153,18 @@ window.renderizarLojas = function () {
     }
 }
 
-function abrirModal(id, nome, estado) {
     lojaAtualId = id;
     document.getElementById('modalTitle').innerText = nome;
     document.getElementById('modalEstado').innerText = estado;
+    
+    // Popular responsáveis
+    var select = document.getElementById('tagRespLog');
+    if (select) {
+        select.innerHTML = (window.membrosEquipe || []).map(function (m) {
+            return '<option value="' + m.nome + '">' + m.nome + '</option>';
+        }).join('');
+    }
+
     document.getElementById('modalLoja').classList.add('show');
     renderizarComentarios(window.sysLogs[lojaAtualId] || []);
 }
@@ -174,13 +182,23 @@ window.salvarComentario = async function () {
     var anexoUrl = inputAnexo ? inputAnexo.value.trim() : null;
     if (!texto.trim()) return showToast("A descrição é obrigatória", "error");
 
+    var dt = document.getElementById('tagPrazoLog').value;
+    var resp = document.getElementById('tagRespLog').value;
     var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    var prazoFormatado = null;
+    if (dt) {
+        var parts = dt.split('-');
+        prazoFormatado = parts[2] + '/' + parts[1] + '/' + parts[0];
+    }
 
     try {
         await addDoc(collection(db, "logs"), {
             lojaId: lojaAtualId, dataStr: dStr, texto: texto, tag: tag,
             setor: setor, anexoUrl: anexoUrl || null, resolvido: false,
-            autor: currentUser, timestamp: Date.now()
+            autor: currentUser, timestamp: Date.now(),
+            prazo: prazoFormatado, responsavel: resp,
+            atualizacoes: []
         });
         document.getElementById('novoComentario').value = '';
         document.getElementById('setorComentario').value = '';
@@ -230,13 +248,19 @@ function renderizarComentarios(hist) {
         var div = document.createElement('div');
         var resolveColor = c.resolvido ? 'var(--success)' : 'var(--sp-red)';
         var resolveBg = c.resolvido ? 'rgba(16,185,129,0.05)' : 'rgba(218,13,23,0.05)';
-        div.className = 'p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-color)] shadow-sm relative overflow-hidden';
+        div.className = 'p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-color)] shadow-sm relative overflow-hidden group';
         div.style.borderLeftColor = resolveColor;
         div.style.borderLeftWidth = '4px';
 
+        var badgePrazo = c.prazo ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-black/5 dark:bg-white/10 border border-[var(--border)] text-[var(--text-main)]"><i class="ph ph-calendar"></i> ' + c.prazo + '</span>' : '';
+        var badgeResp = c.responsavel ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-[var(--primary)] text-white border border-[var(--primary)]"><i class="ph ph-user-check"></i> ' + c.responsavel + '</span>' : '';
+
+        var totalComments = (c.atualizacoes || []).length;
+        var commentBtn = '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsLog(\'' + c.firebaseId + '\')"><i class="ph ph-chat-centered-dots"></i> ' + (totalComments > 0 ? totalComments + ' Atzs' : 'Atualizar') + '</button>';
+
         var htmlButtons = '';
-        htmlButtons += '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-transparent border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors mr-2" onclick="window.abrirModalEditLog(\'' + c.firebaseId + '\')"><i class="ph ph-pencil"></i> Editar</button>';
-        htmlButtons += '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-lg bg-[rgba(218,13,23,0.1)] text-red-600 dark:text-red-400 border border-transparent hover:border-red-600/30 transition-colors" onclick="window.deletarComentario(\'' + c.firebaseId + '\')"><i class="ph ph-trash"></i> Apagar</button>';
+        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-transparent border border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors mr-2" onclick="window.abrirModalEditLog(\'' + c.firebaseId + '\')"><i class="ph ph-pencil"></i></button>';
+        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-transparent border border-[var(--border)] text-red-500 hover:bg-red-500 hover:text-white transition-colors" onclick="window.deletarComentario(\'' + c.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
 
         var resolveSection = '';
         if (!c.resolvido) {
@@ -271,21 +295,42 @@ function renderizarComentarios(hist) {
             '</div>' +
             '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10">' + c.texto + anexoHtml + '</div>' +
             '<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-[var(--border)] gap-3 relative z-10">' +
-                resolveSection +
-                '<div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end">' + htmlButtons + '</div>' +
+                '<div class="flex items-center gap-3">' +
+                    resolveSection +
+                    commentBtn +
+                '</div>' +
+                '<div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end opacity-0 group-hover:opacity-100 transition-opacity">' +
+                    badgePrazo + ' ' + badgeResp + ' ' + htmlButtons +
+                '</div>' +
             '</div>';
         container.appendChild(div);
     });
 }
 
 // ====== EDIÇÃO DE CHAMADOS ======
-window.abrirModalEditLog = function (firebaseId) {
     var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === firebaseId; });
     if (!log) return;
     document.getElementById('editLogId').value = firebaseId;
     document.getElementById('editLogTexto').value = log.texto;
     document.getElementById('editLogTag').value = log.tag || 'Hardware';
     document.getElementById('editLogSetor').value = log.setor || '';
+    
+    // Popular responsáveis na edição
+    var selectEdit = document.getElementById('editLogResp');
+    if (selectEdit) {
+        selectEdit.innerHTML = (window.membrosEquipe || []).map(function (m) {
+            return '<option value="' + m.nome + '" ' + (m.nome === log.responsavel ? 'selected' : '') + '>' + m.nome + '</option>';
+        }).join('');
+    }
+
+    // Datas na edição
+    if (log.prazo) {
+        var pParts = log.prazo.split('/');
+        document.getElementById('editLogPrazo').value = pParts[2] + '-' + pParts[1] + '-' + pParts[0];
+    } else {
+        document.getElementById('editLogPrazo').value = '';
+    }
+
     document.getElementById('modalEditLog').classList.add('show');
 }
 
@@ -293,20 +338,104 @@ window.fecharModalEditLog = function () {
     document.getElementById('modalEditLog').classList.remove('show');
 }
 
-window.confirmarEdicaoLog = async function () {
     var id = document.getElementById('editLogId').value;
     var texto = document.getElementById('editLogTexto').value;
     var tag = document.getElementById('editLogTag').value;
     var setor = document.getElementById('editLogSetor').value;
+    var dt = document.getElementById('editLogPrazo').value;
+    var resp = document.getElementById('editLogResp').value;
+
     if (!texto.trim()) return showToast("A descrição é obrigatória", "error");
 
+    var prazoFormatado = null;
+    if (dt) {
+        var parts = dt.split('-');
+        prazoFormatado = parts[2] + '/' + parts[1] + '/' + parts[0];
+    }
+
     try {
-        await updateDoc(doc(db, "logs", id), { texto: texto, tag: tag, setor: setor });
+        await updateDoc(doc(db, "logs", id), { 
+            texto: texto, tag: tag, setor: setor,
+            prazo: prazoFormatado, responsavel: resp
+        });
         window.fecharModalEditLog();
         showToast("Chamado atualizado com sucesso!");
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar chamado", "error");
+    }
+}
+
+// ====== COMENTÁRIOS DE CHAMADOS (NESTED) ======
+window.abrirModalCommentsLog = function (firebaseId) {
+    var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === firebaseId; });
+    if (!log) return;
+
+    document.getElementById('commentLogId').value = log.firebaseId;
+    document.getElementById('commentLogLoja').innerText = "Loja: " + document.getElementById('modalTitle').innerText;
+    document.getElementById('commentLogTexto').innerText = log.texto;
+
+    renderizarAtualizacoesChamado(log.atualizacoes || []);
+    document.getElementById('modalCommentsLog').classList.add('show');
+}
+
+window.fecharModalCommentsLog = function () {
+    document.getElementById('modalCommentsLog').classList.remove('show');
+}
+
+function renderizarAtualizacoesChamado(lista) {
+    var container = document.getElementById('listaComentariosLog');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (lista.length === 0) {
+        container.innerHTML = '<div class="flex flex-col items-center justify-center p-8 text-center text-[var(--text-muted)]"><i class="ph ph-chat-circle-text text-4xl mb-3 opacity-20"></i><p class="m-0 text-sm">Nenhuma atualização registrada.</p></div>';
+        return;
+    }
+
+    lista.sort((a,b) => a.timestamp - b.timestamp).forEach(function (c) {
+        var div = document.createElement('div');
+        div.className = 'mb-4 last:mb-0';
+        div.innerHTML =
+            '<div class="flex gap-3">' +
+                '<div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0">' + (c.autor ? c.autor.charAt(0).toUpperCase() : '?') + '</div>' +
+                '<div class="flex-1">' +
+                    '<div class="flex items-center gap-2 mb-1">' +
+                        '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
+                        '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+                    '</div>' +
+                    '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + c.texto + '</div>' +
+                '</div>' +
+            '</div>';
+        container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+}
+
+window.salvarComentarioLog = async function () {
+    var id = document.getElementById('commentLogId').value;
+    var texto = document.getElementById('novoComentarioLog').value.trim();
+    if (!texto) return;
+
+    var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === id; });
+    if (!log) return;
+
+    var novasAtualizacoes = log.atualizacoes || [];
+    novasAtualizacoes.push({
+        autor: currentUser,
+        texto: texto,
+        timestamp: Date.now(),
+        data: new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+    });
+
+    try {
+        await updateDoc(doc(db, "logs", id), { atualizacoes: novasAtualizacoes });
+        document.getElementById('novoComentarioLog').value = '';
+        renderizarAtualizacoesChamado(novasAtualizacoes);
+        showToast("Atualização registrada");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao registrar atualização", "error");
     }
 }
 
