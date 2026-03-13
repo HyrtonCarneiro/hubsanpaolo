@@ -163,6 +163,19 @@ function renderizarProjetosList() {
             }
 
             var totalComments = (p.comentarios || []).length;
+            var recentCommentsHtml = '';
+            var lastTwo = (p.comentarios || []).slice(-2).reverse();
+            if (lastTwo.length > 0) {
+                recentCommentsHtml = '<div class="mt-2 mb-3 flex flex-col gap-1.5">';
+                lastTwo.forEach(c => {
+                    recentCommentsHtml += 
+                        '<div class="text-[0.65rem] text-[var(--text-muted)] italic line-clamp-1 border-l-2 border-[var(--primary)]/30 pl-2">' +
+                            '<span class="font-bold not-italic text-[var(--primary)]">' + c.autor + ':</span> ' + c.texto +
+                        '</div>';
+                });
+                recentCommentsHtml += '</div>';
+            }
+
             var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
 
             div.innerHTML =
@@ -174,11 +187,12 @@ function renderizarProjetosList() {
                     '<div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">' + actionBtns + '</div>' +
                 '</div>' +
                 '<h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">' + p.desc + '</h4>' +
-                '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-3 gap-2">' +
+                '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-2 gap-2">' +
                     '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
                     urlBadge +
                 '</div>' +
-                '<div class="flex justify-end">' + commentBadge + '</div>';
+                recentCommentsHtml +
+                '<div class="flex justify-end pt-2 border-t border-[var(--border)] border-dashed mt-auto">' + commentBadge + '</div>';
             itemsContainer.appendChild(div);
         });
 

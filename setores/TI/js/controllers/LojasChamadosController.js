@@ -306,6 +306,20 @@ function renderizarComentarios(hist) {
             }
         }
 
+        var recentUpdatesHtml = '';
+        var updates = (c.atualizacoes || []).sort((a, b) => b.timestamp - a.timestamp).slice(0, 2);
+        if (updates.length > 0) {
+            recentUpdatesHtml = '<div class="mt-3 pt-3 border-t border-[var(--border)] border-dashed flex flex-col gap-2">';
+            updates.forEach(up => {
+                recentUpdatesHtml += 
+                    '<div class="flex items-start gap-2 text-[0.7rem] bg-black/5 dark:bg-white/5 p-2 rounded-lg">' +
+                        '<span class="font-bold text-[var(--primary)] shrink-0">' + up.autor + ':</span>' +
+                        '<span class="text-[var(--text-main)] leading-tight">' + up.texto + '</span>' +
+                    '</div>';
+            });
+            recentUpdatesHtml += '</div>';
+        }
+
         div.innerHTML =
             '<div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[' + resolveBg + '] to-transparent pointer-events-none"></div>' +
             '<div class="flex justify-between items-start mb-3 relative z-10 flex-wrap gap-2">' +
@@ -318,7 +332,7 @@ function renderizarComentarios(hist) {
                     setorBadge +
                 '</div>' +
             '</div>' +
-            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10">' + c.texto + anexoHtml + '</div>' +
+            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10">' + c.texto + anexoHtml + recentUpdatesHtml + '</div>' +
             '<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-[var(--border)] gap-3 relative z-10">' +
                 '<div class="flex items-center gap-3">' +
                     resolveSection +
