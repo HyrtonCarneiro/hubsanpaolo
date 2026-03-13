@@ -1,39 +1,15 @@
 import fitz  # PyMuPDF
-import pytesseract
 import re
-from PIL import Image
-import io
 import os
 import shutil
 
-# --- CONFIGURAÇÃO DE PORTABILIDADE DO TESSERACT ---
-# 1. Tenta encontrar na pasta local 'tesseract/' (Versão Portátil)
-# 2. Se não encontrar, tenta o caminho padrão do Windows
-caminho_local_tesseract = os.path.join(os.getcwd(), 'tesseract', 'tesseract.exe')
-caminho_padrao_windows = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-
-if os.path.exists(caminho_local_tesseract):
-    pytesseract.pytesseract.tesseract_cmd = caminho_local_tesseract
-    print(f"🤖 Usando Tesseract Portátil: {caminho_local_tesseract}")
-else:
-    pytesseract.pytesseract.tesseract_cmd = caminho_padrao_windows
-    print(f"🤖 Usando Tesseract do Sistema: {caminho_padrao_windows}")
-
 def extrair_texto(caminho_pdf):
-    """Extrai texto nativo ou usa OCR se necessário."""
+    """Extrai texto nativo de todas as páginas do PDF."""
     texto_completo = ""
     try:
         documento = fitz.open(caminho_pdf)
         for pagina in documento:
-            texto_pagina = pagina.get_text()
-            if len(texto_pagina.strip()) < 50:
-                lista_imagens = pagina.get_images(full=True)
-                for img in lista_imagens:
-                    xref = img[0]
-                    base_imagem = documento.extract_image(xref)
-                    imagem_pil = Image.open(io.BytesIO(base_imagem["image"]))
-                    texto_pagina += pytesseract.image_to_string(imagem_pil, lang='por')
-            texto_completo += texto_pagina + " "
+            texto_completo += pagina.get_text() + " "
         documento.close()
         return texto_completo.lower()
     except Exception as e:
@@ -41,23 +17,27 @@ def extrair_texto(caminho_pdf):
         return ""
 
 def classificar_documento(texto):
-    """Retorna a categoria baseada em pontuação."""
+    """Retorna a categoria baseada em pontuação de palavras-chave."""
     pontos = {"Boleto": 0, "NFse": 0, "Nota_de_Debito": 0}
     
+    # Regras para Boleto
     if "nosso número" in texto or "nosso numero" in texto: pontos["Boleto"] += 3
     if re.search(r'\d{5}\.\d{5} \d{5}\.\d{6}', texto): pontos["Boleto"] += 5
     
+    # Regras para NFse
     if "nfs-e" in texto or "nota fiscal de serviços" in texto: pontos["NFse"] += 5
     if "issqn" in texto: pontos["NFse"] += 2
 
+    # Regras para Nota de Débito
     if "nota de débito" in texto or "nota de debito" in texto: pontos["Nota_de_Debito"] += 5
     if "reembolso de despesas" in texto: pontos["Nota_de_Debito"] += 3
 
+    # Define o vencedor (mínimo de 3 pontos para classificar)
     tipo_vencedor = max(pontos, key=pontos.get)
     return tipo_vencedor if pontos[tipo_vencedor] >= 3 else "Nao_Classificado"
 
 def processar_pasta():
-    """Lê todos os PDFs e organiza em pastas."""
+    """Lê todos os PDFs da pasta atual e os organiza em subpastas."""
     arquivos = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
     if not arquivos:
         print("📭 Nenhum arquivo PDF encontrado na pasta.")
@@ -74,7 +54,7 @@ def processar_pasta():
         if not os.path.exists(categoria):
             os.makedirs(categoria)
         
-        # Mover arquivo
+        # Mover arquivo para a pasta correspondente
         try:
             shutil.move(arquivo, os.path.join(categoria, arquivo))
             print(f"✅ Classificado como [{categoria}] e movido.\n")
@@ -82,6 +62,7 @@ def processar_pasta():
             print(f"❌ Erro ao mover arquivo: {e}\n")
 
 if __name__ == "__main__":
+    print("--- San Paolo Fiscal: Robô de Classificação ---")
     try:
         processar_pasta()
     except Exception as e:

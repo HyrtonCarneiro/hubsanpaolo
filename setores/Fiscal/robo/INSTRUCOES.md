@@ -1,39 +1,23 @@
-# Instruções para Gerar o Executável (.exe)
+# Instruções para o Robô de Classificação
 
-Para que o Robô de Classificação funcione em qualquer computador sem precisar do Python instalado, siga estes passos:
+O robô foi simplificado para funcionar sem nenhuma instalação externa. Ele processa PDFs nativos (documentos digitais onde o texto é selecionável).
 
-## 1. Instalação do Ambiente (Apenas uma vez)
-Se você ainda não tem o Python, baixe em [python.org](https://www.python.org/downloads/) (versão 3.10 ou superior).
-**IMPORTANTE:** Durante a instalação, marque a caixa **"Add Python to PATH"**.
+## 1. Como Usar
+1. Baixe o arquivo `RoboClassificador.zip` no Hub San Paolo.
+2. Extraia o conteúdo para uma pasta no seu computador.
+3. Coloque todos os PDFs que deseja classificar **na mesma pasta** do arquivo `classificador.exe`.
+4. Dê dois cliques no `classificador.exe`.
 
-## 2. Instalar o Tesseract OCR (Obrigatório)
-O robô precisa do Tesseract para ler imagens.
-- Baixe o instalador para Windows aqui: [Tesseract OCR 64-bit](https://github.com/UB-Mannheim/tesseract/wiki)
-- Instale no caminho padrão: `C:\Program Files\Tesseract-OCR`
+## 2. O que ele fará?
+- O robô lerá cada PDF.
+- Criará as pastas `Boleto`, `NFse` e `Nota_de_Debito` automaticamente.
+- Moverá cada arquivo para sua respectiva pasta.
 
-## 3. Instalar Dependências do Script
-Abra o **Prompt de Comando (CMD)** ou PowerShell e execute:
-```bash
-pip install pymupdf pytesseract pillow pyinstaller
-```
+## 3. Requisitos
+- Apenas Windows.
+- **Não** precisa de Python.
+- **Não** precisa de Tesseract OCR.
+- Funciona apenas com PDFs digitais (não funciona com fotos/scans sem texto nativo).
 
-## 4. Gerar o Arquivo .exe
-Navegue até a pasta onde está o arquivo `classificador.py` e rode:
-```bash
-pyinstaller --onefile classificador.py
-```
-
-## 5. Localizar o Executável
-- Após o comando terminar, uma pasta chamada `dist` será criada.
-- Dentro dela estará o arquivo `classificador.exe`.
-- Você pode copiar este arquivo para qualquer máquina Windows.
-
-## 6. Versão Portátil (Sem Instalação no Windows)
-Se você quer que o robô funcione sem precisar instalar o Tesseract em cada computador:
-1. Siga os passos acima para gerar o `classificador.exe`.
-2. No computador onde o robô vai rodar, crie uma pasta (ex: `MeuRobo`).
-3. Coloque o `classificador.exe` dentro dessa pasta.
-4. Crie uma subpasta chamada `tesseract` dentro de `MeuRobo`.
-5. Copie todos os arquivos da pasta original do Tesseract (`C:\Program Files\Tesseract-OCR`) para dentro dessa nova pasta `MeuRobo\tesseract`.
-
-O robô está programado para procurar os arquivos de visão primeiro nessa pasta local antes de procurar no sistema!
+---
+**Nota para Desenvolvedores:** Se desejar rodar o código-fonte (`.py`), você precisará do Python 3.10+ e da biblioteca `pymupdf` (`pip install pymupdf`).
