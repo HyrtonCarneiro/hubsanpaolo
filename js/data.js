@@ -24,5 +24,5 @@ window.lojasIniciais = [
     { id: 60, estado: 'RN', nome: 'LAGOA MALL' }, { id: 61, estado: 'RN', nome: 'NATAL SHOPPING' }, { id: 62, estado: 'RN', nome: 'PARNAMIRIM' }, { id: 63, estado: 'AM', nome: 'MANAUS - PONTA NEGRA' },
     { id: 64, estado: 'AM', nome: 'VIERALVES' }, { id: 65, estado: 'SE', nome: 'RIOMAR ARACAJU' }, { id: 66, estado: 'SE', nome: 'JARDINS' }, { id: 67, estado: 'MT', nome: 'PANTANAL SHOPPING / CUIABA' },
     { id: 68, estado: 'MT', nome: 'SHOPPING ESTAÇÃO CUIABA' }, { id: 69, estado: 'AL', nome: 'PARQUE SHOPPING MACEIO' },
-    { id: 70, estado: 'RMA', nome: 'RMA' }
+    { id: 70, estado: 'RMA', nome: 'CSC' }
 ];
