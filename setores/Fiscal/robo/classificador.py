@@ -1,9 +1,15 @@
-import fitz  # PyMuPDF
-import re
-import os
-import shutil
-import sys
-import time
+try:
+    import fitz  # PyMuPDF
+    import re
+    import os
+    import shutil
+    import sys
+    import time
+except ImportError as e:
+    print(f"\n❌ ERRO DE BIBLIOTECA: {str(e)}")
+    print("\nCertifique-se de que rodou: pip install pymupdf")
+    input("\nPressione ENTER para fechar...")
+    sys.exit(1)
 
 def log_erro(mensagem):
     """Salva erros em um arquivo para diagnóstico."""
