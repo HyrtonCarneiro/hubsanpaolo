@@ -109,11 +109,124 @@ function renderizarHistoricoNotas() {
             if (parts[0] && parts[1] && parts[2]) displayData = parts[2] + '/' + parts[1] + '/' + parts[0];
         }
 
+        var actionButtons = `
+            <div class="flex items-center justify-center gap-1">
+                <button onclick="window.abrirModalEditarNota('${nota.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                    <i class="ph ph-pencil-simple text-lg"></i>
+                </button>
+                <button onclick="window.excluirNota('${nota.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Excluir">
+                    <i class="ph ph-trash text-lg"></i>
+                </button>
+            </div>
+        `;
+
         tr.innerHTML =
             '<td class="p-4 text-sm text-[var(--text-main)]">' + displayData + '</td>' +
             '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + nota.loja + '</td>' +
             '<td class="p-4 text-sm text-[var(--text-muted)]"><i class="ph ph-user"></i> ' + nota.auditor + '</td>' +
-            '<td class="p-4 text-lg font-bold text-right ' + colorClass + '">' + nota.nota.toFixed(1) + '</td>';
+            '<td class="p-4 text-lg font-bold text-right ' + colorClass + '">' + nota.nota.toFixed(1) + '</td>' +
+            '<td class="p-4 text-center">' + actionButtons + '</td>';
         tbody.appendChild(tr);
     });
+}
+
+window.excluirNota = async function (id) {
+    if (!confirm("Deseja realmente excluir esta avaliação?")) return;
+    try {
+        await deleteDoc(doc(db, "auditoria_notas", id));
+        showToast("Avaliação excluída com sucesso!", "success");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao excluir nota.", "error");
+    }
+}
+
+window.abrirModalEditarNota = function (id) {
+    const nota = window.notasCache.find(n => n.id === id);
+    if (!nota) return;
+
+    document.getElementById('editNotaId').value = id;
+    
+    // Popular select de lojas no modal
+    const sel = document.getElementById('editNotaLoja');
+    sel.innerHTML = window.lojasIniciais.sort((a,b) => a.nome.localeCompare(b.nome)).map(l => 
+        `<option value="${l.nome}">${l.nome}</option>`
+    ).join('');
+    
+    sel.value = nota.loja;
+    document.getElementById('editNotaData').value = nota.data;
+    document.getElementById('editNotaValor').value = nota.nota;
+
+    document.getElementById('modalEditNota').classList.add('show');
+}
+
+window.fecharModalEditNota = function () {
+    document.getElementById('modalEditNota').classList.remove('show');
+}
+
+window.salvarEdicaoNota = async function () {
+    const id = document.getElementById('editNotaId').value;
+    const loja = document.getElementById('editNotaLoja').value;
+    const data = document.getElementById('editNotaData').value;
+    const notaValor = parseFloat(document.getElementById('editNotaValor').value);
+
+    if (!loja || !data || isNaN(notaValor) || notaValor < 0 || notaValor > 10) {
+        showToast("Preencha todos os campos corretamente.", "warning");
+        return;
+    }
+
+    try {
+        await updateDoc(doc(db, "auditoria_notas", id), {
+            loja: loja,
+            data: data,
+            nota: notaValor,
+            updatedAt: new Date().toISOString()
+        });
+        showToast("Avaliação atualizada!", "success");
+        window.fecharModalEditNota();
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao atualizar nota.", "error");
+    }
+}
+
+window.processarImportacaoNotas = async function (dados) {
+    let sucessos = 0;
+    let erros = 0;
+
+    for (const row of dados) {
+        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
+        const data = (row.DATA_AUDITORIA || '').toString().trim();
+        const nota = parseFloat(row.NOTA);
+        const auditor = (row.AUDITOR || '').toString().trim();
+
+        if (!nomeLoja || !data || isNaN(nota)) continue;
+
+        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
+        if (!lojaValida) continue;
+
+        const payload = {
+            loja: lojaValida.nome,
+            data: data,
+            nota: nota,
+            auditor: auditor || currentUser || 'Sistema',
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            // Tenta atualizar se já existe nota para aquela loja e data
+            const exist = window.notasCache.find(n => n.loja === lojaValida.nome && n.data === data);
+            if (exist) {
+                await updateDoc(doc(db, "auditoria_notas", exist.id), payload);
+            } else {
+                await addDoc(collection(db, "auditoria_notas"), payload);
+            }
+            sucessos++;
+        } catch (err) {
+            console.error(err);
+            erros++;
+        }
+    }
+
+    showToast(`Importação de Notas: ${sucessos} processadas, ${erros} erros.`, erros > 0 ? "warning" : "success");
 }

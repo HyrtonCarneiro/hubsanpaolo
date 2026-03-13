@@ -139,6 +139,9 @@ window.renderizarTabelaPlanejamento = function () {
                 <button onclick="window.abrirModalEditPlanejamento('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-lg transition-colors" title="Editar Agendamento">
                     <i class="ph ph-pencil-simple text-lg"></i>
                 </button>
+                <button onclick="window.excluirPlanejamento('${r.docId}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors ${r.docId ? '' : 'hidden'}" title="Excluir Planejamento">
+                    <i class="ph ph-trash text-lg"></i>
+                </button>
             </div>
         `;
 
@@ -238,6 +241,18 @@ window.salvarPlanejamento = async function () {
     } catch (e) {
         console.error(e);
         showToast("Erro ao salvar planejamento", "error");
+    }
+}
+
+window.excluirPlanejamento = async function (docId) {
+    if (!docId || docId === 'null') return;
+    if (!confirm("Deseja realmente remover este planejamento?")) return;
+    try {
+        await deleteDoc(doc(db, "auditoria_planejamento", docId));
+        showToast("Planejamento removido.", "success");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao excluir planejamento.", "error");
     }
 }
 

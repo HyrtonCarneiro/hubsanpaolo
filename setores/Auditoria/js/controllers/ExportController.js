@@ -158,3 +158,49 @@ window.importarPlanejamentoExcel = function (event) {
     };
     reader.readAsArrayBuffer(file);
 };
+
+window.importarNotasExcel = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            if (jsonData.length === 0) return showToast("Planilha vazia.", "warning");
+            
+            if (typeof window.processarImportacaoNotas === 'function') {
+                await window.processarImportacaoNotas(jsonData);
+            }
+            event.target.value = '';
+        } catch (err) {
+            console.error(err);
+            showToast("Erro ao processar Excel.", "error");
+        }
+    };
+    reader.readAsArrayBuffer(file);
+};
+
+window.importarMapeamentoExcel = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+            if (jsonData.length === 0) return showToast("Planilha vazia.", "warning");
+            
+            if (typeof window.processarImportacaoMapeamento === 'function') {
+                await window.processarImportacaoMapeamento(jsonData);
+            }
+            event.target.value = '';
+        } catch (err) {
+            console.error(err);
+            showToast("Erro ao processar Excel.", "error");
+        }
+    };
+    reader.readAsArrayBuffer(file);
+};

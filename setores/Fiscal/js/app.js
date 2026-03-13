@@ -71,16 +71,19 @@ function iniciarListenerEquipe() {
 }
 
 window.switchView = function (view) {
-    document.getElementById('view-dashboard').style.display = 'none';
-    document.getElementById('view-tarefas').style.display = 'none';
-    document.getElementById('view-metapwr').style.display = 'none';
+    const views = ['dashboard', 'tarefas', 'metapwr', 'robo'];
+    
+    views.forEach(v => {
+        const viewEl = document.getElementById(`view-${v}`);
+        const navEl = document.getElementById(`nav-${v}`);
+        if (viewEl) viewEl.style.display = 'none';
+        if (navEl) navEl.classList.remove('active-nav');
+    });
 
-    document.getElementById('nav-dashboard').classList.remove('active-nav');
-    document.getElementById('nav-tarefas').classList.remove('active-nav');
-    document.getElementById('nav-metapwr').classList.remove('active-nav');
-
-    document.getElementById(`view-${view}`).style.display = 'block';
-    document.getElementById(`nav-${view}`).classList.add('active-nav');
+    const targetView = document.getElementById(`view-${view}`);
+    const targetNav = document.getElementById(`nav-${view}`);
+    if (targetView) targetView.style.display = 'block';
+    if (targetNav) targetNav.classList.add('active-nav');
 
     if (window.innerWidth <= 768) {
         window.toggleSidebar();
