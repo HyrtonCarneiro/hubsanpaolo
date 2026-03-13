@@ -2,6 +2,13 @@ import fitz  # PyMuPDF
 import re
 import os
 import shutil
+import sys
+import time
+
+def log_erro(mensagem):
+    """Salva erros em um arquivo para diagnóstico."""
+    with open("log_erros.txt", "a", encoding="utf-8") as f:
+        f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {mensagem}\n")
 
 def extrair_texto(caminho_pdf):
     """Extrai texto nativo de todas as páginas do PDF."""
@@ -13,7 +20,9 @@ def extrair_texto(caminho_pdf):
         documento.close()
         return texto_completo.lower()
     except Exception as e:
-        print(f"❌ Erro ao ler {caminho_pdf}: {e}")
+        msg = f"Erro ao ler {caminho_pdf}: {str(e)}"
+        print(f"❌ {msg}")
+        log_erro(msg)
         return ""
 
 def classificar_documento(texto):
@@ -32,41 +41,55 @@ def classificar_documento(texto):
     if "nota de débito" in texto or "nota de debito" in texto: pontos["Nota_de_Debito"] += 5
     if "reembolso de despesas" in texto: pontos["Nota_de_Debito"] += 3
 
-    # Define o vencedor (mínimo de 3 pontos para classificar)
     tipo_vencedor = max(pontos, key=pontos.get)
     return tipo_vencedor if pontos[tipo_vencedor] >= 3 else "Nao_Classificado"
 
 def processar_pasta():
-    """Lê todos os PDFs da pasta atual e os organiza em subpastas."""
+    """Lê todos os PDFs da pasta atual e os organiza em subpastas com progresso."""
     arquivos = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
-    if not arquivos:
-        print("📭 Nenhum arquivo PDF encontrado na pasta.")
+    total = len(arquivos)
+    
+    if total == 0:
+        print("\n📭 Nenhum arquivo PDF encontrado nesta pasta.")
+        print("Dica: Coloque os PDFs no mesmo lugar que este programa.")
         return
 
-    print(f"🚀 Iniciando processamento de {len(arquivos)} arquivos...\n")
+    print(f"\n🚀 Iniciando processamento de {total} arquivos...\n")
+    print("-" * 50)
 
-    for arquivo in arquivos:
-        print(f"🔍 Analisando: {arquivo}")
+    for i, arquivo in enumerate(arquivos, 1):
+        porcentagem = (i / total) * 100
+        print(f"[{i}/{total}] ({porcentagem:.0f}%) Analisando: {arquivo}")
+        
         texto = extrair_texto(arquivo)
         categoria = classificar_documento(texto)
         
-        # Criar pasta da categoria se não existir
         if not os.path.exists(categoria):
-            os.makedirs(categoria)
-        
-        # Mover arquivo para a pasta correspondente
+            try:
+                os.makedirs(categoria)
+            except Exception as e:
+                log_erro(f"Erro ao criar pasta {categoria}: {str(e)}")
+
         try:
             shutil.move(arquivo, os.path.join(categoria, arquivo))
-            print(f"✅ Classificado como [{categoria}] e movido.\n")
+            print(f"   └─ ✅ Classificado como [{categoria}] e movido.\n")
         except Exception as e:
-            print(f"❌ Erro ao mover arquivo: {e}\n")
+            msg = f"Erro ao mover {arquivo}: {str(e)}"
+            print(f"   └─ ❌ {msg}\n")
+            log_erro(msg)
 
 if __name__ == "__main__":
-    print("--- San Paolo Fiscal: Robô de Classificação ---")
+    print("=" * 50)
+    print("       SAN PAOLO FISCAL - ROBÔ DE CLASSIFICAÇÃO")
+    print("=" * 50)
+    
     try:
         processar_pasta()
     except Exception as e:
-        print(f"💥 Erro crítico no robô: {e}")
+        msg = f"ERRO CRÍTICO: {str(e)}"
+        print(f"\n💥 {msg}")
+        log_erro(msg)
     
+    print("-" * 50)
     print("🏁 Processamento finalizado.")
-    input("Pressione Enter para fechar...")
+    input("\nPressione ENTER para fechar esta janela...")
