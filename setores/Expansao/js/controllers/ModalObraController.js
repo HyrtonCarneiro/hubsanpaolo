@@ -91,6 +91,7 @@ window.ModalObraController = {
                 }
             }
 
+            modal.classList.remove('hidden');
             modal.classList.add('show');
         } catch (e) {
             console.error("Erro abrir modal: ", e);
@@ -99,7 +100,10 @@ window.ModalObraController = {
 
     fecharModal() {
         const modal = document.getElementById('modalCardExpansaoObj');
-        if (modal) modal.classList.remove('show');
+        if (modal) {
+            modal.classList.remove('show');
+            setTimeout(() => { if (!modal.classList.contains('show')) modal.classList.add('hidden'); }, 200);
+        }
         this.cardAbertoId = null;
     },
 

@@ -110,6 +110,7 @@ window.TarefasController = {
     abrirModalEquipe() {
         const modal = document.getElementById('modalEquipeObj');
         if (!modal) return;
+        modal.classList.remove('hidden');
         modal.classList.add('show');
         this.renderListaMembrosModal();
     },
@@ -118,6 +119,7 @@ window.TarefasController = {
         const modal = document.getElementById('modalEquipeObj');
         if (modal) {
             modal.classList.remove('show');
+            setTimeout(() => { if (!modal.classList.contains('show')) modal.classList.add('hidden'); }, 200);
         }
     },
 

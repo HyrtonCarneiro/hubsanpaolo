@@ -6,8 +6,8 @@
 let chartObrasStatusInst = null;
 let chartObrasTagsInst = null;
 
-// Registrar plugin de labels globalmente
-if (typeof ChartDataLabels !== 'undefined') {
+// Registrar plugin de labels globalmente com segurança
+if (typeof Chart !== 'undefined' && typeof ChartDataLabels !== 'undefined') {
     Chart.register(ChartDataLabels);
 }
 

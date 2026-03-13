@@ -94,6 +94,8 @@ async function carregarDadosBase() {
 window.switchView = function (view) {
     try {
         const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt'];
+        
+        // Esconder todas as views e remover 'active' dos navs
         views.forEach(v => {
             const el = document.getElementById('view-' + v);
             if (el) el.style.display = 'none';
@@ -104,13 +106,28 @@ window.switchView = function (view) {
         const currView = document.getElementById('view-' + view);
         const currNav = document.getElementById('nav-' + view);
 
-        if (currView) currView.style.display = (view === 'obras' || view === 'tarefas' || view === 'gantt') ? 'flex' : 'block';
-        if (view === 'tarefas' && currView) currView.style.flexDirection = 'column';
+        if (currView) {
+            // Views que precisam de 'flex' em vez de 'block'
+            const flexViews = ['obras', 'tarefas', 'gantt'];
+            currView.style.display = flexViews.includes(view) ? 'flex' : 'block';
+            
+            if (view === 'tarefas') {
+                currView.style.flexDirection = 'column';
+            }
+        }
+        
         if (currNav) currNav.classList.add('active');
 
-        if (view === 'gantt') GanttController.renderGantt(obrasCache);
+        // Renderizar Gantt se necessário
+        if (view === 'gantt' && typeof GanttController !== 'undefined') {
+            GanttController.renderGantt(obrasCache);
+        }
 
-        if (window.innerWidth <= 768) window.toggleSidebar();
+        // Fechar sidebar no mobile após trocar de view se estiver aberta
+        const sidebar = document.getElementById('appSidebar');
+        if (window.innerWidth <= 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
+            window.toggleSidebar();
+        }
     } catch (e) {
         console.error("ERRO NO SWITCHVIEW:", e);
         showToast("Erro ao mudar de aba", "error");
@@ -121,8 +138,13 @@ window.toggleSidebar = function () {
     const sidebar = document.getElementById('appSidebar');
     const overlay = document.getElementById('sidebarOverlay');
     if (sidebar && overlay) {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
+        if (sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('show');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.remove('show');
+        }
     }
 }
 
