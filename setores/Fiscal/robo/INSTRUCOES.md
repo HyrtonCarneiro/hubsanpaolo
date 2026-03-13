@@ -28,5 +28,12 @@ pyinstaller --onefile classificador.py
 - Dentro dela estará o arquivo `classificador.exe`.
 - Você pode copiar este arquivo para qualquer máquina Windows.
 
----
-**Nota:** Ao rodar o `.exe`, certifique-se de que o Tesseract esteja instalado naquela máquina no caminho mencionado no passo 2.
+## 6. Versão Portátil (Sem Instalação no Windows)
+Se você quer que o robô funcione sem precisar instalar o Tesseract em cada computador:
+1. Siga os passos acima para gerar o `classificador.exe`.
+2. No computador onde o robô vai rodar, crie uma pasta (ex: `MeuRobo`).
+3. Coloque o `classificador.exe` dentro dessa pasta.
+4. Crie uma subpasta chamada `tesseract` dentro de `MeuRobo`.
+5. Copie todos os arquivos da pasta original do Tesseract (`C:\Program Files\Tesseract-OCR`) para dentro dessa nova pasta `MeuRobo\tesseract`.
+
+O robô está programado para procurar os arquivos de visão primeiro nessa pasta local antes de procurar no sistema!

@@ -151,19 +151,19 @@
                             <h2 class="text-xl font-bold text-[var(--text-main)]">O que é o Robô?</h2>
                         </div>
                         <p class="text-[var(--text-muted)] mb-4 leading-relaxed">
-                            O Robô de Classificação é um script inteligente desenvolvido em Python que utiliza OCR (Reconhecimento Óptico de Caracteres) para ler seus arquivos PDF e classificá-los automaticamente entre:
+                            O Robô de Classificação agora processa <strong>todos os PDFs</strong> da pasta de uma vez. Ele organiza automaticamente seus arquivos criando subpastas para:
                         </p>
                         <ul class="space-y-2 mb-6 text-[var(--text-main)] font-medium">
-                            <li class="flex items-center gap-2"><i class="ph ph-check-circle text-green-500"></i> Boletos Bancários</li>
-                            <li class="flex items-center gap-2"><i class="ph ph-check-circle text-green-500"></i> NFS-e (Nota Fiscal de Serviços)</li>
-                            <li class="flex items-center gap-2"><i class="ph ph-check-circle text-green-500"></i> Notas de Débito</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-folder-open text-brandBlue"></i> <strong>Boleto</strong> (Boletos bancários)</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-folder-open text-brandGreen"></i> <strong>NFse</strong> (Notas de Serviço)</li>
+                            <li class="flex items-center gap-2"><i class="ph ph-folder-open text-brandOrange"></i> <strong>Nota_de_Debito</strong> (Reembolsos/Débitos)</li>
                         </ul>
-                        <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 p-4 mb-6">
-                            <h4 class="text-amber-800 dark:text-amber-400 font-bold mb-1 flex items-center gap-2">
-                                <i class="ph ph-warning"></i> Requisito Obrigatório
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 p-4 mb-6">
+                            <h4 class="text-blue-800 dark:text-blue-400 font-bold mb-1 flex items-center gap-2">
+                                <i class="ph ph-lightning"></i> Versão Portátil (Beta)
                             </h4>
-                            <p class="text-amber-700 dark:text-amber-300 text-sm">
-                                Para funcionar, você precisa ter o <strong>Tesseract OCR</strong> instalado no seu Windows no caminho padrão: <code>C:\Program Files\Tesseract-OCR\tesseract.exe</code>
+                            <p class="text-blue-700 dark:text-blue-300 text-sm">
+                                O robô agora pode ser "Portátil"! Basta copiar a pasta do Tesseract para dentro da pasta do robô (veja as instruções ao lado).
                             </p>
                         </div>
                         <div class="flex flex-col gap-3">

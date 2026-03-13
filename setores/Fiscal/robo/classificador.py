@@ -1,88 +1,91 @@
-import fitz  # PyMuPDF: para ler o PDF
-import pytesseract # Tesseract: para o OCR (ler imagens)
+import fitz  # PyMuPDF
+import pytesseract
 import re
 from PIL import Image
 import io
 import os
+import shutil
 
-# ⚠️ ATENÇÃO: Aponte para onde o Tesseract foi instalado no seu Windows!
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# --- CONFIGURAÇÃO DE PORTABILIDADE DO TESSERACT ---
+# 1. Tenta encontrar na pasta local 'tesseract/' (Versão Portátil)
+# 2. Se não encontrar, tenta o caminho padrão do Windows
+caminho_local_tesseract = os.path.join(os.getcwd(), 'tesseract', 'tesseract.exe')
+caminho_padrao_windows = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+
+if os.path.exists(caminho_local_tesseract):
+    pytesseract.pytesseract.tesseract_cmd = caminho_local_tesseract
+    print(f"🤖 Usando Tesseract Portátil: {caminho_local_tesseract}")
+else:
+    pytesseract.pytesseract.tesseract_cmd = caminho_padrao_windows
+    print(f"🤖 Usando Tesseract do Sistema: {caminho_padrao_windows}")
 
 def extrair_texto(caminho_pdf):
-    """Extrai texto nativo. Se estiver vazio, usa OCR nas imagens."""
+    """Extrai texto nativo ou usa OCR se necessário."""
     texto_completo = ""
     try:
         documento = fitz.open(caminho_pdf)
-        
         for pagina in documento:
-            # 1. Tenta extrair o texto nativo primeiro
             texto_pagina = pagina.get_text()
-            
-            # 2. Se a página tiver menos de 50 caracteres, assume que é uma imagem escaneada
             if len(texto_pagina.strip()) < 50:
-                print(f"Lendo imagem via OCR no arquivo: {caminho_pdf}")
                 lista_imagens = pagina.get_images(full=True)
-                for img_index, img in enumerate(lista_imagens):
+                for img in lista_imagens:
                     xref = img[0]
                     base_imagem = documento.extract_image(xref)
-                    bytes_imagem = base_imagem["image"]
-                    
-                    # Converte a imagem e passa no OCR
-                    imagem_pil = Image.open(io.BytesIO(bytes_imagem))
-                    texto_ocr = pytesseract.image_to_string(imagem_pil, lang='por') # lang='por' para Português
-                    texto_pagina += texto_ocr
-                    
+                    imagem_pil = Image.open(io.BytesIO(base_imagem["image"]))
+                    texto_pagina += pytesseract.image_to_string(imagem_pil, lang='por')
             texto_completo += texto_pagina + " "
-            
-        return texto_completo.lower() # Converte tudo para minúsculo para facilitar a busca
+        documento.close()
+        return texto_completo.lower()
     except Exception as e:
-        print(f"Erro ao ler o arquivo {caminho_pdf}: {e}")
+        print(f"❌ Erro ao ler {caminho_pdf}: {e}")
         return ""
 
 def classificar_documento(texto):
-    """Aplica o sistema de pontuação (Scoring) para descobrir o tipo da nota."""
-    pontos = {
-        "Boleto": 0,
-        "NFS-e": 0,
-        "Nota_de_Debito": 0
-    }
+    """Retorna a categoria baseada em pontuação."""
+    pontos = {"Boleto": 0, "NFse": 0, "Nota_de_Debito": 0}
     
-    # --- REGRAS PARA BOLETO ---
     if "nosso número" in texto or "nosso numero" in texto: pontos["Boleto"] += 3
-    if "código do beneficiário" in texto or "agência/código" in texto: pontos["Boleto"] += 2
-    if "vencimento" in texto: pontos["Boleto"] += 1
-    # Regex para linha digitável (ex: 34191.09008 63571.277308...)
     if re.search(r'\d{5}\.\d{5} \d{5}\.\d{6}', texto): pontos["Boleto"] += 5
     
-    # --- REGRAS PARA NFS-E ---
-    if "nfs-e" in texto or "nota fiscal de serviços" in texto: pontos["NFS-e"] += 5
-    if "código de verificação" in texto: pontos["NFS-e"] += 2
-    if "prefeitura municipal" in texto: pontos["NFS-e"] += 2
-    if "issqn" in texto: pontos["NFS-e"] += 2
+    if "nfs-e" in texto or "nota fiscal de serviços" in texto: pontos["NFse"] += 5
+    if "issqn" in texto: pontos["NFse"] += 2
 
-    # --- REGRAS PARA NOTA DE DÉBITO ---
     if "nota de débito" in texto or "nota de debito" in texto: pontos["Nota_de_Debito"] += 5
-    if "demonstrativo de débito" in texto: pontos["Nota_de_Debito"] += 4
     if "reembolso de despesas" in texto: pontos["Nota_de_Debito"] += 3
 
-    # Identifica quem fez mais pontos
     tipo_vencedor = max(pontos, key=pontos.get)
-    pontuacao_maxima = pontos[tipo_vencedor]
-    
-    # Se a pontuação for muito baixa, não foi possível identificar com certeza
-    if pontuacao_maxima < 3:
-        return "Desconhecido"
-        
-    return tipo_vencedor
+    return tipo_vencedor if pontos[tipo_vencedor] >= 3 else "Nao_Classificado"
 
-# --- TESTANDO O CÓDIGO ---
+def processar_pasta():
+    """Lê todos os PDFs e organiza em pastas."""
+    arquivos = [f for f in os.listdir('.') if f.lower().endswith('.pdf')]
+    if not arquivos:
+        print("📭 Nenhum arquivo PDF encontrado na pasta.")
+        return
+
+    print(f"🚀 Iniciando processamento de {len(arquivos)} arquivos...\n")
+
+    for arquivo in arquivos:
+        print(f"🔍 Analisando: {arquivo}")
+        texto = extrair_texto(arquivo)
+        categoria = classificar_documento(texto)
+        
+        # Criar pasta da categoria se não existir
+        if not os.path.exists(categoria):
+            os.makedirs(categoria)
+        
+        # Mover arquivo
+        try:
+            shutil.move(arquivo, os.path.join(categoria, arquivo))
+            print(f"✅ Classificado como [{categoria}] e movido.\n")
+        except Exception as e:
+            print(f"❌ Erro ao mover arquivo: {e}\n")
+
 if __name__ == "__main__":
-    caminho_teste = "sua_nota_teste.pdf" # Coloque um PDF na mesma pasta para testar
-    if os.path.exists(caminho_teste):
-        texto_extraido = extrair_texto(caminho_teste)
-        resultado = classificar_documento(texto_extraido)
-        print(f"\n✅ Resultado: O documento é um(a) {resultado}!")
-        input("\nPressione Enter para sair...")
-    else:
-        print("Arquivo de teste não encontrado. Coloque um PDF válido no código para testar.")
-        input("\nPressione Enter para sair...")
+    try:
+        processar_pasta()
+    except Exception as e:
+        print(f"💥 Erro crítico no robô: {e}")
+    
+    print("🏁 Processamento finalizado.")
+    input("Pressione Enter para fechar...")
