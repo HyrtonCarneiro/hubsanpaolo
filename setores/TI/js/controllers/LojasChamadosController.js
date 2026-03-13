@@ -161,13 +161,36 @@ function abrirModal(id, nome, estado) {
     // Popular responsáveis
     var select = document.getElementById('tagRespLog');
     if (select) {
+        var user = sessionStorage.getItem('loggedUser') || '';
         select.innerHTML = (window.membrosEquipe || []).map(function (m) {
-            return '<option value="' + m.nome + '">' + m.nome + '</option>';
+            var isMe = m.nome === user;
+            return '<option value="' + m.nome + '" ' + (isMe ? 'selected' : '') + '>' + m.nome + '</option>';
         }).join('');
     }
 
     document.getElementById('modalLoja').classList.add('show');
+    
+    // Esconder formulário por padrão ao abrir
+    var form = document.getElementById('formNovaOcorrencia');
+    if (form) form.classList.add('hidden');
+    var btn = document.getElementById('btnNovaOcorrenciaContainer');
+    if (btn) btn.classList.remove('hidden');
+
     renderizarComentarios(window.sysLogs[lojaAtualId] || []);
+}
+
+window.toggleFormOcorrencia = function() {
+    var form = document.getElementById('formNovaOcorrencia');
+    var btn = document.getElementById('btnNovaOcorrenciaContainer');
+    if (!form || !btn) return;
+
+    if (form.classList.contains('hidden')) {
+        form.classList.remove('hidden');
+        btn.classList.add('hidden');
+    } else {
+        form.classList.add('hidden');
+        btn.classList.remove('hidden');
+    }
 }
 
 window.fecharModal = function () {
@@ -204,6 +227,7 @@ window.salvarComentario = async function () {
         document.getElementById('novoComentario').value = '';
         document.getElementById('setorComentario').value = '';
         if (inputAnexo) inputAnexo.value = '';
+        window.toggleFormOcorrencia(); // Esconder após salvar
         showToast("Ocorrência registrada");
     } catch (e) {
         console.error(e);
@@ -323,6 +347,7 @@ window.abrirModalEditLog = function (firebaseId) {
         selectEdit.innerHTML = (window.membrosEquipe || []).map(function (m) {
             return '<option value="' + m.nome + '" ' + (m.nome === log.responsavel ? 'selected' : '') + '>' + m.nome + '</option>';
         }).join('');
+        if (!log.responsavel) selectEdit.value = log.autor; // Fallback para o autor se não houver responsável
     }
 
     // Datas na edição

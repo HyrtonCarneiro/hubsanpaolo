@@ -163,7 +163,7 @@ function renderizarProjetosList() {
             }
 
             var totalComments = (p.comentarios || []).length;
-            var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
+            var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
 
             div.innerHTML =
                 '<div class="flex justify-between items-start mb-3">' +
@@ -268,20 +268,140 @@ window.salvarComentarioProjeto = async function () {
 
 // ====== EDIÇÃO DE PROJETOS ======
 window.abrirModalEditProj = function (firebaseId) {
-    var p = window.sysProjetos[window.currentMember].find(function (x) { return x.firebaseId === firebaseId; });
+    var p = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === firebaseId; });
+        if (found) p = found;
+    });
+    
     if (!p) return;
+    
+    // Preencher campos de edição
     document.getElementById('editProjId').value = p.firebaseId;
     document.getElementById('editProjDesc').value = p.desc;
     document.getElementById('editProjDemand').value = p.demandante;
     var parts = p.dataAtv.split('/');
-    document.getElementById('editProjDate').value = parts[2] + '-' + parts[1] + '-' + parts[0];
+    if (parts.length === 3) document.getElementById('editProjDate').value = parts[2] + '-' + parts[1] + '-' + parts[0];
     document.getElementById('editProjStatus').value = p.status;
 
     var mbSelect = document.getElementById('editProjMember');
-    mbSelect.innerHTML = window.membrosEquipe.map(function (mb) { return '<option value="' + mb.nome + '">' + mb.nome + '</option>'; }).join('');
-    mbSelect.value = p.membroResponsavel;
+    if (mbSelect) {
+        mbSelect.innerHTML = (window.membrosEquipe || []).map(function (mb) { 
+            return '<option value="' + mb.nome + '">' + mb.nome + '</option>'; 
+        }).join('');
+        mbSelect.value = p.membroResponsavel;
+    }
+
+    // Preencher campos de visualização (Detail View)
+    document.getElementById('viewProjDemand').innerText = p.demandante;
+    document.getElementById('viewProjDate').innerText = p.dataAtv;
+    document.getElementById('viewProjResp').innerText = p.membroResponsavel;
+    document.getElementById('viewProjStatus').innerText = p.status;
+    document.getElementById('viewProjDesc').innerText = p.desc;
+    
+    // Anexo
+    var anexoDiv = document.getElementById('viewProjAnexo');
+    anexoDiv.innerHTML = '';
+    if (p.anexoUrl) {
+        var isImg = p.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
+        if (isImg) {
+            anexoDiv.innerHTML = '<img src="' + p.anexoUrl + '" class="max-w-full max-h-[200px] rounded-lg border border-[var(--border)] object-cover shadow-sm">';
+        } else {
+            anexoDiv.innerHTML = '<a href="' + p.anexoUrl + '" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface)] text-[var(--text-main)] text-sm font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline"><i class="ph ph-link"></i> Ver Anexo</a>';
+        }
+    }
+
+    // Comentários no detalhe
+    renderizarComentariosTarefaDetalhe(p.comentarios || []);
+
+    // Reset para modo visualização
+    var editMode = document.getElementById('taskEditMode');
+    var viewMode = document.getElementById('taskViewMode');
+    var btnSwitch = document.getElementById('btnSwitchToEditProj');
+    var title = document.getElementById('taskModalTitle');
+
+    if (editMode && viewMode && btnSwitch && title) {
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+        btnSwitch.classList.remove('hidden');
+        title.innerText = 'Detalhes da Tarefa';
+    }
 
     document.getElementById('modalEditProj').classList.add('show');
+}
+
+window.toggleEditModeProj = function() {
+    var editMode = document.getElementById('taskEditMode');
+    var viewMode = document.getElementById('taskViewMode');
+    var btnSwitch = document.getElementById('btnSwitchToEditProj');
+    var title = document.getElementById('taskModalTitle');
+    if (!editMode || !viewMode || !btnSwitch || !title) return;
+
+    if (editMode.classList.contains('hidden')) {
+        editMode.classList.remove('hidden');
+        viewMode.classList.add('hidden');
+        btnSwitch.classList.add('hidden');
+        title.innerText = 'Editar Tarefa';
+    } else {
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
+        btnSwitch.classList.remove('hidden');
+        title.innerText = 'Detalhes da Tarefa';
+    }
+}
+
+function renderizarComentariosTarefaDetalhe(comentarios) {
+    var container = document.getElementById('listaComentariosProjDetalhe');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!comentarios || comentarios.length === 0) {
+        container.innerHTML = '<p class="text-xs text-[var(--text-muted)] italic">Nenhum comentário.</p>';
+        return;
+    }
+
+    comentarios.forEach(function (c) {
+        var div = document.createElement('div');
+        div.className = 'p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-[var(--border)] text-sm';
+        div.innerHTML = 
+            '<div class="flex justify-between mb-1">' +
+                '<span class="font-bold text-xs text-[var(--primary)]">' + c.autor + '</span>' +
+                '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+            '</div>' +
+            '<div class="text-[var(--text-main)]">' + c.texto + '</div>';
+        container.appendChild(div);
+    });
+}
+
+window.salvarComentarioProjetoDetalhe = async function() {
+    var id = document.getElementById('editProjId').value;
+    var texto = document.getElementById('novoComentarioProjDetalhe').value.trim();
+    if (!texto) return;
+
+    var p = null;
+    var membroKey = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) { p = found; membroKey = m; }
+    });
+
+    if (!p) return;
+
+    var user = sessionStorage.getItem('loggedUser') || 'Usuário';
+    var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    var novoArr = (p.comentarios || []);
+    novoArr.push({ autor: user, texto: texto, data: dStr });
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { comentarios: novoArr });
+        document.getElementById('novoComentarioProjDetalhe').value = '';
+        renderizarComentariosTarefaDetalhe(novoArr);
+        showToast("Comentário adicionado");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao salvar comentário", "error");
+    }
 }
 
 window.fecharModalEditProj = function () {
