@@ -29,6 +29,7 @@ window.initProjetosEquipeListeners = function () {
                 window.currentMember = window.membrosEquipe[0].nome;
             }
             renderizarBotoesEquipe();
+            renderizarSelectResponsaveis();
             renderizarProjetosList();
             renderizarListaEquipeGerenciar();
         });
@@ -58,6 +59,14 @@ function renderizarBotoesEquipe() {
     });
 }
 
+function renderizarSelectResponsaveis() {
+    var select = document.getElementById('projResp');
+    if (!select) return;
+    select.innerHTML = window.membrosEquipe.map(function (m) {
+        return '<option value="' + m.nome + '" ' + (m.nome === window.currentMember ? 'selected' : '') + '>' + m.nome + '</option>';
+    }).join('');
+}
+
 window.salvarProjeto = async function () {
     if (!window.currentMember) return showToast("Selecione ou crie um membro da equipe antes", "error");
     var desc = document.getElementById('projDesc').value;
@@ -66,16 +75,19 @@ window.salvarProjeto = async function () {
     var status = document.getElementById('projStatus').value;
     var fileInput = document.getElementById('projAnexo');
 
-    if (!desc || !dem || !dt) return showToast("Preencha os dados do projeto", "error");
+    var resp = document.getElementById('projResp').value;
+
+    if (!desc || !dem || !dt || !resp) return showToast("Preencha os dados do projeto", "error");
     var parts = dt.split('-');
     var anexoUrl = fileInput ? fileInput.value.trim() : null;
 
     try {
         await addDoc(collection(db, "projetos"), {
-            membroResponsavel: window.currentMember,
+            membroResponsavel: resp,
             dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
             desc: desc, demandante: dem, status: status,
-            anexoUrl: anexoUrl, autor: currentUser, timestamp: Date.now()
+            anexoUrl: anexoUrl, autor: currentUser, timestamp: Date.now(),
+            comentarios: []
         });
         document.getElementById('projDesc').value = '';
         document.getElementById('projDemand').value = '';
@@ -150,21 +162,108 @@ function renderizarProjetosList() {
                 }
             }
 
+            var totalComments = (p.comentarios || []).length;
+            var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
+
             div.innerHTML =
                 '<div class="flex justify-between items-start mb-3">' +
-                    '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ' + col.classBadge + '"><i class="ph ph-calendar"></i> ' + p.dataAtv + '</span>' +
+                    '<div class="flex flex-col gap-1">' +
+                        '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</span>' +
+                        '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ' + col.classBadge + '"><i class="ph ph-calendar"></i> ' + p.dataAtv + '</span>' +
+                    '</div>' +
                     '<div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">' + actionBtns + '</div>' +
                 '</div>' +
                 '<h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">' + p.desc + '</h4>' +
-                '<div class="flex justify-between items-center pt-3 border-t border-[var(--border)]">' +
-                    '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate pr-2" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
+                '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-3 gap-2">' +
+                    '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
                     urlBadge +
-                '</div>';
+                '</div>' +
+                '<div class="flex justify-end">' + commentBadge + '</div>';
             itemsContainer.appendChild(div);
         });
 
         container.appendChild(colDiv);
     });
+}
+
+// ====== COMENTÁRIOS DE PROJETOS ======
+window.abrirModalCommentsProj = function (firebaseId) {
+    var p = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === firebaseId; });
+        if (found) p = found;
+    });
+
+    if (!p) return;
+    document.getElementById('commentProjId').value = p.firebaseId;
+    document.getElementById('commentProjTitle').innerText = p.desc;
+    renderizarComentariosTarefa(p.comentarios || []);
+    document.getElementById('modalCommentsProj').classList.add('show');
+}
+
+window.fecharModalCommentsProj = function () {
+    document.getElementById('modalCommentsProj').classList.remove('show');
+}
+
+function renderizarComentariosTarefa(comentarios) {
+    var container = document.getElementById('listaComentariosProj');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (comentarios.length === 0) {
+        container.innerHTML = '<div class="flex flex-col items-center justify-center p-8 text-center text-[var(--text-muted)]"><i class="ph ph-chat-circle-dots text-4xl mb-3 opacity-20"></i><p class="m-0 text-sm">Nenhum comentário ainda.<br>Seja o primeiro a comentar!</p></div>';
+        return;
+    }
+
+    comentarios.forEach(function (c) {
+        var div = document.createElement('div');
+        div.className = 'mb-4 last:mb-0';
+        div.innerHTML =
+            '<div class="flex gap-3">' +
+                '<div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0">' + (c.autor ? c.autor.charAt(0).toUpperCase() : '?') + '</div>' +
+                '<div class="flex-1">' +
+                    '<div class="flex items-center gap-2 mb-1">' +
+                        '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
+                        '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+                    '</div>' +
+                    '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + c.texto + '</div>' +
+                '</div>' +
+            '</div>';
+        container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+}
+
+window.salvarComentarioProjeto = async function () {
+    var id = document.getElementById('commentProjId').value;
+    var texto = document.getElementById('novoComentarioProj').value.trim();
+    if (!texto) return;
+
+    var p = null;
+    var membroKey = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) { p = found; membroKey = m; }
+    });
+
+    if (!p) return;
+
+    var novosComentarios = p.comentarios || [];
+    novosComentarios.push({
+        autor: currentUser,
+        texto: texto,
+        data: new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+    });
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { comentarios: novosComentarios });
+        document.getElementById('novoComentarioProj').value = '';
+        renderizarComentariosTarefa(novosComentarios);
+        showToast("Comentário adicionado");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao comentar", "error");
+    }
 }
 
 // ====== EDIÇÃO DE PROJETOS ======
