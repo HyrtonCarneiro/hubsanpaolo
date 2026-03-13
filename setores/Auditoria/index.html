@@ -194,9 +194,15 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Auditoria Online</h1>
                     </div>
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarNotasPowerBI()">
-                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <input type="file" id="importNotasInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarNotasExcel(event)">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="document.getElementById('importNotasInput').click()">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
+                        </button>
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarNotasPowerBI()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Formulário de Nova Nota -->
@@ -238,6 +244,7 @@
                                     <th class="p-4 font-semibold text-sm text-[var(--text-muted)]">Loja Avaliada</th>
                                     <th class="p-4 font-semibold text-sm text-[var(--text-muted)]">Auditor</th>
                                     <th class="p-4 font-semibold text-sm text-[var(--text-muted)] text-right">Nota Final</th>
+                                    <th class="p-4 font-semibold text-sm text-[var(--text-muted)] text-center">Ações</th>
                                 </tr>
                             </thead>
                             <tbody id="audiHistoricoBody" class="divide-y divide-[var(--border)]">
@@ -313,9 +320,15 @@
                         <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapeamento de Auditorias</h1>
                     </div>
-                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarMapeamentoPowerBI()">
-                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <input type="file" id="importMapeamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarMapeamentoExcel(event)">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="document.getElementById('importMapeamentoInput').click()">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
+                        </button>
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarMapeamentoPowerBI()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Formulário de Registro de Tentativa -->
@@ -567,6 +580,37 @@
                     <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:-translate-y-0.5 shadow-sm" onclick="window.adicionarAudiMembro()">Adicionar</button>
                 </div>
                 <div id="listaAudiEquipeGerenciar" class="flex flex-col gap-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR NOTA AUDITORIA ONLINE -->
+    <div id="modalEditNota" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-full max-w-[450px] rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Editar Avaliação</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEditNota()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <input type="hidden" id="editNotaId">
+                <div>
+                    <label class="block text-sm font-semibold text-[var(--text-muted)] mb-1.5">Loja</label>
+                    <select id="editNotaLoja" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors"></select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-[var(--text-muted)] mb-1.5">Data</label>
+                    <input type="date" id="editNotaData" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-[var(--text-muted)] mb-1.5">Nota (0 a 10)</label>
+                    <input type="number" id="editNotaValor" min="0" max="10" step="0.1" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">
+                </div>
+                <div class="mt-4 flex justify-end gap-2.5">
+                    <button class="px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:bg-black/5 dark:hover:bg-white/5" onclick="window.fecharModalEditNota()">Cancelar</button>
+                    <button class="flex items-center gap-2 px-6 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.salvarEdicaoNota()">
+                        <i class="ph ph-check"></i> Salvar Alterações
+                    </button>
+                </div>
             </div>
         </div>
     </div>

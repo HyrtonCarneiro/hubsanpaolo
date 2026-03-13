@@ -245,3 +245,40 @@ window.navegarParaLancarNota = function(lojaIdentificador) {
         setTimeout(() => select.classList.remove('ring-2', 'ring-[var(--primary)]'), 2000);
     }
 };
+
+window.processarImportacaoMapeamento = async function (dados) {
+    let sucessos = 0;
+    let erros = 0;
+
+    for (const row of dados) {
+        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
+        const data = (row.DATA_TENTATIVA || '').toString().trim();
+        if (!nomeLoja || !data) continue;
+
+        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
+        if (!lojaValida) continue;
+
+        const dadosMap = {
+            lojaId: lojaValida.id.toString(),
+            nomeLoja: lojaValida.nome,
+            estado: lojaValida.estado,
+            dataTentativa: data,
+            realizada: row.REALIZADA || 'SIM',
+            justificativa: row.MOTIVO_NEGATIVA || null,
+            auditor: row.AUDITOR || window.currentUser || 'Sistema',
+            notas: row.NOTAS_ADICIONAIS || '',
+            nTentativa: parseInt(row.N_TENTATIVA) || 1,
+            sla: row.ESTA_NO_PRAZO === 'SIM',
+            horario: row.HORARIO || '08:00'
+        };
+
+        try {
+            await window.MapeamentoService.registrarTentativa(dadosMap);
+            sucessos++;
+        } catch (err) {
+            console.error(err);
+            erros++;
+        }
+    }
+    showToast(`Mapeamento: ${sucessos} importados, ${erros} erros.`, erros > 0 ? "warning" : "success");
+}
