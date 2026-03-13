@@ -240,3 +240,67 @@ window.salvarPlanejamento = async function () {
         showToast("Erro ao salvar planejamento", "error");
     }
 }
+
+window.processarImportacaoPlanejamento = async function (dados) {
+    let sucessos = 0;
+    let erros = 0;
+    let ignorados = 0;
+
+    for (const row of dados) {
+        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
+        const dataPrevista = (row.DATA_PREVISTA || '').toString().trim();
+        const auditor = (row.AUDITOR_RESPONSAVEL || '').toString().trim();
+        const idRegistro = row.ID_REGISTRO;
+
+        // Validar se a loja existe no sistema
+        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
+        if (!lojaValida) {
+            console.warn("Loja ignorada (não encontrada):", nomeLoja);
+            ignorados++;
+            continue;
+        }
+
+        const payload = {
+            loja: lojaValida.nome, // Usa o nome oficial
+            dataProxima: dataPrevista,
+            auditor: auditor,
+            notasInternas: row.NOTAS_ADICIONAIS || '',
+            regional: 'Nordeste', // Default do sistema atual
+            updatedAt: new Date().toISOString()
+        };
+
+        try {
+            // Se tiver ID_REGISTRO, tentamos atualizar
+            let docRef = null;
+            if (idRegistro) {
+                // Tenta achar pelo docId no cache primeiro
+                const noCache = (window.planejamentoCache || []).find(p => p.docId === idRegistro || p.id === idRegistro);
+                if (noCache) {
+                    docRef = doc(db, "auditoria_planejamento", noCache.docId);
+                    await updateDoc(docRef, payload);
+                    sucessos++;
+                    continue;
+                }
+            }
+
+            // Se não achou pelo ID ou não tem ID, busca por nome de loja
+            const existByLoja = (window.planejamentoCache || []).find(p => p.loja === lojaValida.nome);
+            if (existByLoja) {
+                docRef = doc(db, "auditoria_planejamento", existByLoja.docId);
+                await updateDoc(docRef, payload);
+            } else {
+                await addDoc(collection(db, "auditoria_planejamento"), payload);
+            }
+            sucessos++;
+        } catch (err) {
+            console.error("Erro ao importar linha:", row, err);
+            erros++;
+        }
+    }
+
+    let msg = `Importação concluída: ${sucessos} salvos.`;
+    if (ignorados > 0) msg += ` ${ignorados} lojas não encontradas.`;
+    if (erros > 0) msg += ` ${erros} erros.`;
+    
+    showToast(msg, erros > 0 ? "warning" : "success");
+}

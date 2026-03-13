@@ -111,3 +111,50 @@ window.exportarTarefasPowerBI = function () {
 
     window.exportarParaExcel(flatData, "auditoria_tarefas_powerbi");
 };
+
+window.importarPlanejamentoExcel = function (event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async function (e) {
+        try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+            if (jsonData.length === 0) {
+                showToast("A planilha está vazia.", "warning");
+                return;
+            }
+
+            // Validar colunas básicas
+            const firstRow = jsonData[0];
+            const requiredCols = ["LOJA", "DATA_PREVISTA", "AUDITOR_RESPONSAVEL"];
+            const missingCols = requiredCols.filter(col => !(col in firstRow));
+
+            if (missingCols.length > 0) {
+                showToast("Colunas ausentes: " + missingCols.join(", "), "error");
+                return;
+            }
+
+            showToast("Processando " + jsonData.length + " registros...", "info");
+            
+            if (typeof window.processarImportacaoPlanejamento === 'function') {
+                await window.processarImportacaoPlanejamento(jsonData);
+            } else {
+                console.error("Função window.processarImportacaoPlanejamento não encontrada.");
+                showToast("Erro interno: Controlador de importação não pronto.", "error");
+            }
+
+            // Limpa o input para permitir re-importação do mesmo arquivo
+            event.target.value = '';
+        } catch (err) {
+            console.error("Erro ao ler Excel:", err);
+            showToast("Erro ao processar o arquivo Excel.", "error");
+        }
+    };
+    reader.readAsArrayBuffer(file);
+};
