@@ -104,15 +104,38 @@ window.toggleSidebar = function () {
 // ====== EQUIPE ======
 window.abrirModalEquipe = function() {
     document.getElementById('modalEquipe').classList.add('show');
+    window.carregarUsuariosSistema();
 }
 
 window.fecharModalEquipe = function() {
     document.getElementById('modalEquipe').classList.remove('show');
 }
 
+window.carregarUsuariosSistema = async function() {
+    const select = document.getElementById('novoMembroSelecionado');
+    if (!select) return;
+    select.innerHTML = '<option value="">Carregando...</option>';
+    try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        let users = [];
+        querySnapshot.forEach(docSnap => users.push(docSnap.data().user));
+        users.sort();
+        select.innerHTML = '<option value="">Selecione um usuário...</option>';
+        users.forEach(u => {
+            const opt = document.createElement('option');
+            opt.value = u;
+            opt.innerText = u;
+            select.appendChild(opt);
+        });
+    } catch(e) {
+        console.error(e);
+        select.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+}
+
 window.adicionarMembro = async function() {
-    const nome = document.getElementById('novoMembroNome').value.trim();
-    if (!nome) return showToast("Digite um nome", "error");
+    const nome = document.getElementById('novoMembroSelecionado').value;
+    if (!nome) return showToast("Selecione um usuário", "error");
     if (equipeCache.find(m => m.nome.toLowerCase() === nome.toLowerCase())) {
         return showToast("Membro já existe", "error");
     }

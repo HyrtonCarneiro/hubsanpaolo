@@ -222,15 +222,38 @@ window.confirmarEdicaoAudiProj = async function () {
 // ====== EQUIPE ======
 window.abrirModalAudiEquipe = function () {
     document.getElementById('modalAudiEquipe').classList.add('show');
+    window.carregarUsuariosSistema();
 }
 
 window.fecharModalAudiEquipe = function () {
     document.getElementById('modalAudiEquipe').classList.remove('show');
 }
 
+window.carregarUsuariosSistema = async function() {
+    var select = document.getElementById('novoAudiMembroSelecionado');
+    if (!select) return;
+    select.innerHTML = '<option value="">Carregando...</option>';
+    try {
+        var querySnapshot = await getDocs(collection(db, "users"));
+        var users = [];
+        querySnapshot.forEach(function(docSnap) { users.push(docSnap.data().user); });
+        users.sort();
+        select.innerHTML = '<option value="">Selecione um usuário...</option>';
+        users.forEach(function(u) {
+            var opt = document.createElement('option');
+            opt.value = u;
+            opt.innerText = u;
+            select.appendChild(opt);
+        });
+    } catch(e) {
+        console.error(e);
+        select.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+}
+
 window.adicionarAudiMembro = async function () {
-    var nome = document.getElementById('novoAudiMembroNome').value.trim();
-    if (!nome) return showToast("Digite um nome", "error");
+    var nome = document.getElementById('novoAudiMembroSelecionado').value;
+    if (!nome) return showToast("Selecione um usuário", "error");
     if (window.audiEquipe.find(function (m) { return m.nome.toLowerCase() === nome.toLowerCase(); })) {
         return showToast("Membro já existe", "error");
     }

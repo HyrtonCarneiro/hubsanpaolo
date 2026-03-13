@@ -449,15 +449,44 @@ window.confirmarEdicaoProj = async function () {
 // ====== EQUIPE ======
 window.abrirModalEquipe = function () {
     document.getElementById('modalEquipe').classList.add('show');
+    window.carregarUsuariosSistema();
 }
 
 window.fecharModalEquipe = function () {
     document.getElementById('modalEquipe').classList.remove('show');
 }
 
+window.carregarUsuariosSistema = async function() {
+    var select = document.getElementById('novoMembroSelecionado');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Carregando...</option>';
+    
+    try {
+        var querySnapshot = await getDocs(collection(db, "users"));
+        var users = [];
+        querySnapshot.forEach(function(doc) {
+            users.push(doc.data().user);
+        });
+        
+        users.sort();
+        
+        select.innerHTML = '<option value="">Selecione um usuário...</option>';
+        users.forEach(function(u) {
+            var opt = document.createElement('option');
+            opt.value = u;
+            opt.innerText = u;
+            select.appendChild(opt);
+        });
+    } catch (e) {
+        console.error(e);
+        select.innerHTML = '<option value="">Erro ao carregar</option>';
+    }
+}
+
 window.adicionarMembro = async function () {
-    var nome = document.getElementById('novoMembroNome').value.trim();
-    if (!nome) return showToast("Digite um nome", "error");
+    var nome = document.getElementById('novoMembroSelecionado').value;
+    if (!nome) return showToast("Selecione um usuário", "error");
     if (window.membrosEquipe.find(function (m) { return m.nome.toLowerCase() === nome.toLowerCase(); })) {
         return showToast("Membro já existe", "error");
     }

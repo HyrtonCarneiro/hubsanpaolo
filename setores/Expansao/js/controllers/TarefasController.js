@@ -113,6 +113,29 @@ window.TarefasController = {
         modal.classList.remove('hidden');
         modal.classList.add('show');
         this.renderListaMembrosModal();
+        this.carregarUsuariosSistema();
+    },
+
+    async carregarUsuariosSistema() {
+        const select = document.getElementById('novoMembroExpSelecionado');
+        if (!select) return;
+        select.innerHTML = '<option value="">Carregando...</option>';
+        try {
+            const querySnapshot = await getDocs(collection(db, "users"));
+            let users = [];
+            querySnapshot.forEach(docSnap => users.push(docSnap.data().user));
+            users.sort();
+            select.innerHTML = '<option value="">Selecione um usuário...</option>';
+            users.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u;
+                opt.innerText = u;
+                select.appendChild(opt);
+            });
+        } catch(e) {
+            console.error(e);
+            select.innerHTML = '<option value="">Erro ao carregar</option>';
+        }
     },
 
     fecharModalEquipe() {
@@ -135,11 +158,10 @@ window.TarefasController = {
     },
 
     async addMembro() {
-        const nome = document.getElementById('novoMembroExp').value.trim();
-        if (!nome) return;
+        const nome = document.getElementById('novoMembroExpSelecionado').value;
+        if (!nome) return window.showToast("Selecione um usuário", "warning");
         try {
             await ExpansaoService.addMembroEquipe(nome);
-            document.getElementById('novoMembroExp').value = '';
             window.showToast("Membro adicionado", "success");
         } catch (e) { console.error(e); }
     },
