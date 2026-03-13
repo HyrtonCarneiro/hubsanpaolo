@@ -153,6 +153,7 @@ window.renderizarLojas = function () {
     }
 }
 
+function abrirModal(id, nome, estado) {
     lojaAtualId = id;
     document.getElementById('modalTitle').innerText = nome;
     document.getElementById('modalEstado').innerText = estado;
@@ -308,6 +309,7 @@ function renderizarComentarios(hist) {
 }
 
 // ====== EDIÇÃO DE CHAMADOS ======
+window.abrirModalEditLog = function (firebaseId) {
     var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === firebaseId; });
     if (!log) return;
     document.getElementById('editLogId').value = firebaseId;
@@ -338,6 +340,7 @@ window.fecharModalEditLog = function () {
     document.getElementById('modalEditLog').classList.remove('show');
 }
 
+window.confirmarEdicaoLog = async function () {
     var id = document.getElementById('editLogId').value;
     var texto = document.getElementById('editLogTexto').value;
     var tag = document.getElementById('editLogTag').value;
