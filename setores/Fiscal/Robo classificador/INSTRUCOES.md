@@ -1,35 +1,13 @@
-# Instruções para o Robô de Classificação
+# Guia de Uso - Robô de Classificação
 
-O robô foi simplificado para funcionar sem nenhuma instalação externa. Ele processa PDFs nativos (documentos digitais onde o texto é selecionável).
+O robô organiza automaticamente seus arquivos PDF em pastas (Boleto, NFse e Nota de Débito).
 
-## 1. Como Usar
-1. Baixe o arquivo `Robo classificador.rar` no Hub San Paolo.
-2. Extraia o conteúdo completo para uma pasta. **Atenção:** O arquivo `Robo classificador.exe` precisa estar na mesma pasta que a pasta `_internal` para funcionar.
-3. Coloque todos os PDFs que deseja classificar **na mesma pasta** do executável.
-4. Dê dois cliques no `Robo classificador.exe`.
-
-## 2. Para Gerar o Pacote (TI / Admin)
-Se precisar gerar o pacote novamente, use o modo `--onedir` do PyInstaller:
-
-```powershell
-# 1. Entre na pasta do robô
-cd /d "G:\Meu Drive\SANPAOLO\Dev\hubsanpaolo\setores\Fiscal\Robo classificador"
-
-# 2. Gere o pacote (EXE + Pasta _internal)
-python -m PyInstaller --onedir --name "Robo classificador" "Robo classificador.py"
-```
-Ao terminar, compacte o conteúdo da pasta `dist/Robo classificador` (o `.exe` e a pasta `_internal`) em um arquivo chamado `Robo classificador.rar` e coloque na pasta `Robo classificador` do site.
-
-## 2. O que ele fará?
-- O robô lerá cada PDF.
-- Criará as pastas `Boleto`, `NFse` e `Nota_de_Debito` automaticamente.
-- Moverá cada arquivo para sua respectiva pasta.
-
-## 3. Requisitos
-- Apenas Windows.
-- **Não** precisa de Python.
-- **Não** precisa de Tesseract OCR.
-- Funciona apenas com PDFs digitais (não funciona com fotos/scans sem texto nativo).
+## Como Usar
+1. Baixe o arquivo **Robo classificador.rar**.
+2. Extraia o conteúdo para uma pasta no seu computador.
+3. Coloque todos os PDFs que você quer organizar **na mesma pasta** onde está o arquivo `Robo classificador.exe`.
+4. Dê dois cliques no **Robo classificador.exe**.
+5. Uma janela irá abrir mostrando o progresso. Quando terminar, pressione a tecla **Enter** para fechar.
 
 ---
-**Nota para Desenvolvedores:** Se desejar rodar o código-fonte (`.py`), você precisará do Python 3.10+ e da biblioteca `pymupdf` (`pip install pymupdf`).
+**Atenção:** Não apague a pasta `_internal`, pois o robô precisa dela para funcionar.
