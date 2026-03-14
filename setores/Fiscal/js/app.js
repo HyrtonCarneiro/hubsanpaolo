@@ -42,7 +42,9 @@ function initApp() {
     // Injetar botão do Hub dinamicamente
     document.querySelectorAll('.flex.items-center.gap-3').forEach(container => {
         if (!container.closest('.mb-8')) return; // Apenas no header
+        if (!container.querySelector('h1')) return; // Apenas se houver título principal
         if (container.querySelector('.btn-hub')) return;
+        
         const btn = document.createElement('button');
         btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
         btn.title = 'Escolha de Setores';
