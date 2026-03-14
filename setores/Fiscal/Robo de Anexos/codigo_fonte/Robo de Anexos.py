@@ -90,28 +90,31 @@ def main():
         response.raise_for_status()
         data = response.json()
         
-        # Extrair anexos
+        # Extrair anexos recursivamente de todo o JSON
         urls = []
         
-        # 1. De checklistActions
-        checklist_actions = data.get('checklistActions', [])
-        for action in checklist_actions:
-            attachments = action.get('attachments', [])
-            for attr in attachments:
-                if isinstance(attr, str) and attr.startswith('http'):
-                    urls.append(attr)
-            
-            # Alguns endpoints usam imageUrl
-            img_url = action.get('imageUrl')
-            if img_url and isinstance(img_url, str) and img_url.startswith('http'):
-                urls.append(img_url)
+        def find_urls(obj):
+            if isinstance(obj, str):
+                if obj.startswith('http') and any(ext in obj.lower() for ext in ['.jpg', '.jpeg', '.png', '.pdf', '.docx', '.xlsx', '.txt', '.zip']):
+                    urls.append(obj)
+                # Adicionar caso seja uma URL curta do Trílogo ou algo similar sem ext óbvia
+                elif obj.startswith('http') and 'trilogo' in obj.lower() and ('/attachment/' in obj.lower() or '/file/' in obj.lower()):
+                    urls.append(obj)
+            elif isinstance(obj, dict):
+                for value in obj.values():
+                    find_urls(value)
+            elif isinstance(obj, list):
+                for item in obj:
+                    find_urls(item)
+
+        find_urls(data)
 
         # Remover duplicados
         urls = list(set(urls))
 
         if not urls:
-            print(f"\n📭 Nenhum anexo encontrado para o ticket {ticket_id}.")
-            print("Dica: Verifique se os anexos estão vinculados a itens do checklist.")
+            log_message(f"Nenhum anexo encontrado para o ticket {ticket_id}.")
+            print("\nDica: Se houver anexos e o robô não os encontrou, verifique se estão visíveis na API Pública.")
         else:
             print(f"\n📂 Encontrados {len(urls)} anexos. Iniciando download...\n")
             
