@@ -73,7 +73,7 @@ function iniciarListenerEquipe() {
 }
 
 window.switchView = function (view) {
-    const views = ['dashboard', 'tarefas', 'metapwr', 'robo'];
+    const views = ['dashboard', 'tarefas', 'metapwr', 'robo', 'robo-anexos'];
     
     views.forEach(v => {
         const viewEl = document.getElementById(`view-${v}`);

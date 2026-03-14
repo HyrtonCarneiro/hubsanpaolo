@@ -65,6 +65,9 @@
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('robo')" id="nav-robo">
                     <i class="ph ph-robot text-xl"></i> Robô de Classificação
                 </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('robo-anexos')" id="nav-robo-anexos">
+                    <i class="ph ph-paperclip text-xl"></i> Robô de Anexos
+                </div>
             </div>
             <div class="p-6 border-t border-[var(--border)] bg-black/5 dark:bg-black/20">
                 <div class="mb-4 text-sm text-[var(--text-muted)] flex flex-col gap-1">Logado como: <strong id="loggedUserName"
@@ -168,6 +171,47 @@
                             
                             <a href="Robo%20classificador/INSTRUCOES.md" target="_blank" class="flex items-center justify-center gap-2 text-[var(--text-muted)] hover:text-brandOrange underline text-sm transition-all">
                                 <i class="ph ph-book-open"></i> Ver Guia de Uso
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-robo-anexos" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Robô de Anexos (Alpha)</h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 p-6 animate-fade-in">
+                    <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-[var(--border)] max-w-2xl mx-auto">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center">
+                                <i class="ph ph-paperclip text-blue-500 text-2xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-[var(--text-main)]">Robô de Anexos</h2>
+                        </div>
+                        
+                        <p class="text-[var(--text-muted)] mb-6 leading-relaxed">
+                            O Robô de Anexos facilita o download em massa de todos os documentos anexados a um Ticket da Trílogo.
+                        </p>
+                        
+                        <ul class="space-y-3 mb-8 text-[var(--text-main)]">
+                            <li class="flex items-center gap-3 text-lg"><i class="ph ph-check-circle text-green-500"></i> Download por número de ticket</li>
+                            <li class="flex items-center gap-3 text-lg"><i class="ph ph-check-circle text-green-500"></i> Salva arquivos automaticamente na pasta local</li>
+                            <li class="flex items-center gap-3 text-lg"><i class="ph ph-check-circle text-green-500"></i> Suporte a imagens e PDFs de checklist</li>
+                        </ul>
+
+                        <div class="flex flex-col gap-4">
+                            <a href="Robo%20de%20Anexos/Robo%20de%20Anexos.rar?v=1.0" download class="flex items-center justify-center gap-3 px-8 py-5 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-xl hover:brightness-110 hover:-translate-y-1 transition-all">
+                                <i class="ph ph-download-simple text-2xl"></i> Baixar Robô (Arquivos Completos)
+                            </a>
+                            
+                            <a href="Robo%20de%20Anexos/INSTRUCOES.md" target="_blank" class="flex items-center justify-center gap-2 text-[var(--text-muted)] hover:text-blue-500 underline text-sm transition-all">
+                                <i class="ph ph-book-open"></i> Ver Guia de Uso / Código Fonte
                             </a>
                         </div>
                     </div>
