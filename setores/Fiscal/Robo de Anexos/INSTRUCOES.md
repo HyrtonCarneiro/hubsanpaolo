@@ -15,6 +15,10 @@ Para rodar a partir do código fonte:
 1. Instale as dependências: `pip install -r requirements.txt`
 2. Execute: `python "Robo de Anexos.py"`
 
-## Compilação (Opcional)
-Para gerar o executável:
-`pyinstaller --onefile --add-data "config.ini;." "Robo de Anexos.py"`
+## Dicas de Suporte
+- Se o robô não encontrar anexos em um ticket que você sabe que tem (ex: 820829), ele gerará um arquivo chamado `debug_full_response.json`. 
+- Esse arquivo serve para o desenvolvedor verificar se a Trílogo mudou o nome dos campos de anexos.
+
+## Publicação
+Para instruções detalhadas de como compilar e subir para o site, veja o arquivo:
+[INSTRUCOES_PUBLICACAO.md](INSTRUCOES_PUBLICACAO.md)
