@@ -4,6 +4,8 @@ try:
     import sys
     import configparser
     import time
+    import re
+    import json
 except ImportError as e:
     print(f"\n❌ ERRO DE BIBLIOTECA: {str(e)}")
     print("\nCertifique-se de que instalou os requisitos antes de compilar:")
@@ -93,13 +95,37 @@ def main():
         # Extrair anexos recursivamente de todo o JSON
         urls = []
         
+        # Filtros de exclusão para URLs conhecidas de metadados
+        exclusion_list = ['schema.org', 'w3.org', 'microsoft.com', 'google.com/recaptcha', 'apple.com']
+
         def find_urls(obj):
             if isinstance(obj, str):
-                if obj.startswith('http') and any(ext in obj.lower() for ext in ['.jpg', '.jpeg', '.png', '.pdf', '.docx', '.xlsx', '.txt', '.zip']):
-                    urls.append(obj)
-                # Adicionar caso seja uma URL curta do Trílogo ou algo similar sem ext óbvia
-                elif obj.startswith('http') and 'trilogo' in obj.lower() and ('/attachment/' in obj.lower() or '/file/' in obj.lower()):
-                    urls.append(obj)
+                if len(obj) > 1000: return
+                
+                # 1. Regex para encontrar URLs completas
+                found = re.findall(r'https?://[^\s<>"]+', obj)
+                for item in found:
+                    item_lower = item.lower()
+                    if not any(exc in item_lower for exc in exclusion_list):
+                        # Se parece um anexo (extensão ou pasta de arquivos)
+                        is_storage = 'storage.googleapis' in item_lower or 'amazonaws.com' in item_lower or 'trilogo' in item_lower
+                        has_extension = any(ext in item_lower for ext in ['.jpg', '.jpeg', '.png', '.pdf', '.docx', '.xlsx', '.xls', '.txt', '.zip', '.rar', '.doc', '.msg'])
+                        is_attachment_path = any(kw in item_lower for kw in ['/attachment/', '/file/', '/image/', '/media/'])
+                        
+                        if is_storage or has_extension or is_attachment_path:
+                            urls.append(item)
+                
+                # 2. Busca por caminhos relativos ou URLs sem protocolo que pareçam anexos
+                obj_lower = obj.lower()
+                if not obj.startswith('http') and not any(exc in obj_lower for exc in exclusion_list):
+                    if any(ext in obj_lower for ext in ['.jpg', '.jpeg', '.png', '.pdf', '.docx', '.xlsx', '.xls', '.txt', '.zip', '.rar', '.doc', '.msg']):
+                        if obj.startswith('//'):
+                            urls.append('https:' + obj)
+                        elif obj.startswith('/'):
+                            # Se for um caminho absoluto do servidor, tentamos o host da API
+                            domain = base_url.replace('https://', '').replace('http://', '').split('/')[0]
+                            urls.append(f"https://{domain}{obj}")
+
             elif isinstance(obj, dict):
                 for value in obj.values():
                     find_urls(value)
@@ -115,6 +141,15 @@ def main():
         if not urls:
             log_message(f"Nenhum anexo encontrado para o ticket {ticket_id}.")
             print("\nDica: Se houver anexos e o robô não os encontrou, verifique se estão visíveis na API Pública.")
+            
+            # Log de depuração COMPLETO
+            try:
+                with open('debug_full_response.json', 'w', encoding='utf-8') as f:
+                    json.dump(data, f, indent=4, ensure_ascii=False)
+                log_message("Log de depuração completo gerado: debug_full_response.json")
+                print("Por favor, envie este arquivo para análise.")
+            except:
+                pass
         else:
             print(f"\n📂 Encontrados {len(urls)} anexos. Iniciando download...\n")
             
