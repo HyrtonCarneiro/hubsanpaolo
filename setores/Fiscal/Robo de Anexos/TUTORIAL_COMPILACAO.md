@@ -19,11 +19,11 @@ Navegue até a pasta do código fonte:
 cd "G:\Meu Drive\SANPAOLO\Dev\hubsanpaolo\setores\Fiscal\Robo de Anexos\codigo_fonte"
 ```
 
-Execute o comando do PyInstaller para gerar o arquivo único:
+Execute o comando abaixo para gerar o arquivo único (usamos `python -m PyInstaller` para evitar erros de "comando não encontrado"):
 ```bash
-pyinstaller --onefile --noconsole --add-data "config.ini;." "Robo de Anexos.py"
+python -m PyInstaller --onefile --add-data "config.ini;." "Robo de Anexos.py"
 ```
-*Nota: Se quiser ver logs de erro durante os testes, remova o `--noconsole`.*
+*Nota: Não use a opção `--noconsole`, pois o robô precisa da janela preta (terminal) para você digitar o número do ticket e ver o progresso.*
 
 ## 3. Localizando o Arquivo
 Após o comando terminar, uma pasta chamada `dist` será criada. Dentro dela estará o arquivo `Robo de Anexos.exe`.
