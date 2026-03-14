@@ -1,8 +1,15 @@
-import requests
-import os
-import sys
-import configparser
-import time
+try:
+    import requests
+    import os
+    import sys
+    import configparser
+    import time
+except ImportError as e:
+    print(f"\n❌ ERRO DE BIBLIOTECA: {str(e)}")
+    print("\nCertifique-se de que instalou os requisitos antes de compilar:")
+    print("👉 pip install requests configparser")
+    input("\nPressione ENTER para fechar...")
+    sys.exit(1)
 
 def log_message(message):
     print(f"[{time.strftime('%H:%M:%S')}] {message}")

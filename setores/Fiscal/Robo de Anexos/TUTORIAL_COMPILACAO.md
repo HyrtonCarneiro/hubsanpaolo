@@ -2,8 +2,12 @@
 
 Siga os passos abaixo para transformar o código Python em um executável (.exe) e torná-lo disponível para download no site.
 
+
+> [!IMPORTANT]
+> O erro que você viu (`No module named 'requests'`) acontece porque a biblioteca `requests` não estava instalada no ambiente Python na hora de gerar o executável. 
+
 ## 1. Preparação do Ambiente
-Abra o **Prompt de Comando (CMD)** ou **PowerShell** e certifique-se de que o Python está instalado. Instale as bibliotecas necessárias:
+Abra o **Prompt de Comando (CMD)** ou **PowerShell** e instale obrigatoriamente as bibliotecas:
 
 ```bash
 pip install requests configparser pyinstaller
