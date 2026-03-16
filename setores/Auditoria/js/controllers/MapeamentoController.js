@@ -433,6 +433,13 @@ window.processarImportacaoMapeamento = async function (dados) {
             continue;
         }
 
+        // Parse Tentativa (more robust)
+        let nTentativaFinal = 1;
+        if (rawTentativa !== undefined && rawTentativa !== null && rawTentativa !== "") {
+            const parsed = parseInt(rawTentativa.toString().replace(/[^0-9]/g, ''));
+            if (!isNaN(parsed)) nTentativaFinal = parsed;
+        }
+
         // Tratar data (Excel Serial or String)
         let dataFormatada = "";
         try {
@@ -463,7 +470,6 @@ window.processarImportacaoMapeamento = async function (dados) {
             window.updateImportProgress(index, total, `Linha ${i}: Data inválida (${rawData}).`, 'warning');
             continue;
         }
-
         const auditorFinal = window.getAuditorByFlexName(rawAuditor);
 
         const dadosMap = {
@@ -475,7 +481,7 @@ window.processarImportacaoMapeamento = async function (dados) {
             justificativa: rawRealizada === 'NÃO' ? (rawMotivo || 'NÃO ESPECIFICADO') : null,
             auditor: auditorFinal,
             notas: rawRealizada === 'NÃO' ? rawMotivo : '',
-            nTentativa: parseInt(rawTentativa) || 1,
+            nTentativa: nTentativaFinal,
             sla: rawNoPrazo === 'SIM',
             horario: '08:00',
             createdAt: new Date()
@@ -483,9 +489,10 @@ window.processarImportacaoMapeamento = async function (dados) {
 
         try {
             await window.MapeamentoService.registrarTentativa(dadosMap);
-            window.updateImportProgress(index, total, `${lojaValida.nome}: Salvo com sucesso.`, 'success');
+            window.updateImportProgress(index, total, `${lojaValida.nome}: Salvo (Tentativa ${nTentativaFinal}) como ${auditorFinal}.`, 'success');
             sucessos++;
         } catch (err) {
+// ...
             console.error(err);
             window.updateImportProgress(index, total, `${lojaValida.nome}: Erro (${err.message}).`, 'error');
             erros++;
