@@ -691,6 +691,37 @@
             </div>
         </div>
     </div>
+
+    <!-- MODAL REMAPEAMENTO DE IMPORTAÇÃO -->
+    <div id="modalImportRemapear" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-full max-w-[700px] rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <div>
+                    <h2 class="text-xl font-bold text-[var(--text-main)] m-0 flex items-center gap-2">
+                        <i class="ph ph-arrows-merge text-[var(--sp-laranja)]"></i> Resolver Divergências
+                    </h2>
+                    <p class="text-xs text-[var(--text-muted)] mt-1">Os nomes abaixo não foram reconhecidos. Vincule-os para concluir a importação.</p>
+                </div>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalRemapear()"><i class="ph ph-x"></i></button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar">
+                <div id="remappingContainer" class="flex flex-col gap-6">
+                    <!-- Gerado via JS -->
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-[var(--border)] bg-black/5 dark:bg-black/20 flex justify-between items-center">
+                <span id="remappingStats" class="text-xs font-bold text-[var(--text-muted)] uppercase">0 itens pendentes</span>
+                <div class="flex gap-3">
+                    <button class="px-6 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:bg-black/5" onclick="window.fecharModalRemapear()">Ignorar Pendentes</button>
+                    <button id="btnProcessarRemapeamento" class="px-6 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.processarMapeamentoManual()">
+                        Salvar e Concluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
                 <div>
                     <label class="block text-sm font-semibold text-[var(--text-muted)] mb-1.5">Data</label>
                     <input type="date" id="editNotaData" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors">

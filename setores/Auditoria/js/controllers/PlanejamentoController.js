@@ -260,9 +260,46 @@ window.processarImportacaoPlanejamento = async function (dados) {
     let sucessos = 0;
     let erros = 0;
     let ignorados = 0;
-    const total = dados.length - 1; // Excluindo cabeçalho
+    const total = dados.length - 1;
 
     window.showImportModal(total);
+
+    const salvarLinha = async (lojaValida, rawDataRaw, auditorFinal, row) => {
+        let dataPrevista = "";
+        try {
+            if (rawDataRaw) {
+                if (typeof rawDataRaw === 'number') {
+                    const dateObj = new Date(Math.round((rawDataRaw - 25569) * 86400 * 1000));
+                    dataPrevista = dateObj.toISOString().split('T')[0];
+                } else {
+                    const strDate = rawDataRaw.toString().trim();
+                    if (strDate.includes('/')) {
+                        dataPrevista = strDate.split('/').reverse().join('-');
+                    } else {
+                        dataPrevista = strDate;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Erro data:", e);
+        }
+
+        const payload = {
+            loja: lojaValida.nome,
+            dataProxima: dataPrevista,
+            auditor: auditorFinal,
+            notasInternas: (row[5] || '').toString(), 
+            regional: row[1] || (window.lojasIniciais.find(l => l.nome === lojaValida.nome) || {}).estado || 'N/A', 
+            updatedAt: new Date().toISOString()
+        };
+
+        const existByLoja = (window.planejamentoCache || []).find(p => p.loja === lojaValida.nome);
+        if (existByLoja) {
+            await updateDoc(doc(db, "auditoria_planejamento", existByLoja.docId), payload);
+        } else {
+            await addDoc(collection(db, "auditoria_planejamento"), payload);
+        }
+    };
 
     for (let i = 1; i < dados.length; i++) {
         const row = dados[i];
@@ -278,64 +315,34 @@ window.processarImportacaoPlanejamento = async function (dados) {
             continue;
         }
 
-        // Nova Ordem solicitada: Loja(0), Regional(1), Ultima(2), Proxima(3), Auditor(4)
         const rawLoja = (row[0] || '').toString().trim();
-        const rawDataRaw = row[3]; // Pode ser string ou número do Excel
+        const rawDataRaw = row[3];
         const rawAuditor = (row[4] || '').toString().trim();
         
         if (!rawLoja) {
-            window.updateImportProgress(index, total, `Linha ${i}: Nome da loja ausente na Coluna A.`, 'warning');
+            window.updateImportProgress(index, total, `Linha ${i}: Nome da loja ausente.`, 'warning');
             continue;
         }
 
-        // Validar se a loja existe no sistema usando busca flexível
         const lojaValida = window.getLojaByFlexName(rawLoja);
-        if (!lojaValida) {
-            window.updateImportProgress(index, total, `Loja "${rawLoja}" não mapeada no sistema.`, 'warning');
+        const auditorFinal = window.getAuditorByFlexName(rawAuditor);
+
+        if (!lojaValida || !auditorFinal) {
+            const motivo = !lojaValida ? 'Loja não encontrada' : 'Auditor não encontrado';
+            window.updateImportProgress(index, total, `Linha ${i}: ${motivo}. Adicionado para remapeamento.`, 'warning');
+            window.adicionarPendente(
+                !lojaValida ? 'loja' : 'auditor', 
+                !lojaValida ? rawLoja : rawAuditor, 
+                row, 
+                { rawDataRaw, auditorParcial: auditorFinal, lojaOriginal: lojaValida, unknownAuditorName: !auditorFinal ? rawAuditor : null }
+            );
             ignorados++;
             continue;
         }
 
-        // Tratar data vinda do XLSX (pode ser serial number ou string)
-        let dataPrevista = "";
         try {
-            if (rawDataRaw) {
-                if (typeof rawDataRaw === 'number') {
-                    // Converter serial date do Excel
-                    const dateObj = new Date(Math.round((rawDataRaw - 25569) * 86400 * 1000));
-                    dataPrevista = dateObj.toISOString().split('T')[0];
-                } else {
-                    const strDate = rawDataRaw.toString().trim();
-                    if (strDate.includes('/')) {
-                        dataPrevista = strDate.split('/').reverse().join('-'); // DD/MM/YYYY -> YYYY-MM-DD
-                    } else {
-                        dataPrevista = strDate;
-                    }
-                }
-            }
-        } catch (e) {
-            console.error("Erro data:", e);
-        }
-
-        const payload = {
-            loja: lojaValida.nome,
-            dataProxima: dataPrevista,
-            auditor: window.properCase(rawAuditor),
-            notasInternas: (row[5] || '').toString(), 
-            regional: row[1] || (window.lojasIniciais.find(l => l.nome === lojaValida.nome) || {}).estado || 'N/A', 
-            updatedAt: new Date().toISOString()
-        };
-
-        try {
-            // Busca por nome de loja no planejamento existente para atualizar
-            const existByLoja = (window.planejamentoCache || []).find(p => p.loja === lojaValida.nome);
-            if (existByLoja) {
-                await updateDoc(doc(db, "auditoria_planejamento", existByLoja.docId), payload);
-                window.updateImportProgress(index, total, `${lojaValida.nome}: Atualizado com sucesso.`, 'success');
-            } else {
-                await addDoc(collection(db, "auditoria_planejamento"), payload);
-                window.updateImportProgress(index, total, `${lojaValida.nome}: Criado com sucesso.`, 'success');
-            }
+            await salvarLinha(lojaValida, rawDataRaw, auditorFinal, row);
+            window.updateImportProgress(index, total, `${lojaValida.nome}: Processado com sucesso.`, 'success');
             sucessos++;
         } catch (err) {
             console.error("Erro import:", err);
@@ -343,13 +350,27 @@ window.processarImportacaoPlanejamento = async function (dados) {
             erros++;
         }
         
-        // Pequeno delay para não travar a UI em imports grandes
         if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
     }
 
-    let msg = `Importação concluída: ${sucessos} salvos.`;
-    if (ignorados > 0) msg += ` ${ignorados} lojas não encontradas.`;
-    if (erros > 0) msg += ` ${erros} erros.`;
-    
-    showToast(msg, erros > 0 ? "warning" : "success");
+    if (window.importPendentes.rows.length > 0 && !window.importCancelled) {
+        window.updateImportProgress(total, total, `Importação parcial: ${window.importPendentes.rows.length} itens aguardando remapeamento.`, 'warning');
+        
+        window.abrirModalRemapear(async (resolvidos) => {
+            let remSucessos = 0;
+            for (const r of resolvidos) {
+                try {
+                    const l = r.lojaMapeada || r.lojaOriginal;
+                    const a = r.auditorMapeado || r.auditorParcial || window.currentUser || 'Sistema';
+                    await salvarLinha(l, r.rawDataRaw, a, r.row);
+                    remSucessos++;
+                } catch (e) { console.error("Erro remapeamento:", e); }
+            }
+            showToast(`${remSucessos} registros adicionais salvos após remapeamento.`);
+        }, 'planejamento');
+    } else {
+        let msg = `Importação concluída: ${sucessos} salvos.`;
+        if (erros > 0) msg += ` ${erros} erros.`;
+        showToast(msg, erros > 0 ? "warning" : "success");
+    }
 }

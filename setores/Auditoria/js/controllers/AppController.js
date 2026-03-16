@@ -80,7 +80,7 @@ window.getLojaByFlexName = function(name) {
 };
 
 window.getAuditorByFlexName = function(name) {
-    if (!name) return window.currentUser || 'Sistema';
+    if (!name) return null;
     const search = window.normalizeString(name);
     
     // 1. Tentar correspondência exata ou parcial na equipe cadastrada
@@ -92,14 +92,23 @@ window.getAuditorByFlexName = function(name) {
         if (found) return found.nome;
     }
 
-    // 2. Se não encontrou, retorna o nome formatado bonitinho
-    return window.properCase(name);
+    // Retorna null para disparar o remapeamento se o nome na planilha não for reconhecido como um membro oficial
+    return null;
 };
 
 // --- CONTROLE DE MODAL DE IMPORTAÇÃO ---
 
+window.importPendentes = { 
+    rows: [], 
+    unknownStores: new Set(), 
+    unknownAuditors: new Set(), 
+    callback: null,
+    context: null // 'planejamento' ou 'mapeamento'
+};
+
 window.showImportModal = function(total) {
     window.importCancelled = false; // Reset flag
+    window.importPendentes = { rows: [], unknownStores: new Set(), unknownAuditors: new Set(), callback: null, context: null };
     const modal = document.getElementById('modalImportProgresso');
     const log = document.getElementById('importLog');
     const bar = document.getElementById('importProgressBar');
@@ -119,54 +128,134 @@ window.showImportModal = function(total) {
     if (btnInterromper) btnInterromper.classList.remove('hidden');
 };
 
-window.interromperImportacao = function() {
-    window.importCancelled = true;
-    const btnInterromper = document.getElementById('btnInterromperImport');
-    if (btnInterromper) btnInterromper.classList.add('hidden');
-    const log = document.getElementById('importLog');
-    if (log) {
-        const line = document.createElement('div');
-        line.className = 'text-red-600 font-bold mt-2';
-        line.innerText = `[${new Date().toLocaleTimeString()}] 🛑 INTERRUPÇÃO SOLICITADA PELO USUÁRIO...`;
-        log.appendChild(line);
-        log.scrollTop = log.scrollHeight;
-    }
+window.adicionarPendente = function(tipo, nome, row, extraData = {}) {
+    window.importPendentes.rows.push({ tipo, nome, row, ...extraData });
+    if (tipo === 'loja') window.importPendentes.unknownStores.add(nome);
+    if (tipo === 'auditor') window.importPendentes.unknownAuditors.add(nome);
 };
 
-window.updateImportProgress = function(current, total, message, type = 'info') {
-    const log = document.getElementById('importLog');
-    const bar = document.getElementById('importProgressBar');
-    const percent = document.getElementById('importProgressPercent');
-    const status = document.getElementById('importProgressStatus');
+window.abrirModalRemapear = function(callback, context) {
+    window.importPendentes.callback = callback;
+    window.importPendentes.context = context;
 
-    const p = Math.round((current / total) * 100);
-    if (bar) bar.style.width = p + '%';
-    if (percent) percent.innerText = p + '%';
-    if (status) status.innerText = `Processando ${current}/${total}...`;
+    const modal = document.getElementById('modalImportRemapear');
+    const container = document.getElementById('remappingContainer');
+    const stats = document.getElementById('remappingStats');
 
-    if (log) {
-        const line = document.createElement('div');
-        const colors = {
-            'info': 'text-[var(--text-main)]',
-            'success': 'text-green-500',
-            'warning': 'text-orange-500',
-            'error': 'text-red-500 font-bold'
-        };
-        line.className = colors[type] || colors.info;
-        line.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
-        log.appendChild(line);
-        log.scrollTop = log.scrollHeight;
+    if (!modal || !container) return;
+
+    container.innerHTML = '';
+    
+    // Agrupar lojas desconhecidas
+    if (window.importPendentes.unknownStores.size > 0) {
+        let html = `<div><h4 class="text-sm font-bold text-[var(--sp-red)] uppercase mb-3 flex items-center gap-2"><i class="ph ph-buildings"></i> Lojas não encontradas</h4><div class="space-y-3">`;
+        [...window.importPendentes.unknownStores].sort().forEach(nome => {
+            html += `
+                <div class="flex items-center gap-3 bg-black/5 p-3 rounded-lg border border-[var(--border)]">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-0.5">Nome na Planilha</div>
+                        <div class="font-bold truncate text-[var(--text-main)]">${nome}</div>
+                    </div>
+                    <i class="ph ph-arrow-right text-[var(--text-muted)]"></i>
+                    <div class="flex-1">
+                        <div class="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-0.5">Vincular no Hub</div>
+                        <select data-unknown-store="${nome}" class="w-full text-sm p-2 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)]">
+                            <option value="">Ignorar este nome</option>
+                            ${window.lojasIniciais.map(l => `<option value="${l.id}">${l.nome} (${l.estado})</option>`).join('')}
+                        </select>
+                    </div>
+                </div>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
     }
 
-    if (current === total || window.importCancelled) {
-        if (status) status.innerText = window.importCancelled ? 'Importação Interrompida' : 'Importação Concluída!';
-        const btnFechar = document.getElementById('btnFecharImport');
-        const btnConcluir = document.getElementById('btnConcluirImport');
-        const btnInterromper = document.getElementById('btnInterromperImport');
-        if (btnFechar) btnFechar.classList.remove('hidden');
-        if (btnConcluir) btnConcluir.classList.remove('hidden');
-        if (btnInterromper) btnInterromper.classList.add('hidden');
+    // Agrupar auditores desconhecidos
+    if (window.importPendentes.unknownAuditors.size > 0) {
+        let html = `<div class="mt-4"><h4 class="text-sm font-bold text-[var(--sp-red)] uppercase mb-3 flex items-center gap-2"><i class="ph ph-users"></i> Auditores não encontrados</h4><div class="space-y-3">`;
+        [...window.importPendentes.unknownAuditors].sort().forEach(nome => {
+            html += `
+                <div class="flex items-center gap-3 bg-black/5 p-3 rounded-lg border border-[var(--border)]">
+                    <div class="flex-1 min-w-0">
+                        <div class="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-0.5">Nome na Planilha</div>
+                        <div class="font-bold truncate text-[var(--text-main)]">${nome}</div>
+                    </div>
+                    <i class="ph ph-arrow-right text-[var(--text-muted)]"></i>
+                    <div class="flex-1">
+                        <div class="text-[10px] uppercase font-bold text-[var(--text-muted)] mb-0.5">Vincular no Hub</div>
+                        <select data-unknown-auditor="${nome}" class="w-full text-sm p-2 rounded-md border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)]">
+                            <option value="">Usar nome da planilha</option>
+                            ${(window.audiEquipe || []).map(m => `<option value="${m.nome}">${m.nome}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML += html;
     }
+
+    if (stats) stats.innerText = `${window.importPendentes.rows.length} registros aguardando`;
+    modal.classList.add('show');
+};
+
+window.processarMapeamentoManual = async function() {
+    const modal = document.getElementById('modalImportRemapear');
+    const btn = document.getElementById('btnProcessarRemapeamento');
+    if (!modal || !btn) return;
+
+    btn.disabled = true;
+    btn.innerHTML = `<i class="ph ph-circle-notch animate-spin"></i> Processando...`;
+
+    // Coletar mapeamentos dos selects
+    const mapLojas = {};
+    modal.querySelectorAll('[data-unknown-store]').forEach(select => {
+        if (select.value) {
+            const loja = window.lojasIniciais.find(l => l.id.toString() === select.value.toString());
+            if (loja) mapLojas[select.getAttribute('data-unknown-store')] = loja;
+        }
+    });
+
+    const mapAuditores = {};
+    modal.querySelectorAll('[data-unknown-auditor]').forEach(select => {
+        if (select.value) mapAuditores[select.getAttribute('data-unknown-auditor')] = select.value;
+    });
+
+    // Re-processar as linhas pendentes
+    const rowsParaProcessar = window.importPendentes.rows.map(pendente => {
+        // Se a falha foi de loja e agora temos um mapeamento
+        if (pendente.tipo === 'loja' && mapLojas[pendente.nome]) {
+            return { ...pendente, lojaMapeada: mapLojas[pendente.nome] };
+        }
+        // Se a falha foi de auditor e agora temos um mapeamento
+        if (pendente.tipo === 'auditor' && mapAuditores[pendente.nome]) {
+            return { ...pendente, auditorMapeado: mapAuditores[pendente.nome] };
+        }
+        // Se for uma linha com loja reconhecida mas auditor mapeado
+        if (pendente.unknownAuditorName && mapAuditores[pendente.unknownAuditorName]) {
+            return { ...pendente, auditorMapeado: mapAuditores[pendente.unknownAuditorName] };
+        }
+        
+        return pendente;
+    });
+
+    // Filtrar apenas o que foi resolvido (ou o que o usuário quer ignorar falha e seguir com o que tem)
+    // Se a loja continua nula, não tem como salvar.
+    const resolvidos = rowsParaProcessar.filter(r => r.lojaMapeada || r.lojaOriginal);
+
+    if (window.importPendentes.callback) {
+        await window.importPendentes.callback(resolvidos, mapLojas, mapAuditores);
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = `Salvar e Concluir`;
+    window.fecharModalRemapear();
+    window.fecharModalImportProgresso();
+    showToast(`${resolvidos.length} registros adicionais processados.`);
+};
+
+window.fecharModalRemapear = function() {
+    const modal = document.getElementById('modalImportRemapear');
+    if (modal) modal.classList.remove('show');
 };
 
 window.fecharModalImportProgresso = function() {
