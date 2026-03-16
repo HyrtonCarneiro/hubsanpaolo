@@ -261,12 +261,15 @@ window.processarImportacaoPlanejamento = async function (dados) {
     let erros = 0;
     let ignorados = 0;
 
-    for (const row of dados) {
-        const rawLoja = (row.LOJA || row.KA_BI || '').toString().trim();
-        const dataPrevista = (row.DATA_PREVISTA || row['PLANEJAMENTO INICIAL (DIA)'] || '').toString().trim();
-        const rawAuditor = (row.AUDITOR_RESPONSAVEL || row.RESPONSAVEL || '').toString().trim();
-        const idRegistro = row.ID_REGISTRO;
+    for (let i = 1; i < dados.length; i++) {
+        const row = dados[i];
+        if (!row || row.length < 1) continue;
 
+        // Nova Ordem solicitada: Loja(0), Regional(1), Ultima(2), Proxima(3), Auditor(4)
+        const rawLoja = (row[0] || '').toString().trim();
+        const dataPrevista = (row[3] || '').toString().trim();
+        const rawAuditor = (row[4] || '').toString().trim();
+        
         if (!rawLoja) continue;
 
         // Validar se a loja existe no sistema usando busca flexível
@@ -281,8 +284,8 @@ window.processarImportacaoPlanejamento = async function (dados) {
             loja: lojaValida.nome, // Usa o nome oficial
             dataProxima: dataPrevista,
             auditor: window.properCase(rawAuditor), // Normaliza nome para Proper Case
-            notasInternas: row.NOTAS_ADICIONAIS || '',
-            regional: 'Nordeste', // Default do sistema atual
+            notasInternas: row[5] || '', // Notas em posições posteriores
+            regional: row[1] || (window.lojasIniciais.find(l => l.nome === lojaValida.nome) || {}).estado || 'N/A', 
             updatedAt: new Date().toISOString()
         };
 

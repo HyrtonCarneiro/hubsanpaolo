@@ -305,9 +305,14 @@ window.processarImportacaoMapeamento = async function (dados) {
     let sucessos = 0;
     let erros = 0;
 
-    for (const row of dados) {
-        const rawLoja = (row.LOJA || '').toString().trim();
-        const data = (row.DATA_TENTATIVA || '').toString().trim();
+    for (let i = 1; i < dados.length; i++) {
+        const row = dados[i];
+        if (!row || row.length < 3) continue;
+
+        // Mapeamento Posicional (Ordem padrão de exportação do Hub):
+        // 0:DATA_TENTATIVA, 1:HORARIO, 2:LOJA, 3:REGIONAL, 4:REALIZADA, 5:MOTIVO, 6:AUDITOR, 7:N_TENTATIVA, 8:ESTA_NO_PRAZO, 9:NOTAS
+        const rawLoja = (row[2] || '').toString().trim();
+        const data = (row[0] || '').toString().trim();
         if (!rawLoja || !data) continue;
 
         const lojaValida = window.getLojaByFlexName(rawLoja);
@@ -318,13 +323,13 @@ window.processarImportacaoMapeamento = async function (dados) {
             nomeLoja: lojaValida.nome,
             estado: lojaValida.estado,
             dataTentativa: data,
-            realizada: row.REALIZADA || 'SIM',
-            justificativa: row.MOTIVO_NEGATIVA || null,
-            auditor: window.properCase(row.AUDITOR || window.currentUser || 'Sistema'),
-            notas: row.NOTAS_ADICIONAIS || '',
-            nTentativa: parseInt(row.N_TENTATIVA) || 1,
-            sla: row.ESTA_NO_PRAZO === 'SIM',
-            horario: row.HORARIO || '08:00'
+            realizada: row[4] || 'SIM',
+            justificativa: row[5] || null,
+            auditor: window.properCase(row[6] || window.currentUser || 'Sistema'),
+            notas: row[9] || '',
+            nTentativa: parseInt(row[7]) || 1,
+            sla: row[8] === 'SIM',
+            horario: row[1] || '08:00'
         };
 
         try {

@@ -75,13 +75,20 @@ window.exportarPlanejamentoPowerBI = function () {
         return;
     }
 
-    const dadosNormalizados = plane.map(p => ({
-        ID_REGISTRO: p.id || p.docId,
-        LOJA: p.loja,
-        REGIONAL: (lojasIniciais.find(l => l.nome === p.loja) || {}).estado || 'N/A',
-        DATA_PREVISTA: p.dataProxima || '',
-        AUDITOR_RESPONSAVEL: p.auditor || 'A Definir'
-    }));
+    const dadosNormalizados = plane.map(p => {
+        const ultima = (window.historicoMapeamento || [])
+            .filter(m => m.nomeLoja === p.loja && m.realizada === 'SIM')
+            .sort((a,b) => b.dataTentativa.localeCompare(a.dataTentativa))[0]?.dataTentativa || 'Nunca';
+
+        return {
+            LOJA: p.loja,
+            REGIONAL: (lojasIniciais.find(l => l.nome === p.loja) || {}).estado || 'N/A',
+            ULTIMA_AUDITORIA: ultima,
+            DATA_PREVISTA: p.dataProxima || '',
+            AUDITOR_RESPONSAVEL: p.auditor || 'A Definir',
+            ID_REGISTRO: p.id || p.docId
+        };
+    });
 
     window.exportarParaExcel(dadosNormalizados, "auditoria_planejamento_powerbi");
 };
@@ -123,24 +130,16 @@ window.importarPlanejamentoExcel = function (event) {
             const workbook = XLSX.read(data, { type: 'array' });
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet);
+            
+            // Usar header: 1 para obter um array de arrays (linhas e colunas puras)
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            if (jsonData.length === 0) {
-                showToast("A planilha está vazia.", "warning");
+            if (jsonData.length <= 1) { // 1 linha seria apenas o cabeçalho (ou nem isso)
+                showToast("A planilha está vazia ou contém apenas o cabeçalho.", "warning");
                 return;
             }
 
-            // Validar colunas básicas
-            const firstRow = jsonData[0];
-            const requiredCols = ["LOJA", "DATA_PREVISTA", "AUDITOR_RESPONSAVEL"];
-            const missingCols = requiredCols.filter(col => !(col in firstRow));
-
-            if (missingCols.length > 0) {
-                showToast("Colunas ausentes: " + missingCols.join(", "), "error");
-                return;
-            }
-
-            showToast("Processando " + jsonData.length + " registros...", "info");
+            showToast("Processando " + (jsonData.length - 1) + " registros...", "info");
             
             if (typeof window.processarImportacaoPlanejamento === 'function') {
                 await window.processarImportacaoPlanejamento(jsonData);
@@ -167,8 +166,8 @@ window.importarNotasExcel = function (event) {
         try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            if (jsonData.length === 0) return showToast("Planilha vazia.", "warning");
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+            if (jsonData.length <= 1) return showToast("Planilha vazia ou insuficiente.", "warning");
             
             if (typeof window.processarImportacaoNotas === 'function') {
                 await window.processarImportacaoNotas(jsonData);
@@ -190,8 +189,8 @@ window.importarMapeamentoExcel = function (event) {
         try {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
-            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            if (jsonData.length === 0) return showToast("Planilha vazia.", "warning");
+            const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1 });
+            if (jsonData.length <= 1) return showToast("Planilha vazia ou insuficiente.", "warning");
             
             if (typeof window.processarImportacaoMapeamento === 'function') {
                 await window.processarImportacaoMapeamento(jsonData);
