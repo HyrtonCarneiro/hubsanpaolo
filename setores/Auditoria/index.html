@@ -174,7 +174,7 @@
                 </div>
 
                 <!-- Novos Indicadores de Tarefas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 mb-5">
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
                         <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-kanban text-blue-500"></i> Status das Tarefas Ativas</h3>
                         <div class="h-[300px]"><canvas id="chartTarefaStatus"></canvas></div>
@@ -182,6 +182,16 @@
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
                         <h3 class="mt-0 mb-4 text-base font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph ph-users-three text-purple-500"></i> Distribuição por Responsável</h3>
                         <div class="h-[300px]"><canvas id="chartTarefaEquipe"></canvas></div>
+                    </div>
+                </div>
+
+                <!-- Lojas Críticas (2+ Tentativas sem Sucesso) -->
+                <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-6 shadow-sm mb-8">
+                    <h3 class="mt-0 mb-4 text-base font-semibold text-spRed flex items-center gap-2">
+                        <i class="ph ph-warning-octagon"></i> Lojas Críticas - 2+ Tentativas sem Sucesso (Mês Atual)
+                    </h3>
+                    <div id="dashboardLojasCriticas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada.</div>
                     </div>
                 </div>
             </div>
@@ -392,10 +402,36 @@
                 </div>
 
                 <!-- Filtros e Listagem -->
-                <div class="bg-[var(--surface)] p-4 rounded-xl border border-[var(--border)] mb-4 flex flex-wrap gap-4 items-center shadow-sm">
-                    <div class="flex-1 min-w-[200px] relative">
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
-                        <input type="text" id="mapSearch" placeholder="Filtrar por loja, regional ou auditor..." oninput="window.renderizarMapeamento()" class="w-full pl-10 pr-4 py-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--primary)]">
+                <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] mb-4 shadow-sm flex flex-col gap-4">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div class="flex-1 min-w-[200px] relative">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+                            <input type="text" id="mapSearch" placeholder="Buscar por loja ou notas..." oninput="window.renderizarMapeamento()" class="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--primary)] transition-colors">
+                        </div>
+                        <div class="w-full md:w-[150px]">
+                            <select id="mapFilterRegional" onchange="window.renderizarMapeamento()" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
+                                <option value="">Todas Regionais</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-[150px]">
+                            <select id="mapFilterAuditor" onchange="window.renderizarMapeamento()" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
+                                <option value="">Todos Auditores</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-[130px]">
+                            <select id="mapFilterRealizada" onchange="window.renderizarMapeamento()" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
+                                <option value="">Status (Todos)</option>
+                                <option value="SIM">SIM</option>
+                                <option value="NÃO">NÃO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 px-1">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="mapFilterCritico" onchange="window.renderizarMapeamento()" class="sr-only peer">
+                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500"></div>
+                            <span class="ml-3 text-sm font-medium text-[var(--text-main)]">Ver apenas lojas com 2+ tentativas (Críticas)</span>
+                        </label>
                     </div>
                 </div>
 

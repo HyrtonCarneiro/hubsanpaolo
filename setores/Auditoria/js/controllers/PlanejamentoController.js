@@ -262,15 +262,17 @@ window.processarImportacaoPlanejamento = async function (dados) {
     let ignorados = 0;
 
     for (const row of dados) {
-        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
-        const dataPrevista = (row.DATA_PREVISTA || '').toString().trim();
-        const auditor = (row.AUDITOR_RESPONSAVEL || '').toString().trim();
+        const rawLoja = (row.LOJA || row.KA_BI || '').toString().trim();
+        const dataPrevista = (row.DATA_PREVISTA || row['PLANEJAMENTO INICIAL (DIA)'] || '').toString().trim();
+        const rawAuditor = (row.AUDITOR_RESPONSAVEL || row.RESPONSAVEL || '').toString().trim();
         const idRegistro = row.ID_REGISTRO;
 
-        // Validar se a loja existe no sistema
-        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
+        if (!rawLoja) continue;
+
+        // Validar se a loja existe no sistema usando busca flexível
+        const lojaValida = window.getLojaByFlexName(rawLoja);
         if (!lojaValida) {
-            console.warn("Loja ignorada (não encontrada):", nomeLoja);
+            console.warn("Loja ignorada (não encontrada):", rawLoja);
             ignorados++;
             continue;
         }
@@ -278,7 +280,7 @@ window.processarImportacaoPlanejamento = async function (dados) {
         const payload = {
             loja: lojaValida.nome, // Usa o nome oficial
             dataProxima: dataPrevista,
-            auditor: auditor,
+            auditor: window.properCase(rawAuditor), // Normaliza nome para Proper Case
             notasInternas: row.NOTAS_ADICIONAIS || '',
             regional: 'Nordeste', // Default do sistema atual
             updatedAt: new Date().toISOString()

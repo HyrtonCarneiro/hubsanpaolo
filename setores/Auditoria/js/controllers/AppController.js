@@ -16,6 +16,68 @@ function showToast(msg, type = 'success') {
 }
 window.showToast = showToast;
 
+// --- HELPERS DE NORMALIZAÇÃO E ROBUSTEZ ---
+
+window.normalizeString = function(str) {
+    if (!str) return "";
+    return str.toString()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove acentos
+        .toUpperCase()
+        .trim();
+};
+
+window.properCase = function(str) {
+    if (!str) return "";
+    const s = str.toString().toLowerCase().trim();
+    if (s.length === 0) return "";
+    return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+window.getLojaByFlexName = function(name) {
+    if (!name) return null;
+    const search = window.normalizeString(name);
+    
+    // Mapeamento de Sinônimos/Apelidos comuns
+    const sinonimos = {
+        "OUTLET FORTALEZA": "CAUCAIA/OUTLET",
+        "CAUCAIA": "CAUCAIA/OUTLET",
+        "OUTLET": "CAUCAIA/OUTLET",
+        "ESTACAO CUIABA": "SHOPPING ESTAÇÃO CUIABA",
+        "PANTANAL": "PANTANAL SHOPPING / CUIABA",
+        "COHAMA": "SHOPPING DA ILHA", // No Hub Cohama é o Shopping da Ilha
+        "IGUATEMI": "IGUATEMI FORTALEZA",
+        "RIO POTY": "RIO POTY",
+        "RIVERSIDE": "RIVERSIDE",
+        "PATIO PAULISTA": "PATIO PAULISTA",
+        "CIDADE SAO PAULO": "CIDADE SÃO PAULO",
+        "AEROPORTO SALVADOR Q": "AEROPORTO QUIOSQUE SALVADOR",
+        "AEROPORTO SALVADOR": "AEROPORTO LOJA SALVADOR",
+        "BOULEVARD": "BOULEVARD",
+        "PARNAMIRIM": "PARNAMIRIM",
+        "PREA": "PREA"
+    };
+
+    // 1. Tentar por sinônimo exato (normalizado)
+    if (sinonimos[search]) {
+        const oficial = sinonimos[search];
+        const loja = window.lojasIniciais.find(l => window.normalizeString(l.nome) === window.normalizeString(oficial));
+        if (loja) return loja;
+    }
+
+    // 2. Tentar correspondência exata
+    let found = window.lojasIniciais.find(l => window.normalizeString(l.nome) === search);
+    if (found) return found;
+
+    // 3. Tentar correspondência parcial (se o nome da planilha está contido no nome do sistema ou vice-versa)
+    found = window.lojasIniciais.find(l => {
+        const oficial = window.normalizeString(l.nome);
+        return oficial.includes(search) || search.includes(oficial);
+    });
+
+    return found || null;
+};
+
 window.toggleDarkMode = function () {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));

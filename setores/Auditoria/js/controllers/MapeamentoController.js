@@ -24,9 +24,41 @@ window.initMapeamentoListeners = function() {
         window.popularSelectAuditoresMapeamento();
     }
     
+    // Popular filtros novos
+    window.popularFiltrosMapeamento();
+    
     // Data de hoje default
     const inputData = document.getElementById('mapDataInput');
     if (inputData) inputData.valueAsDate = new Date();
+};
+
+window.popularFiltrosMapeamento = function() {
+    // Regional
+    const selReg = document.getElementById('mapFilterRegional');
+    if (selReg) {
+        selReg.innerHTML = '<option value="">Todas Regionais</option>';
+        const estados = [...new Set(window.lojasIniciais.map(l => l.estado))].sort();
+        estados.forEach(est => {
+            const opt = document.createElement('option');
+            opt.value = est;
+            opt.textContent = est;
+            selReg.appendChild(opt);
+        });
+    }
+
+    // Auditor
+    const selAud = document.getElementById('mapFilterAuditor');
+    if (selAud) {
+        selAud.innerHTML = '<option value="">Todos Auditores</option>';
+        if (window.audiEquipe) {
+            window.audiEquipe.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.nome;
+                opt.textContent = m.nome;
+                selAud.appendChild(opt);
+            });
+        }
+    }
 };
 
 window.popularSelectLojasMapeamento = function() {
@@ -136,11 +168,26 @@ window.renderizarMapeamento = function() {
     if (!body) return;
 
     const searchTerm = document.getElementById('mapSearch').value.toLowerCase();
+    const filterRegional = document.getElementById('mapFilterRegional')?.value;
+    const filterAuditor = document.getElementById('mapFilterAuditor')?.value;
+    const filterRealizada = document.getElementById('mapFilterRealizada')?.value;
+    const filterCritico = document.getElementById('mapFilterCritico')?.checked;
     
     let filtrados = window.historicoMapeamento.filter(h => {
-        return h.nomeLoja.toLowerCase().includes(searchTerm) || 
-               h.estado.toLowerCase().includes(searchTerm) ||
-               (h.auditor && h.auditor.toLowerCase().includes(searchTerm));
+        const matchesSearch = h.nomeLoja.toLowerCase().includes(searchTerm) || 
+                             (h.notas && h.notas.toLowerCase().includes(searchTerm)) ||
+                             (h.justificativa && h.justificativa.toLowerCase().includes(searchTerm));
+        
+        const matchesRegional = !filterRegional || h.estado === filterRegional;
+        const matchesAuditor = !filterAuditor || h.auditor === filterAuditor;
+        const matchesRealizada = !filterRealizada || h.realizada === filterRealizada;
+        
+        // Lógica de crítico: 2+ tentativas e sem sucesso (realizada === 'NÃO')
+        // Nota: para o filtro, mostramos apenas os registros que são 'NÃO' e nTentativa >= 2
+        const isCritico = h.realizada === 'NÃO' && (h.nTentativa >= 2);
+        const matchesCritico = !filterCritico || isCritico;
+
+        return matchesSearch && matchesRegional && matchesAuditor && matchesRealizada && matchesCritico;
     });
 
     // Aplicar Ordenação
@@ -178,6 +225,8 @@ window.renderizarMapeamento = function() {
         const dataMes = h.dataTentativa.substring(0, 7);
         const jaTemNota = (window.notasCache || []).find(n => n.loja === h.nomeLoja && n.data.startsWith(dataMes));
 
+        const isCritico = h.realizada === 'NÃO' && (h.nTentativa >= 2);
+        
         const actionNota = h.realizada === 'SIM' ? 
             `<button onclick="window.navegarParaLancarNota('${h.nomeLoja}')" 
                 class="p-1.5 ${jaTemNota ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-500'} rounded-lg transition-colors" 
@@ -185,20 +234,26 @@ window.renderizarMapeamento = function() {
                 <i class="ph ${jaTemNota ? 'ph-check-circle' : 'ph-scroll'}"></i>
             </button>` : '';
 
+        const rowClass = isCritico ? 'bg-red-50/50 hover:bg-red-100/50' : 'hover:bg-black/5';
+        const criticoIcon = isCritico ? '<i class="ph-fill ph-warning-octagon text-red-500 mr-1" title="Loja Crítica (2+ tentativas sem sucesso)"></i>' : '';
+
         return `
-            <tr class="hover:bg-black/5 transition-colors">
+            <tr class="${rowClass} transition-colors border-l-4 ${isCritico ? 'border-red-500' : 'border-transparent'}">
                 <td class="p-4 text-sm whitespace-nowrap">
                     <div class="font-bold">${new Date(h.dataTentativa).toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'})}</div>
                     <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa} ${h.horario || ''}</div>
                 </td>
                 <td class="p-4 text-center">
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold border border-blue-100">${h.nTentativa}</div>
+                    <div class="w-8 h-8 rounded-full ${isCritico ? 'bg-red-100 text-red-600 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-100'} flex items-center justify-center font-bold border">${h.nTentativa}</div>
                 </td>
                 <td class="p-4">
                     <div class="font-medium text-[var(--text-main)] text-sm">${h.estado}</div>
                 </td>
                 <td class="p-4">
-                    <div class="font-bold text-[var(--text-main)]">${h.nomeLoja}</div>
+                    <div class="flex items-center font-bold text-[var(--text-main)]">
+                        ${criticoIcon}
+                        ${h.nomeLoja}
+                    </div>
                 </td>
                 <td class="p-4 text-center">${realizedBadge}</td>
                 <td class="p-4 text-sm font-semibold text-[var(--text-main)]">${h.auditor || '-'}</td>
@@ -251,11 +306,11 @@ window.processarImportacaoMapeamento = async function (dados) {
     let erros = 0;
 
     for (const row of dados) {
-        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
+        const rawLoja = (row.LOJA || '').toString().trim();
         const data = (row.DATA_TENTATIVA || '').toString().trim();
-        if (!nomeLoja || !data) continue;
+        if (!rawLoja || !data) continue;
 
-        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
+        const lojaValida = window.getLojaByFlexName(rawLoja);
         if (!lojaValida) continue;
 
         const dadosMap = {
@@ -265,7 +320,7 @@ window.processarImportacaoMapeamento = async function (dados) {
             dataTentativa: data,
             realizada: row.REALIZADA || 'SIM',
             justificativa: row.MOTIVO_NEGATIVA || null,
-            auditor: row.AUDITOR || window.currentUser || 'Sistema',
+            auditor: window.properCase(row.AUDITOR || window.currentUser || 'Sistema'),
             notas: row.NOTAS_ADICIONAIS || '',
             nTentativa: parseInt(row.N_TENTATIVA) || 1,
             sla: row.ESTA_NO_PRAZO === 'SIM',

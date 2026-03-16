@@ -89,6 +89,44 @@ window.renderDashboard = function () {
     });
     document.getElementById('kpiLojasAtrasadas').textContent = statusCounts.atrasada;
 
+    // --- LOGICA DE LOJAS CRÍTICAS (Dashboard) ---
+    const mapCacheMes = mapCache.filter(m => m.dataTentativa.startsWith(mesAtual));
+    const lojasCriticasMap = {};
+    
+    mapCacheMes.forEach(m => {
+        if (!lojasCriticasMap[m.nomeLoja]) {
+            lojasCriticasMap[m.nomeLoja] = { maxTentativa: 0, teveSucesso: false };
+        }
+        if (m.realizada === 'SIM') lojasCriticasMap[m.nomeLoja].teveSucesso = true;
+        if (m.nTentativa > lojasCriticasMap[m.nomeLoja].maxTentativa) {
+            lojasCriticasMap[m.nomeLoja].maxTentativa = m.nTentativa;
+        }
+    });
+
+    const bodyCriticas = document.getElementById('dashboardLojasCriticas');
+    if (bodyCriticas) {
+        const criticas = Object.entries(lojasCriticasMap)
+            .filter(([nome, dados]) => !dados.teveSucesso && dados.maxTentativa >= 2)
+            .sort((a, b) => b[1].maxTentativa - a[1].maxTentativa);
+
+        if (criticas.length === 0) {
+            bodyCriticas.innerHTML = '<div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada.</div>';
+        } else {
+            bodyCriticas.innerHTML = criticas.map(([nome, dados]) => `
+                <div class="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold border border-red-200">${dados.maxTentativa}</div>
+                        <div>
+                            <div class="font-bold text-red-900">${nome}</div>
+                            <div class="text-[10px] text-red-700 uppercase font-semibold">Tentativas sem sucesso</div>
+                        </div>
+                    </div>
+                    <i class="ph ph-warning-octagon text-red-400 text-xl"></i>
+                </div>
+            `).join('');
+        }
+    }
+
     // --- GRAFICOS ---
     var isDark = document.body.classList.contains('dark-mode');
     var textColor = isDark ? '#f8fafc' : '#0f172a';
