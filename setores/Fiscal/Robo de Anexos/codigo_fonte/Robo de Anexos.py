@@ -140,7 +140,9 @@ def main():
 
         if not urls:
             log_message(f"Nenhum anexo encontrado para o ticket {ticket_id}.")
-            print("\nDica: Se houver anexos e o robô não os encontrou, verifique se estão visíveis na API Pública.")
+            print("\n⚠️ AVISO: A API Pública da Trílogo possui limitações conhecidas.")
+            print("Muitas vezes, anexos da 'Timeline' ou 'Relacionados' não são expostos nesta API.")
+            print("O robô buscou em todo o conteúdo retornado e não encontrou links de arquivos.")
             
             # Log de depuração COMPLETO
             try:
