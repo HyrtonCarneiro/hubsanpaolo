@@ -128,6 +128,36 @@ window.showImportModal = function(total) {
     if (btnInterromper) btnInterromper.classList.remove('hidden');
 };
 
+window.updateImportProgress = function(index, total, msg, type = 'info') {
+    const log = document.getElementById('importLog');
+    const bar = document.getElementById('importProgressBar');
+    const percent = document.getElementById('importProgressPercent');
+    const status = document.getElementById('importProgressStatus');
+
+    const pct = Math.round((index / total) * 100);
+    if (bar) bar.style.width = pct + '%';
+    if (percent) percent.innerText = pct + '%';
+    if (status) status.innerText = index === total ? 'Concluído' : 'Processando...';
+
+    if (log && msg) {
+        let color = 'text-[var(--text-muted)]';
+        if (type === 'success') color = 'text-green-500 font-medium';
+        if (type === 'warning') color = 'text-yellow-500';
+        if (type === 'error') color = 'text-red-500 font-bold';
+        
+        const item = document.createElement('div');
+        item.className = `py-1 border-b border-black/5 dark:border-white/5 text-[11px] ${color}`;
+        item.innerHTML = msg;
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+    }
+};
+
+window.interromperImportacao = function() {
+    window.importCancelled = true;
+    window.updateImportProgress(0, 100, "INTERROMPENDO... O processo irá parar no próximo lote.", "error");
+};
+
 window.adicionarPendente = function(tipo, nome, row, extraData = {}) {
     window.importPendentes.rows.push({ tipo, nome, row, ...extraData });
     if (tipo === 'loja') window.importPendentes.unknownStores.add(nome);
