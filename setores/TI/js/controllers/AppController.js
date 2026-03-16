@@ -75,22 +75,22 @@ function initApp() {
 window.initApp = initApp;
 
 window.switchView = function (view) {
-    document.getElementById('view-analytics').style.display = 'none';
-    document.getElementById('view-lojas').style.display = 'none';
-    document.getElementById('view-projetos').style.display = 'none';
-    var va = document.getElementById('view-atas'); if (va) va.style.display = 'none';
-    var vb = document.getElementById('view-bi'); if (vb) vb.style.display = 'none';
-    var vp = document.getElementById('view-metapwr'); if (vp) vp.style.display = 'none';
+    // Esconder todas as views
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'bi', 'metapwr', 'tiaguinho'];
+    views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.style.display = 'none';
+        
+        const nav = document.getElementById('nav-' + v);
+        if (nav) nav.classList.remove('active');
+    });
 
-    document.getElementById('nav-analytics').classList.remove('active');
-    document.getElementById('nav-lojas').classList.remove('active');
-    document.getElementById('nav-projetos').classList.remove('active');
-    var na = document.getElementById('nav-atas'); if (na) na.classList.remove('active');
-    var nb = document.getElementById('nav-bi'); if (nb) nb.classList.remove('active');
-    var np = document.getElementById('nav-metapwr'); if (np) np.classList.remove('active');
-
-    document.getElementById('view-' + view).style.display = 'block';
-    document.getElementById('nav-' + view).classList.add('active');
+    // Mostrar a view solicitada
+    const targetView = document.getElementById('view-' + view);
+    const targetNav = document.getElementById('nav-' + view);
+    
+    if (targetView) targetView.style.display = 'block';
+    if (targetNav) targetNav.classList.add('active');
 
     if (window.innerWidth <= 768) {
         window.toggleSidebar();
