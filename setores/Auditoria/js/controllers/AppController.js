@@ -3,6 +3,7 @@
 
 let currentUser = sessionStorage.getItem('loggedUser') || null;
 window.currentUser = currentUser;
+window.importCancelled = false;
 
 function showToast(msg, type = 'success') {
     try {
@@ -98,6 +99,7 @@ window.getAuditorByFlexName = function(name) {
 // --- CONTROLE DE MODAL DE IMPORTAÇÃO ---
 
 window.showImportModal = function(total) {
+    window.importCancelled = false; // Reset flag
     const modal = document.getElementById('modalImportProgresso');
     const log = document.getElementById('importLog');
     const bar = document.getElementById('importProgressBar');
@@ -105,6 +107,7 @@ window.showImportModal = function(total) {
     const status = document.getElementById('importProgressStatus');
     const btnFechar = document.getElementById('btnFecharImport');
     const btnConcluir = document.getElementById('btnConcluirImport');
+    const btnInterromper = document.getElementById('btnInterromperImport');
 
     if (modal) modal.classList.add('show');
     if (log) log.innerHTML = `<div class="text-blue-500 font-bold">Iniciando importação de ${total} registros...</div>`;
@@ -113,6 +116,21 @@ window.showImportModal = function(total) {
     if (status) status.innerText = 'Processando...';
     if (btnFechar) btnFechar.classList.add('hidden');
     if (btnConcluir) btnConcluir.classList.add('hidden');
+    if (btnInterromper) btnInterromper.classList.remove('hidden');
+};
+
+window.interromperImportacao = function() {
+    window.importCancelled = true;
+    const btnInterromper = document.getElementById('btnInterromperImport');
+    if (btnInterromper) btnInterromper.classList.add('hidden');
+    const log = document.getElementById('importLog');
+    if (log) {
+        const line = document.createElement('div');
+        line.className = 'text-red-600 font-bold mt-2';
+        line.innerText = `[${new Date().toLocaleTimeString()}] 🛑 INTERRUPÇÃO SOLICITADA PELO USUÁRIO...`;
+        log.appendChild(line);
+        log.scrollTop = log.scrollHeight;
+    }
 };
 
 window.updateImportProgress = function(current, total, message, type = 'info') {
@@ -140,12 +158,14 @@ window.updateImportProgress = function(current, total, message, type = 'info') {
         log.scrollTop = log.scrollHeight;
     }
 
-    if (current === total) {
-        if (status) status.innerText = 'Importação Concluída!';
+    if (current === total || window.importCancelled) {
+        if (status) status.innerText = window.importCancelled ? 'Importação Interrompida' : 'Importação Concluída!';
         const btnFechar = document.getElementById('btnFecharImport');
         const btnConcluir = document.getElementById('btnConcluirImport');
+        const btnInterromper = document.getElementById('btnInterromperImport');
         if (btnFechar) btnFechar.classList.remove('hidden');
         if (btnConcluir) btnConcluir.classList.remove('hidden');
+        if (btnInterromper) btnInterromper.classList.add('hidden');
     }
 };
 

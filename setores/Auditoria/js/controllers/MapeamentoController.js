@@ -173,6 +173,9 @@ window.renderizarMapeamento = function() {
     const filterRealizada = document.getElementById('mapFilterRealizada')?.value;
     const filterCritico = document.getElementById('mapFilterCritico')?.checked;
     
+    const filterInicio = document.getElementById('mapFilterInicio')?.value;
+    const filterFim = document.getElementById('mapFilterFim')?.value;
+    
     let filtrados = window.historicoMapeamento.filter(h => {
         const matchesSearch = h.nomeLoja.toLowerCase().includes(searchTerm) || 
                              (h.notas && h.notas.toLowerCase().includes(searchTerm)) ||
@@ -182,12 +185,15 @@ window.renderizarMapeamento = function() {
         const matchesAuditor = !filterAuditor || h.auditor === filterAuditor;
         const matchesRealizada = !filterRealizada || h.realizada === filterRealizada;
         
-        // Lógica de crítico: 2+ tentativas e sem sucesso (realizada === 'NÃO')
-        // Nota: para o filtro, mostramos apenas os registros que são 'NÃO' e nTentativa >= 2
+        // Filtro de Data
+        let matchesData = true;
+        if (filterInicio) matchesData = matchesData && (h.dataTentativa >= filterInicio);
+        if (filterFim) matchesData = matchesData && (h.dataTentativa <= filterFim);
+
         const isCritico = h.realizada === 'NÃO' && (h.nTentativa >= 2);
         const matchesCritico = !filterCritico || isCritico;
 
-        return matchesSearch && matchesRegional && matchesAuditor && matchesRealizada && matchesCritico;
+        return matchesSearch && matchesRegional && matchesAuditor && matchesRealizada && matchesCritico && matchesData;
     });
 
     // Aplicar Ordenação
@@ -207,10 +213,9 @@ window.renderizarMapeamento = function() {
         return 0;
     });
 
-    if (filtrados.length === 0) {
-        body.innerHTML = '<tr><td colspan="9" class="p-10 text-center text-[var(--text-muted)]">Nenhum registro encontrado.</td></tr>';
-        return;
-    }
+    const allChecked = filtrados.length > 0 && filtrados.every(h => h.selected);
+    const selectAllCheck = document.getElementById('selectAllMapeamento');
+    if (selectAllCheck) selectAllCheck.checked = allChecked;
 
     body.innerHTML = filtrados.map(h => {
         const slaLabel = h.sla ? 
@@ -221,10 +226,8 @@ window.renderizarMapeamento = function() {
             '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-[10px] font-bold">SIM</span>' : 
             '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-[10px] font-bold">NÃO</span>';
 
-        // Verifica se já existe nota para esta loja/mês
         const dataMes = h.dataTentativa.substring(0, 7);
         const jaTemNota = (window.notasCache || []).find(n => n.loja === h.nomeLoja && n.data.startsWith(dataMes));
-
         const isCritico = h.realizada === 'NÃO' && (h.nTentativa >= 2);
         
         const actionNota = h.realizada === 'SIM' ? 
@@ -237,10 +240,21 @@ window.renderizarMapeamento = function() {
         const rowClass = isCritico ? 'bg-red-50/50 hover:bg-red-100/50' : 'hover:bg-black/5';
         const criticoIcon = isCritico ? '<i class="ph-fill ph-warning-octagon text-red-500 mr-1" title="Loja Crítica (2+ tentativas sem sucesso)"></i>' : '';
 
+        let dataExibicao = h.dataTentativa;
+        let dataObj = new Date(h.dataTentativa);
+        // Fallback para datas que foram salvas como serial do Excel por erro anterior
+        if (isNaN(dataObj.getTime()) && !isNaN(h.dataTentativa)) {
+            const serial = parseFloat(h.dataTentativa);
+            dataObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
+        }
+
         return `
             <tr class="${rowClass} transition-colors border-l-4 ${isCritico ? 'border-red-500' : 'border-transparent'}">
+                <td class="p-4">
+                    <input type="checkbox" ${h.selected ? 'checked' : ''} onchange="window.toggleRowMapeamento('${h.id}', this.checked)" class="rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer">
+                </td>
                 <td class="p-4 text-sm whitespace-nowrap">
-                    <div class="font-bold">${new Date(h.dataTentativa).toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'})}</div>
+                    <div class="font-bold">${isNaN(dataObj.getTime()) ? 'Data Inválida' : dataObj.toLocaleDateString('pt-BR', {month: 'long', year: 'numeric'})}</div>
                     <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa} ${h.horario || ''}</div>
                 </td>
                 <td class="p-4 text-center">
@@ -273,6 +287,81 @@ window.renderizarMapeamento = function() {
             </tr>
         `;
     }).join('');
+    window.updateBulkButtonVisibility();
+};
+
+window.toggleRowMapeamento = function(id, checked) {
+    const item = window.historicoMapeamento.find(h => h.id === id);
+    if (item) item.selected = checked;
+    window.updateBulkButtonVisibility();
+    
+    // Sync Select All checkbox
+    const filtrados = window.historicoMapeamentoFiltradoCache || []; 
+    // Nota: precisei cachear ou refiltrar para checar o toggle
+    // Mas para simplificar, o renderizar cuida disso na próxima chamada
+};
+
+window.toggleSelectAllMapeamento = function(checked) {
+    // Aplicar apenas aos registros que estão VISÍVEIS (filtrados)
+    const searchTerm = document.getElementById('mapSearch').value.toLowerCase();
+    const filterRegional = document.getElementById('mapFilterRegional')?.value;
+    const filterAuditor = document.getElementById('mapFilterAuditor')?.value;
+    const filterRealizada = document.getElementById('mapFilterRealizada')?.value;
+    const filterCritico = document.getElementById('mapFilterCritico')?.checked;
+    const filterInicio = document.getElementById('mapFilterInicio')?.value;
+    const filterFim = document.getElementById('mapFilterFim')?.value;
+
+    window.historicoMapeamento.forEach(h => {
+        const matchesSearch = h.nomeLoja.toLowerCase().includes(searchTerm) || 
+                             (h.notas && h.notas.toLowerCase().includes(searchTerm)) ||
+                             (h.justificativa && h.justificativa.toLowerCase().includes(searchTerm));
+        const matchesRegional = !filterRegional || h.estado === filterRegional;
+        const matchesAuditor = !filterAuditor || h.auditor === filterAuditor;
+        const matchesRealizada = !filterRealizada || h.realizada === filterRealizada;
+        let matchesData = true;
+        if (filterInicio) matchesData = matchesData && (h.dataTentativa >= filterInicio);
+        if (filterFim) matchesData = matchesData && (h.dataTentativa <= filterFim);
+        const matchesCritico = !filterCritico || (h.realizada === 'NÃO' && h.nTentativa >= 2);
+
+        if (matchesSearch && matchesRegional && matchesAuditor && matchesRealizada && matchesData && matchesCritico) {
+            h.selected = checked;
+        }
+    });
+
+    window.renderizarMapeamento();
+};
+
+window.updateBulkButtonVisibility = function() {
+    const selectedCount = window.historicoMapeamento.filter(h => h.selected).length;
+    const btn = document.getElementById('btnBulkDeleteMapeamento');
+    const countSpan = document.getElementById('countSelectedMapeamento');
+    
+    if (btn && countSpan) {
+        if (selectedCount > 0) {
+            btn.classList.remove('hidden');
+            btn.classList.add('flex');
+            countSpan.innerText = selectedCount;
+        } else {
+            btn.classList.add('hidden');
+            btn.classList.remove('flex');
+        }
+    }
+};
+
+window.excluirMapeamentoEmMassa = async function() {
+    const selecionados = window.historicoMapeamento.filter(h => h.selected);
+    if (selecionados.length === 0) return;
+
+    if (!confirm(`Excluir ${selecionados.length} registros selecionados permanentemente?`)) return;
+
+    try {
+        const promessas = selecionados.map(h => window.MapeamentoService.excluirRegistro(h.id));
+        await Promise.all(promessas);
+        showToast(`${selecionados.length} registros excluídos com sucesso.`);
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao excluir alguns registros.", "error");
+    }
 };
 
 window.sortMapeamento = function(field) {
@@ -304,41 +393,106 @@ window.navegarParaLancarNota = function(lojaIdentificador) {
 window.processarImportacaoMapeamento = async function (dados) {
     let sucessos = 0;
     let erros = 0;
+    let ignorados = 0;
+    const total = dados.length - 1;
+
+    window.showImportModal(total);
 
     for (let i = 1; i < dados.length; i++) {
         const row = dados[i];
-        if (!row || row.length < 3) continue;
+        const index = i;
+        
+        if (window.importCancelled) {
+            window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
+            break;
+        }
+        if (!row || row.length < 4) {
+            window.updateImportProgress(index, total, `Linha ${i}: Incompleta ou vazia.`, 'warning');
+            continue;
+        }
 
-        // Mapeamento Posicional (Ordem padrão de exportação do Hub):
-        // 0:DATA_TENTATIVA, 1:HORARIO, 2:LOJA, 3:REGIONAL, 4:REALIZADA, 5:MOTIVO, 6:AUDITOR, 7:N_TENTATIVA, 8:ESTA_NO_PRAZO, 9:NOTAS
-        const rawLoja = (row[2] || '').toString().trim();
-        const data = (row[0] || '').toString().trim();
-        if (!rawLoja || !data) continue;
+        // Layout da Planilha (Print):
+        // 0:DATA DA TENTATIVA, 1:N° DA TENTATIVA, 2:UF, 3:LOJA, 4:AUDITORIA REALIZADA?, 5:SE NÃO REALIZADA, POR QUE?, 6:RESPONSÁVEL, 7:SE REALIZADO, NO PRAZO?
+        const rawData = row[0];
+        const rawTentativa = row[1];
+        const rawLoja = (row[3] || '').toString().trim();
+        const rawRealizada = (row[4] || 'SIM').toString().trim().toUpperCase();
+        const rawMotivo = (row[5] || '').toString().trim();
+        const rawAuditor = (row[6] || '').toString().trim();
+        const rawNoPrazo = (row[7] || '').toString().trim().toUpperCase();
+
+        if (!rawLoja || !rawData) {
+            window.updateImportProgress(index, total, `Linha ${i}: Loja ou Data ausente.`, 'warning');
+            continue;
+        }
 
         const lojaValida = window.getLojaByFlexName(rawLoja);
-        if (!lojaValida) continue;
+        if (!lojaValida) {
+            window.updateImportProgress(index, total, `Loja "${rawLoja}" não encontrada no sistema.`, 'warning');
+            ignorados++;
+            continue;
+        }
+
+        // Tratar data (Excel Serial or String)
+        let dataFormatada = "";
+        try {
+            if (rawData) {
+                if (typeof rawData === 'number' || (!isNaN(rawData) && !rawData.toString().includes('-') && !rawData.toString().includes('/'))) {
+                    // Converter serial date do Excel
+                    const serial = parseFloat(rawData);
+                    const dateObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
+                    dataFormatada = dateObj.toISOString().split('T')[0];
+                } else {
+                    const strDate = rawData.toString().trim();
+                    if (strDate.includes('/')) {
+                        // DD/MM/YYYY -> YYYY-MM-DD
+                        const parts = strDate.split('/');
+                        if (parts.length === 3) {
+                            dataFormatada = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    } else if (strDate.includes('-')) {
+                        dataFormatada = strDate; // Assume YYYY-MM-DD
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Erro data:", e);
+        }
+
+        if (!dataFormatada) {
+            window.updateImportProgress(index, total, `Linha ${i}: Data inválida (${rawData}).`, 'warning');
+            continue;
+        }
+
+        const auditorFinal = window.getAuditorByFlexName(rawAuditor);
 
         const dadosMap = {
             lojaId: lojaValida.id.toString(),
             nomeLoja: lojaValida.nome,
             estado: lojaValida.estado,
-            dataTentativa: data,
-            realizada: row[4] || 'SIM',
-            justificativa: row[5] || null,
-            auditor: window.properCase(row[6] || window.currentUser || 'Sistema'),
-            notas: row[9] || '',
-            nTentativa: parseInt(row[7]) || 1,
-            sla: row[8] === 'SIM',
-            horario: row[1] || '08:00'
+            dataTentativa: dataFormatada,
+            realizada: rawRealizada === 'NÃO' ? 'NÃO' : 'SIM',
+            justificativa: rawRealizada === 'NÃO' ? (rawMotivo || 'NÃO ESPECIFICADO') : null,
+            auditor: auditorFinal,
+            notas: rawRealizada === 'NÃO' ? rawMotivo : '',
+            nTentativa: parseInt(rawTentativa) || 1,
+            sla: rawNoPrazo === 'SIM',
+            horario: '08:00',
+            createdAt: new Date()
         };
 
         try {
             await window.MapeamentoService.registrarTentativa(dadosMap);
+            window.updateImportProgress(index, total, `${lojaValida.nome}: Salvo com sucesso.`, 'success');
             sucessos++;
         } catch (err) {
             console.error(err);
+            window.updateImportProgress(index, total, `${lojaValida.nome}: Erro (${err.message}).`, 'error');
             erros++;
         }
+
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
     }
-    showToast(`Mapeamento: ${sucessos} importados, ${erros} erros.`, erros > 0 ? "warning" : "success");
+
+    showToast(`Mapeamento concluído: ${sucessos} sucessos.`, erros > 0 ? "warning" : "success");
 }

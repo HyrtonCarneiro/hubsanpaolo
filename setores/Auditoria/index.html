@@ -408,6 +408,11 @@
                             <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
                             <input type="text" id="mapSearch" placeholder="Buscar por loja ou notas..." oninput="window.renderizarMapeamento()" class="w-full pl-10 pr-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--primary)] transition-colors">
                         </div>
+                        <div class="flex items-center gap-2">
+                            <input type="date" id="mapFilterInicio" onchange="window.renderizarMapeamento()" class="border border-[var(--border)] rounded-lg p-2 bg-[var(--bg-color)] text-[var(--text-main)] text-sm outline-none focus:border-[var(--primary)]">
+                            <span class="text-[var(--text-muted)] text-xs font-bold uppercase">até</span>
+                            <input type="date" id="mapFilterFim" onchange="window.renderizarMapeamento()" class="border border-[var(--border)] rounded-lg p-2 bg-[var(--bg-color)] text-[var(--text-main)] text-sm outline-none focus:border-[var(--primary)]">
+                        </div>
                         <div class="w-full md:w-[150px]">
                             <select id="mapFilterRegional" onchange="window.renderizarMapeamento()" class="w-full border border-[var(--border)] rounded-lg p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-colors text-sm">
                                 <option value="">Todas Regionais</option>
@@ -426,12 +431,17 @@
                             </select>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 px-1">
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="mapFilterCritico" onchange="window.renderizarMapeamento()" class="sr-only peer">
-                            <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500"></div>
-                            <span class="ml-3 text-sm font-medium text-[var(--text-main)]">Ver apenas lojas com 2+ tentativas (Críticas)</span>
-                        </label>
+                    <div class="flex flex-wrap items-center justify-between gap-4 px-1">
+                        <div class="flex items-center gap-3">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="mapFilterCritico" onchange="window.renderizarMapeamento()" class="sr-only peer">
+                                <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-red-500"></div>
+                                <span class="ml-3 text-sm font-medium text-[var(--text-main)]">Ver apenas lojas com 2+ tentativas (Críticas)</span>
+                            </label>
+                        </div>
+                        <button id="btnBulkDeleteMapeamento" onclick="window.excluirMapeamentoEmMassa()" class="hidden items-center gap-2 px-4 py-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg text-sm font-bold transition-all animate-fade-in border border-red-200">
+                            <i class="ph ph-trash"></i> Excluir Selecionados (<span id="countSelectedMapeamento">0</span>)
+                        </button>
                     </div>
                 </div>
 
@@ -440,6 +450,9 @@
                         <table class="w-full border-collapse text-left">
                             <thead class="bg-black/5 dark:bg-black/20 border-b border-[var(--border)]">
                                 <tr>
+                                    <th class="p-4 w-10">
+                                        <input type="checkbox" id="selectAllMapeamento" onchange="window.toggleSelectAllMapeamento(this.checked)" class="rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer">
+                                    </th>
                                     <th onclick="window.sortMapeamento('dataTentativa')" class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase cursor-pointer hover:text-[var(--primary)] transition-colors">Mês/Data <i class="ph ph-caret-up-down"></i></th>
                                     <th onclick="window.sortMapeamento('nTentativa')" class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase cursor-pointer hover:text-[var(--primary)] transition-colors">Tentativa <i class="ph ph-caret-up-down"></i></th>
                                     <th onclick="window.sortMapeamento('estado')" class="p-4 font-bold text-xs text-[var(--text-muted)] uppercase cursor-pointer hover:text-[var(--primary)] transition-colors">UF <i class="ph ph-caret-up-down"></i></th>
@@ -669,7 +682,10 @@
                     <div class="text-[var(--text-muted)] italic">Aguardando início...</div>
                 </div>
 
-                <div class="mt-5 flex justify-end">
+                <div class="mt-5 flex justify-end gap-3">
+                    <button id="btnInterromperImport" class="hidden px-6 py-2 rounded-lg bg-red-50 text-red-600 font-semibold transition-all hover:bg-red-100 border border-red-200" onclick="window.interromperImportacao()">
+                        <i class="ph ph-stop-circle text-lg"></i> Interromper
+                    </button>
                     <button id="btnConcluirImport" class="hidden px-6 py-2 rounded-lg bg-[var(--primary)] text-white font-semibold transition-all hover:brightness-110 shadow-sm" onclick="window.fecharModalImportProgresso()">Concluir</button>
                 </div>
             </div>

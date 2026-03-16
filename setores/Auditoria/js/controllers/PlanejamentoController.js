@@ -267,6 +267,11 @@ window.processarImportacaoPlanejamento = async function (dados) {
     for (let i = 1; i < dados.length; i++) {
         const row = dados[i];
         const index = i;
+
+        if (window.importCancelled) {
+            window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
+            break;
+        }
         
         if (!row || row.length < 1) {
             window.updateImportProgress(index, total, `Linha ${i}: Vazia ou incompleta.`, 'warning');
