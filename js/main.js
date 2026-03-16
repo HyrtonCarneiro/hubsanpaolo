@@ -26,9 +26,10 @@ window.handleAuth = async function () {
         if (querySnapshot.empty) {
             if (user === 'admin' && pass === '$@np@010') {
                 const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
-                await addDoc(collection(db, "users"), { user: 'admin', pass: '$@np@010', setores_permitidos: allSectors });
+                await addDoc(collection(db, "users"), { user: 'admin', pass: '$@np@010', setores_permitidos: allSectors, isSuperAdmin: true });
                 sessionStorage.setItem('loggedUser', user);
                 sessionStorage.setItem('userSectors', JSON.stringify(allSectors));
+                sessionStorage.setItem('isSuperAdmin', 'true');
                 currentUser = user;
                 initApp();
             } else {
@@ -53,6 +54,7 @@ window.handleAuth = async function () {
             }
             sessionStorage.setItem('userSectors', JSON.stringify(sectors));
             sessionStorage.setItem('loggedUser', user);
+            sessionStorage.setItem('isSuperAdmin', (user === 'admin' || userData.isSuperAdmin) ? 'true' : 'false');
             currentUser = user;
             initApp();
         } else {
@@ -67,6 +69,7 @@ window.handleAuth = async function () {
 window.logout = function () {
     sessionStorage.removeItem('loggedUser');
     sessionStorage.removeItem('userSectors');
+    sessionStorage.removeItem('isSuperAdmin');
     location.reload();
 }
 
@@ -105,11 +108,13 @@ function initApp() {
         { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
     ];
 
+    const isSuperAdmin = sessionStorage.getItem('isSuperAdmin') === 'true';
+
     const hubGrid = document.getElementById('hub-grid');
     if (hubGrid) {
         let gridHTML = '';
         allHubSectors.forEach(sec => {
-            const isActive = sectors.includes(sec.id) || currentUser === 'admin';
+            const isActive = sectors.includes(sec.id) || isSuperAdmin;
             if (isActive) {
                 gridHTML += SectorCard({
                     id: sec.id,
@@ -126,7 +131,7 @@ function initApp() {
 
     const adminBtn = document.getElementById('adminPanelBtn');
     if (adminBtn) {
-        if (currentUser === 'admin') adminBtn.style.display = 'inline-flex';
+        if (isSuperAdmin) adminBtn.style.display = 'inline-flex';
         else adminBtn.style.display = 'none';
     }
 }
@@ -207,10 +212,19 @@ function renderAdminUsersList() {
         const d = document.createElement('div');
         d.className = 'border border-gray-200 p-4 mb-4 rounded-lg bg-white shadow-sm';
 
-        const adminBadge = u.user === 'admin' ? '<span class="bg-brandOrange text-white text-xs px-2 py-1 rounded">Super Admin</span>' : '';
+        const adminBadge = (u.user === 'admin' || u.isSuperAdmin) ? '<span class="bg-brandOrange text-white text-xs px-2 py-1 rounded">Super Admin</span>' : '';
+        const isSelf = u.user === 'admin';
+        
+        const superAdminToggle = !isSelf ? `
+            <label class="inline-flex items-center gap-2 mb-4 p-3 bg-brandOrange/10 border border-brandOrange/20 rounded-lg cursor-pointer w-full">
+                <input type="checkbox" id="superAdmin-${u.id}" class="rounded text-brandOrange focus:ring-brandOrange" ${u.isSuperAdmin ? 'checked' : ''}> 
+                <span class="text-sm font-bold text-brandOrange">Conceder Acesso Total (Super Admin)</span>
+            </label>
+        ` : '';
+
         const btnAlterarSenha = Button({ text: "Senha", icon: "<i class='ph ph-key mr-1'></i>", variant: "outline", onClick: `window.alterarSenhaUsuario('${u.id}', '${u.user}')` });
-        const btnDelete = u.user !== 'admin' ? Button({ text: "Excluir", icon: "<i class='ph ph-trash mr-1'></i>", variant: "outline", onClick: `window.deletarUsuario('${u.id}', '${u.user}')` }) : '';
-        const btnSave = u.user !== 'admin' ? Button({ text: "Salvar Permissões", icon: "<i class='ph ph-floppy-disk mr-1'></i>", variant: "primary", onClick: `window.salvarPermissoesUsuario('${u.id}')` }) : '<p class="text-xs text-mutedText">Permissões de Super Admin não podem ser alteradas.</p>';
+        const btnDelete = !isSelf ? Button({ text: "Excluir", icon: "<i class='ph ph-trash mr-1'></i>", variant: "outline", onClick: `window.deletarUsuario('${u.id}', '${u.user}')` }) : '';
+        const btnSave = !isSelf ? Button({ text: "Salvar Permissões", icon: "<i class='ph ph-floppy-disk mr-1'></i>", variant: "primary", onClick: `window.salvarPermissoesUsuario('${u.id}')` }) : '<p class="text-xs text-mutedText italic">Permissões de administrador raiz não podem ser alteradas.</p>';
 
         d.innerHTML = `
             <div class="flex justify-between items-center mb-4">
@@ -223,6 +237,7 @@ function renderAdminUsersList() {
                     ${btnDelete}
                 </div>
             </div>
+            ${superAdminToggle}
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-4">
                 ${checksHtml}
             </div>
@@ -243,11 +258,15 @@ window.salvarPermissoesUsuario = async function (userId) {
 
     if (novasPermissoes.length === 0) return showToast("Selecione pelo menos um setor", "error");
 
+    const isSuper = document.getElementById('superAdmin-' + userId)?.checked || false;
+
     try {
         await updateDoc(doc(db, "users", userId), {
-            setores_permitidos: novasPermissoes
+            setores_permitidos: novasPermissoes,
+            isSuperAdmin: isSuper
         });
         showToast("Permissões atualizadas com sucesso!");
+        carregarUsuariosAdmin(); // Atualiza cache
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar permissões", "error");

@@ -78,6 +78,23 @@ window.getLojaByFlexName = function(name) {
     return found || null;
 };
 
+window.getAuditorByFlexName = function(name) {
+    if (!name) return window.currentUser || 'Sistema';
+    const search = window.normalizeString(name);
+    
+    // 1. Tentar correspondência exata ou parcial na equipe cadastrada
+    if (window.audiEquipe && window.audiEquipe.length > 0) {
+        const found = window.audiEquipe.find(m => {
+            const normalizedMembro = window.normalizeString(m.nome);
+            return normalizedMembro.includes(search) || search.includes(normalizedMembro);
+        });
+        if (found) return found.nome;
+    }
+
+    // 2. Se não encontrou, retorna o nome formatado bonitinho
+    return window.properCase(name);
+};
+
 // --- CONTROLE DE MODAL DE IMPORTAÇÃO ---
 
 window.showImportModal = function(total) {
