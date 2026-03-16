@@ -78,6 +78,65 @@ window.getLojaByFlexName = function(name) {
     return found || null;
 };
 
+// --- CONTROLE DE MODAL DE IMPORTAÇÃO ---
+
+window.showImportModal = function(total) {
+    const modal = document.getElementById('modalImportProgresso');
+    const log = document.getElementById('importLog');
+    const bar = document.getElementById('importProgressBar');
+    const percent = document.getElementById('importProgressPercent');
+    const status = document.getElementById('importProgressStatus');
+    const btnFechar = document.getElementById('btnFecharImport');
+    const btnConcluir = document.getElementById('btnConcluirImport');
+
+    if (modal) modal.classList.add('show');
+    if (log) log.innerHTML = `<div class="text-blue-500 font-bold">Iniciando importação de ${total} registros...</div>`;
+    if (bar) bar.style.width = '0%';
+    if (percent) percent.innerText = '0%';
+    if (status) status.innerText = 'Processando...';
+    if (btnFechar) btnFechar.classList.add('hidden');
+    if (btnConcluir) btnConcluir.classList.add('hidden');
+};
+
+window.updateImportProgress = function(current, total, message, type = 'info') {
+    const log = document.getElementById('importLog');
+    const bar = document.getElementById('importProgressBar');
+    const percent = document.getElementById('importProgressPercent');
+    const status = document.getElementById('importProgressStatus');
+
+    const p = Math.round((current / total) * 100);
+    if (bar) bar.style.width = p + '%';
+    if (percent) percent.innerText = p + '%';
+    if (status) status.innerText = `Processando ${current}/${total}...`;
+
+    if (log) {
+        const line = document.createElement('div');
+        const colors = {
+            'info': 'text-[var(--text-main)]',
+            'success': 'text-green-500',
+            'warning': 'text-orange-500',
+            'error': 'text-red-500 font-bold'
+        };
+        line.className = colors[type] || colors.info;
+        line.innerText = `[${new Date().toLocaleTimeString()}] ${message}`;
+        log.appendChild(line);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    if (current === total) {
+        if (status) status.innerText = 'Importação Concluída!';
+        const btnFechar = document.getElementById('btnFecharImport');
+        const btnConcluir = document.getElementById('btnConcluirImport');
+        if (btnFechar) btnFechar.classList.remove('hidden');
+        if (btnConcluir) btnConcluir.classList.remove('hidden');
+    }
+};
+
+window.fecharModalImportProgresso = function() {
+    const modal = document.getElementById('modalImportProgresso');
+    if (modal) modal.classList.remove('show');
+};
+
 window.toggleDarkMode = function () {
     document.body.classList.toggle('dark-mode');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));

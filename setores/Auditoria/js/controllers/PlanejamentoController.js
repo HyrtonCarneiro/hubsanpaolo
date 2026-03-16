@@ -260,62 +260,86 @@ window.processarImportacaoPlanejamento = async function (dados) {
     let sucessos = 0;
     let erros = 0;
     let ignorados = 0;
+    const total = dados.length - 1; // Excluindo cabeçalho
+
+    window.showImportModal(total);
 
     for (let i = 1; i < dados.length; i++) {
         const row = dados[i];
-        if (!row || row.length < 1) continue;
+        const index = i;
+        
+        if (!row || row.length < 1) {
+            window.updateImportProgress(index, total, `Linha ${i}: Vazia ou incompleta.`, 'warning');
+            continue;
+        }
 
         // Nova Ordem solicitada: Loja(0), Regional(1), Ultima(2), Proxima(3), Auditor(4)
         const rawLoja = (row[0] || '').toString().trim();
-        const dataPrevista = (row[3] || '').toString().trim();
+        const rawDataRaw = row[3]; // Pode ser string ou número do Excel
         const rawAuditor = (row[4] || '').toString().trim();
         
-        if (!rawLoja) continue;
+        if (!rawLoja) {
+            window.updateImportProgress(index, total, `Linha ${i}: Nome da loja ausente na Coluna A.`, 'warning');
+            continue;
+        }
 
         // Validar se a loja existe no sistema usando busca flexível
         const lojaValida = window.getLojaByFlexName(rawLoja);
         if (!lojaValida) {
-            console.warn("Loja ignorada (não encontrada):", rawLoja);
+            window.updateImportProgress(index, total, `Loja "${rawLoja}" não mapeada no sistema.`, 'warning');
             ignorados++;
             continue;
         }
 
+        // Tratar data vinda do XLSX (pode ser serial number ou string)
+        let dataPrevista = "";
+        try {
+            if (rawDataRaw) {
+                if (typeof rawDataRaw === 'number') {
+                    // Converter serial date do Excel
+                    const dateObj = new Date(Math.round((rawDataRaw - 25569) * 86400 * 1000));
+                    dataPrevista = dateObj.toISOString().split('T')[0];
+                } else {
+                    const strDate = rawDataRaw.toString().trim();
+                    if (strDate.includes('/')) {
+                        dataPrevista = strDate.split('/').reverse().join('-'); // DD/MM/YYYY -> YYYY-MM-DD
+                    } else {
+                        dataPrevista = strDate;
+                    }
+                }
+            }
+        } catch (e) {
+            console.error("Erro data:", e);
+        }
+
         const payload = {
-            loja: lojaValida.nome, // Usa o nome oficial
+            loja: lojaValida.nome,
             dataProxima: dataPrevista,
-            auditor: window.properCase(rawAuditor), // Normaliza nome para Proper Case
-            notasInternas: row[5] || '', // Notas em posições posteriores
+            auditor: window.properCase(rawAuditor),
+            notasInternas: (row[5] || '').toString(), 
             regional: row[1] || (window.lojasIniciais.find(l => l.nome === lojaValida.nome) || {}).estado || 'N/A', 
             updatedAt: new Date().toISOString()
         };
 
         try {
-            // Se tiver ID_REGISTRO, tentamos atualizar
-            let docRef = null;
-            if (idRegistro) {
-                // Tenta achar pelo docId no cache primeiro
-                const noCache = (window.planejamentoCache || []).find(p => p.docId === idRegistro || p.id === idRegistro);
-                if (noCache) {
-                    docRef = doc(db, "auditoria_planejamento", noCache.docId);
-                    await updateDoc(docRef, payload);
-                    sucessos++;
-                    continue;
-                }
-            }
-
-            // Se não achou pelo ID ou não tem ID, busca por nome de loja
+            // Busca por nome de loja no planejamento existente para atualizar
             const existByLoja = (window.planejamentoCache || []).find(p => p.loja === lojaValida.nome);
             if (existByLoja) {
-                docRef = doc(db, "auditoria_planejamento", existByLoja.docId);
-                await updateDoc(docRef, payload);
+                await updateDoc(doc(db, "auditoria_planejamento", existByLoja.docId), payload);
+                window.updateImportProgress(index, total, `${lojaValida.nome}: Atualizado com sucesso.`, 'success');
             } else {
                 await addDoc(collection(db, "auditoria_planejamento"), payload);
+                window.updateImportProgress(index, total, `${lojaValida.nome}: Criado com sucesso.`, 'success');
             }
             sucessos++;
         } catch (err) {
-            console.error("Erro ao importar linha:", row, err);
+            console.error("Erro import:", err);
+            window.updateImportProgress(index, total, `${lojaValida.nome}: Erro ao salvar (${err.message}).`, 'error');
             erros++;
         }
+        
+        // Pequeno delay para não travar a UI em imports grandes
+        if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
     }
 
     let msg = `Importação concluída: ${sucessos} salvos.`;
