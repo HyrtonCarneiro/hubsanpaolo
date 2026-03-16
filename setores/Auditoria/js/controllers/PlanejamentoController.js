@@ -264,6 +264,11 @@ window.processarImportacaoPlanejamento = async function (dados) {
 
     window.showImportModal(total);
 
+    const logErroGlobal = (msg) => {
+        const log = document.getElementById('importLog');
+        if (log) log.innerHTML += `<div class="text-red-500 font-bold mt-2">ERRO CRÍTICO: ${msg}</div>`;
+    };
+
     const salvarLinha = async (lojaValida, rawDataRaw, auditorFinal, row) => {
         let dataPrevista = "";
         try {
@@ -275,6 +280,9 @@ window.processarImportacaoPlanejamento = async function (dados) {
                     const strDate = rawDataRaw.toString().trim();
                     if (strDate.includes('/')) {
                         dataPrevista = strDate.split('/').reverse().join('-');
+                    } else if (strDate.includes('-')) {
+                        const parts = strDate.split(' ')[0].split('-');
+                        dataPrevista = parts[0].length === 4 ? parts.join('-') : parts.reverse().join('-');
                     } else {
                         dataPrevista = strDate;
                     }
@@ -301,76 +309,86 @@ window.processarImportacaoPlanejamento = async function (dados) {
         }
     };
 
-    for (let i = 1; i < dados.length; i++) {
-        const row = dados[i];
-        const index = i;
+    try {
+        for (let i = 1; i < dados.length; i++) {
+            const row = dados[i];
+            const index = i;
 
-        if (window.importCancelled) {
-            window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
-            break;
-        }
-        
-        if (!row || row.length < 1) {
-            window.updateImportProgress(index, total, `Linha ${i}: Vazia ou incompleta.`, 'warning');
-            continue;
-        }
-
-        const rawLoja = (row[0] || '').toString().trim();
-        const rawDataRaw = row[3];
-        const rawAuditor = (row[4] || '').toString().trim();
-        
-        if (!rawLoja) {
-            window.updateImportProgress(index, total, `Linha ${i}: Nome da loja ausente.`, 'warning');
-            continue;
-        }
-
-        const lojaValida = window.getLojaByFlexName(rawLoja);
-        const auditorFinal = window.getAuditorByFlexName(rawAuditor);
-
-        if (!lojaValida || !auditorFinal) {
-            const motivo = !lojaValida ? 'Loja não encontrada' : 'Auditor não encontrado';
-            window.updateImportProgress(index, total, `Linha ${i}: ${motivo}. Adicionado para remapeamento.`, 'warning');
-            window.adicionarPendente(
-                !lojaValida ? 'loja' : 'auditor', 
-                !lojaValida ? rawLoja : rawAuditor, 
-                row, 
-                { rawDataRaw, auditorParcial: auditorFinal, lojaOriginal: lojaValida, unknownAuditorName: !auditorFinal ? rawAuditor : null }
-            );
-            ignorados++;
-            continue;
-        }
-
-        try {
-            await salvarLinha(lojaValida, rawDataRaw, auditorFinal, row);
-            window.updateImportProgress(index, total, `${lojaValida.nome}: Processado com sucesso.`, 'success');
-            sucessos++;
-        } catch (err) {
-            console.error("Erro import:", err);
-            window.updateImportProgress(index, total, `${lojaValida.nome}: Erro ao salvar (${err.message}).`, 'error');
-            erros++;
-        }
-        
-        if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
-    }
-
-    if (window.importPendentes.rows.length > 0 && !window.importCancelled) {
-        window.updateImportProgress(total, total, `Importação parcial: ${window.importPendentes.rows.length} itens aguardando remapeamento.`, 'warning');
-        
-        window.abrirModalRemapear(async (resolvidos) => {
-            let remSucessos = 0;
-            for (const r of resolvidos) {
-                try {
-                    const l = r.lojaMapeada || r.lojaOriginal;
-                    const a = r.auditorMapeado || r.auditorParcial || window.currentUser || 'Sistema';
-                    await salvarLinha(l, r.rawDataRaw, a, r.row);
-                    remSucessos++;
-                } catch (e) { console.error("Erro remapeamento:", e); }
+            if (window.importCancelled) {
+                window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
+                break;
             }
-            showToast(`${remSucessos} registros adicionais salvos após remapeamento.`);
-        }, 'planejamento');
-    } else {
-        let msg = `Importação concluída: ${sucessos} salvos.`;
-        if (erros > 0) msg += ` ${erros} erros.`;
-        showToast(msg, erros > 0 ? "warning" : "success");
+            
+            if (!row || !Array.isArray(row)) {
+                window.updateImportProgress(index, total, `Linha ${i}: Formato inválido.`, 'warning');
+                continue;
+            }
+
+            const rawLoja = (row[0] || '').toString().trim();
+            const rawDataRaw = row[3];
+            const rawAuditor = (row[4] || '').toString().trim();
+            
+            if (!rawLoja) {
+                window.updateImportProgress(index, total, `Linha ${i}: Nome da loja ausente.`, 'warning');
+                continue;
+            }
+
+            const lojaValida = window.getLojaByFlexName(rawLoja);
+            const auditorFinal = window.getAuditorByFlexName(rawAuditor);
+
+            if (!lojaValida || !auditorFinal) {
+                const motivo = !lojaValida ? 'Loja não encontrada' : 'Auditor não encontrado';
+                window.updateImportProgress(index, total, `Linha ${i}: ${motivo} (${!lojaValida ? rawLoja : rawAuditor}).`, 'warning');
+                window.adicionarPendente(
+                    !lojaValida ? 'loja' : 'auditor', 
+                    !lojaValida ? rawLoja : rawAuditor, 
+                    row, 
+                    { rawDataRaw, auditorParcial: auditorFinal, lojaOriginal: lojaValida, unknownAuditorName: !auditorFinal ? rawAuditor : null }
+                );
+                ignorados++;
+                continue;
+            }
+
+            try {
+                await salvarLinha(lojaValida, rawDataRaw, auditorFinal, row);
+                window.updateImportProgress(index, total, `${lojaValida.nome}: Processado com sucesso.`, 'success');
+                sucessos++;
+            } catch (err) {
+                console.error("Erro import:", err);
+                window.updateImportProgress(index, total, `${lojaValida.nome}: Erro ao salvar (${err.message}).`, 'error');
+                erros++;
+            }
+            
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
+        }
+
+        if (window.importPendentes.rows.length > 0 && !window.importCancelled) {
+            window.updateImportProgress(total, total, `Importação parcial: ${window.importPendentes.rows.length} itens aguardando remapeamento.`, 'warning');
+            
+            window.abrirModalRemapear(async (resolvidos) => {
+                let remSucessos = 0;
+                let remErros = 0;
+                for (const r of resolvidos) {
+                    try {
+                        const l = r.lojaMapeada || r.lojaOriginal;
+                        const a = r.auditorMapeado || r.auditorParcial || window.currentUser || 'Sistema';
+                        await salvarLinha(l, r.rawDataRaw, a, r.row);
+                        remSucessos++;
+                    } catch (e) { 
+                        console.error("Erro remapeamento:", e); 
+                        remErros++;
+                    }
+                }
+                showToast(`${remSucessos} registros adicionais salvos pós-remapeamento.`, remErros > 0 ? "warning" : "success");
+            }, 'planejamento');
+        } else {
+            let msg = `Importação concluída: ${sucessos} salvos.`;
+            if (erros > 0) msg += ` ${erros} erros.`;
+            showToast(msg, erros > 0 ? "warning" : "success");
+        }
+    } catch (criticalErr) {
+        console.error("Erro crítico no planejamento:", criticalErr);
+        logErroGlobal(criticalErr.message);
+        showToast("Erro crítico no processamento. Verifique o log.", "error");
     }
 }

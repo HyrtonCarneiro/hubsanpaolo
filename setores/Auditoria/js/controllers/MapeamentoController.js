@@ -426,6 +426,11 @@ window.processarImportacaoMapeamento = async function (dados) {
 
     window.showImportModal(total);
 
+    const logErroGlobal = (msg) => {
+        const log = document.getElementById('importLog');
+        if (log) log.innerHTML += `<div class="text-red-500 font-bold mt-2">ERRO CRÍTICO: ${msg}</div>`;
+    };
+
     // Função auxiliar para salvar um único registro (reutilizada no remapeamento)
     const salvarLinhaMapeamento = async (lojaValida, nTentativaFinal, dataFormatada, rawRealizada, rawMotivo, auditorFinal, rawNoPrazo) => {
         const dadosMap = {
@@ -445,113 +450,128 @@ window.processarImportacaoMapeamento = async function (dados) {
         await window.MapeamentoService.registrarTentativa(dadosMap);
     };
 
-    for (let i = 1; i < dados.length; i++) {
-        const row = dados[i];
-        const index = i;
-        
-        if (window.importCancelled) {
-            window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
-            break;
-        }
-        if (!row || row.length < 4) {
-            window.updateImportProgress(index, total, `Linha ${i}: Incompleta ou vazia.`, 'warning');
-            continue;
-        }
+    try {
+        for (let i = 1; i < dados.length; i++) {
+            const row = dados[i];
+            const index = i;
+            
+            if (window.importCancelled) {
+                window.updateImportProgress(index, total, "Importação interrompida pelo usuário.", "warning");
+                break;
+            }
+            if (!row || !Array.isArray(row)) {
+                window.updateImportProgress(index, total, `Linha ${i}: Formato inválido.`, 'warning');
+                continue;
+            }
 
-        const rawData = row[0];
-        const rawTentativa = row[1];
-        const rawLoja = (row[3] || '').toString().trim();
-        const rawRealizada = (row[4] || 'SIM').toString().trim().toUpperCase();
-        const rawMotivo = (row[5] || '').toString().trim();
-        const rawAuditor = (row[6] || '').toString().trim();
-        const rawNoPrazo = (row[7] || '').toString().trim().toUpperCase();
+            // Layout da Planilha: 0:DATA, 1:TENTATIVA, 2:UF, 3:LOJA, 4:REALIZADA, 5:POR QUE, 6:RESPONSÁVEL, 7:SLA
+            const rawData = row[0];
+            const rawTentativa = row[1];
+            const rawLoja = (row[3] || '').toString().trim();
+            const rawRealizada = (row[4] || 'SIM').toString().trim().toUpperCase();
+            const rawMotivo = (row[5] || '').toString().trim();
+            const rawAuditor = (row[6] || '').toString().trim();
+            const rawNoPrazo = (row[7] || '').toString().trim().toUpperCase();
 
-        if (!rawLoja || !rawData) {
-            window.updateImportProgress(index, total, `Linha ${i}: Loja ou Data ausente.`, 'warning');
-            continue;
-        }
+            if (!rawLoja || !rawData) {
+                window.updateImportProgress(index, total, `Linha ${i}: Loja ou Data ausente (${rawLoja || 'N/A'}).`, 'warning');
+                continue;
+            }
 
-        // Parse Tentativa e Data ANTES de checar loja/auditor para ter os dados prontos
-        let nTentativaFinal = 1;
-        if (rawTentativa !== undefined && rawTentativa !== null && rawTentativa !== "") {
-            const parsed = parseInt(rawTentativa.toString().replace(/[^0-9]/g, ''));
-            if (!isNaN(parsed)) nTentativaFinal = parsed;
-        }
+            // Parse Tentativa e Data ANTES de checar loja/auditor para ter os dados prontos
+            let nTentativaFinal = 1;
+            if (rawTentativa !== undefined && rawTentativa !== null && rawTentativa !== "") {
+                const parsed = parseInt(rawTentativa.toString().replace(/[^0-9]/g, ''));
+                if (!isNaN(parsed)) nTentativaFinal = parsed;
+            }
 
-        let dataFormatada = "";
-        try {
-            if (rawData) {
-                if (typeof rawData === 'number' || (!isNaN(rawData) && !rawData.toString().includes('-') && !rawData.toString().includes('/'))) {
-                    const serial = parseFloat(rawData);
-                    const dateObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
-                    dataFormatada = dateObj.toISOString().split('T')[0];
-                } else {
-                    const strDate = rawData.toString().trim();
-                    if (strDate.includes('/')) {
-                        const parts = strDate.split('/');
-                        if (parts.length === 3) {
-                            dataFormatada = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            let dataFormatada = "";
+            try {
+                if (rawData) {
+                    if (typeof rawData === 'number' || (!isNaN(rawData) && !rawData.toString().includes('-') && !rawData.toString().includes('/'))) {
+                        const serial = parseFloat(rawData);
+                        const dateObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
+                        dataFormatada = dateObj.toISOString().split('T')[0];
+                    } else {
+                        const strDate = rawData.toString().trim();
+                        if (strDate.includes('/')) {
+                            const parts = strDate.split('/');
+                            if (parts.length === 3) {
+                                dataFormatada = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                            }
+                        } else if (strDate.includes('-')) {
+                            const parts = strDate.split(' ')[0].split('-');
+                            if (parts.length === 3) {
+                                // Garantir YYYY-MM-DD
+                                dataFormatada = parts[0].length === 4 ? parts.join('-') : parts.reverse().join('-');
+                            }
                         }
-                    } else if (strDate.includes('-')) {
-                        dataFormatada = strDate;
                     }
                 }
+            } catch (e) {
+                console.error("Erro data:", e);
             }
-        } catch (e) {
-            console.error("Erro data:", e);
+
+            if (!dataFormatada) {
+                window.updateImportProgress(index, total, `Linha ${i}: Data inválida (${rawData}).`, 'warning');
+                continue;
+            }
+
+            const lojaValida = window.getLojaByFlexName(rawLoja);
+            const auditorFinal = window.getAuditorByFlexName(rawAuditor);
+
+            if (!lojaValida || !auditorFinal) {
+                const motivoPendente = !lojaValida ? 'Loja não encontrada' : 'Auditor não encontrado';
+                window.updateImportProgress(index, total, `Linha ${i}: ${motivoPendente} (${!lojaValida ? rawLoja : rawAuditor}).`, 'warning');
+                
+                window.adicionarPendente(
+                    !lojaValida ? 'loja' : 'auditor', 
+                    !lojaValida ? rawLoja : rawAuditor, 
+                    row, 
+                    { nTentativaFinal, dataFormatada, rawRealizada, rawMotivo, rawNoPrazo, auditorParcial: auditorFinal, lojaOriginal: lojaValida, unknownAuditorName: !auditorFinal ? rawAuditor : null }
+                );
+                ignorados++;
+                continue;
+            }
+
+            try {
+                await salvarLinhaMapeamento(lojaValida, nTentativaFinal, dataFormatada, rawRealizada, rawMotivo, auditorFinal, rawNoPrazo);
+                window.updateImportProgress(index, total, `${lojaValida.nome}: Salvo (Tentativa ${nTentativaFinal}).`, 'success');
+                sucessos++;
+            } catch (err) {
+                console.error(err);
+                window.updateImportProgress(index, total, `${lojaValida.nome || rawLoja}: Erro de rede ou Firebase (${err.message}).`, 'error');
+                erros++;
+            }
+
+            if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
         }
 
-        if (!dataFormatada) {
-            window.updateImportProgress(index, total, `Linha ${i}: Data inválida (${rawData}).`, 'warning');
-            continue;
-        }
-
-        const lojaValida = window.getLojaByFlexName(rawLoja);
-        const auditorFinal = window.getAuditorByFlexName(rawAuditor);
-
-        if (!lojaValida || !auditorFinal) {
-            const motivoPendente = !lojaValida ? 'Loja não encontrada' : 'Auditor não encontrado';
-            window.updateImportProgress(index, total, `Linha ${i}: ${motivoPendente}. Adicionado para remapeamento.`, 'warning');
+        if (window.importPendentes.rows.length > 0 && !window.importCancelled) {
+            window.updateImportProgress(total, total, `Importação parcial: ${window.importPendentes.rows.length} itens aguardando remapeamento.`, 'warning');
             
-            window.adicionarPendente(
-                !lojaValida ? 'loja' : 'auditor', 
-                !lojaValida ? rawLoja : rawAuditor, 
-                row, 
-                { nTentativaFinal, dataFormatada, rawRealizada, rawMotivo, rawNoPrazo, auditorParcial: auditorFinal, lojaOriginal: lojaValida, unknownAuditorName: !auditorFinal ? rawAuditor : null }
-            );
-            ignorados++;
-            continue;
+            window.abrirModalRemapear(async (resolvidos, mapLojas, mapAuditores) => {
+                let remSucessos = 0;
+                let remErros = 0;
+                for (const r of resolvidos) {
+                    try {
+                        const l = r.lojaMapeada || r.lojaOriginal;
+                        const a = r.auditorMapeado || r.auditorParcial || window.currentUser || 'Sistema';
+                        await salvarLinhaMapeamento(l, r.nTentativaFinal, r.dataFormatada, r.rawRealizada, r.rawMotivo, a, r.rawNoPrazo);
+                        remSucessos++;
+                    } catch (e) { 
+                        console.error("Erro remapeamento:", e); 
+                        remErros++;
+                    }
+                }
+                showToast(`${remSucessos} registros adicionais salvos pós-remapeamento.`, remErros > 0 ? "warning" : "success");
+            }, 'mapeamento');
+        } else {
+            showToast(`Mapeamento concluído: ${sucessos} sucessos.`, erros > 0 ? "warning" : "success");
         }
-
-        try {
-            await salvarLinhaMapeamento(lojaValida, nTentativaFinal, dataFormatada, rawRealizada, rawMotivo, auditorFinal, rawNoPrazo);
-            window.updateImportProgress(index, total, `${lojaValida.nome}: Salvo (Tentativa ${nTentativaFinal}).`, 'success');
-            sucessos++;
-        } catch (err) {
-            console.error(err);
-            window.updateImportProgress(index, total, `${lojaValida.nome || rawLoja}: Erro (${err.message}).`, 'error');
-            erros++;
-        }
-
-        if (i % 5 === 0) await new Promise(r => setTimeout(r, 50));
-    }
-
-    if (window.importPendentes.rows.length > 0 && !window.importCancelled) {
-        window.updateImportProgress(total, total, `Importação parcial: ${window.importPendentes.rows.length} itens aguardando remapeamento.`, 'warning');
-        
-        window.abrirModalRemapear(async (resolvidos, mapLojas, mapAuditores) => {
-            let remSucessos = 0;
-            for (const r of resolvidos) {
-                try {
-                    const l = r.lojaMapeada || r.lojaOriginal;
-                    const a = r.auditorMapeado || r.auditorParcial || window.currentUser || 'Sistema';
-                    await salvarLinhaMapeamento(l, r.nTentativaFinal, r.dataFormatada, r.rawRealizada, r.rawMotivo, a, r.rawNoPrazo);
-                    remSucessos++;
-                } catch (e) { console.error("Erro remapeamento:", e); }
-            }
-            showToast(`${remSucessos} registros adicionais salvos após remapeamento.`);
-        }, 'mapeamento');
-    } else {
-        showToast(`Mapeamento concluído: ${sucessos} sucessos.`, erros > 0 ? "warning" : "success");
+    } catch (criticalErr) {
+        console.error("Erro crítico na importação:", criticalErr);
+        logErroGlobal(criticalErr.message);
+        showToast("Ocorreu um erro crítico durante o processamento. Verifique o log.", "error");
     }
 }

@@ -197,8 +197,8 @@ window.importarMapeamentoExcel = function (event) {
             }
             event.target.value = '';
         } catch (err) {
-            console.error(err);
-            showToast("Erro ao processar Excel.", "error");
+            console.error("Erro fatal no importarMapeamentoExcel:", err);
+            showToast("Erro ao processar Excel (Mapeamento). Verifique o log de importação.", "error");
         }
     };
     reader.readAsArrayBuffer(file);
