@@ -240,12 +240,15 @@ window.renderizarMapeamento = function() {
         const rowClass = isCritico ? 'bg-red-50/50 hover:bg-red-100/50' : 'hover:bg-black/5';
         const criticoIcon = isCritico ? '<i class="ph-fill ph-warning-octagon text-red-500 mr-1" title="Loja Crítica (2+ tentativas sem sucesso)"></i>' : '';
 
-        let dataExibicao = h.dataTentativa;
         let dataObj = new Date(h.dataTentativa);
-        // Fallback para datas que foram salvas como serial do Excel por erro anterior
-        if (isNaN(dataObj.getTime()) && !isNaN(h.dataTentativa)) {
+        
+        // Se a data resultar em um ano absurdo (ex: 46045) ou for inválida, mas for um número
+        const year = dataObj.getFullYear();
+        if ((isNaN(dataObj.getTime()) || year > 3000) && !isNaN(h.dataTentativa)) {
             const serial = parseFloat(h.dataTentativa);
-            dataObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
+            if (serial > 40000) { // Seriais do Excel atuais estão na casa de 45000+
+                dataObj = new Date(Math.round((serial - 25569) * 86400 * 1000));
+            }
         }
 
         return `
@@ -350,18 +353,43 @@ window.updateBulkButtonVisibility = function() {
 
 window.excluirMapeamentoEmMassa = async function() {
     const selecionados = window.historicoMapeamento.filter(h => h.selected);
-    if (selecionados.length === 0) return;
+    const total = selecionados.length;
+    if (total === 0) return;
 
-    if (!confirm(`Excluir ${selecionados.length} registros selecionados permanentemente?`)) return;
+    if (!confirm(`⚠️ ATENÇÃO: Você está prestes a excluir ${total} registros permanentemente.\n\nEsta ação NÃO pode ser desfeita. Deseja continuar?`)) return;
 
-    try {
-        const promessas = selecionados.map(h => window.MapeamentoService.excluirRegistro(h.id));
-        await Promise.all(promessas);
-        showToast(`${selecionados.length} registros excluídos com sucesso.`);
-    } catch (e) {
-        console.error(e);
-        showToast("Erro ao excluir alguns registros.", "error");
+    // Usar o modal de progresso para dar feedback visual
+    window.showImportModal(total);
+    const log = document.getElementById('importLog');
+    if (log) log.innerHTML = `<div class="text-red-500 font-bold">Iniciando exclusão em massa de ${total} registros...</div>`;
+    
+    let sucessos = 0;
+    let erros = 0;
+
+    for (let i = 0; i < selecionados.length; i++) {
+        if (window.importCancelled) {
+            window.updateImportProgress(i, total, "Exclusão interrompida pelo usuário.", "warning");
+            break;
+        }
+
+        const h = selecionados[i];
+        try {
+            await window.MapeamentoService.excluirRegistro(h.id, true); // true = skipConfirm
+            sucessos++;
+            if (i % 10 === 0 || i === total - 1) {
+                window.updateImportProgress(i + 1, total, `Excluído: ${h.nomeLoja} (${h.dataTentativa})`, 'success');
+            }
+        } catch (e) {
+            console.error(e);
+            erros++;
+            window.updateImportProgress(i + 1, total, `Erro ao excluir ${h.nomeLoja}: ${e.message}`, 'error');
+        }
+        
+        // Pequena pausa para não travar a UI em listas gigantes
+        if (i % 50 === 0) await new Promise(r => setTimeout(r, 10));
     }
+
+    showToast(`${sucessos} registros excluídos com sucesso.`, erros > 0 ? "warning" : "success");
 };
 
 window.sortMapeamento = function(field) {

@@ -23,8 +23,8 @@ window.MapeamentoService = {
         });
     },
 
-    excluirRegistro(id) {
-        if (!confirm("Deseja realmente excluir este registro?")) return;
+    excluirRegistro(id, skipConfirm = false) {
+        if (!skipConfirm && !confirm("Deseja realmente excluir este registro?")) return;
         return window.deleteDoc(window.doc(window.db, "mapeamento_auditoria", id));
     }
 };
