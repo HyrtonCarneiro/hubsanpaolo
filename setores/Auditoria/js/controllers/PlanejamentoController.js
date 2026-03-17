@@ -8,16 +8,18 @@ let planejamentoSortAsc = true;
 
 window.initPlanejamentoListeners = function () {
     try {
+        // Popular filtros imediatamente (Regional)
+        window.popularFiltrosPlanejamento();
+
         onSnapshot(collection(db, "auditoria_planejamento"), function (snapshot) {
             window.planejamentoCache = [];
             snapshot.forEach(function (docSnap) {
                 var data = docSnap.data();
-                // Tenta achar o ID da loja pelo nome para facilitar navegação
-                var lojaId = (window.lojasIniciais.find(l => l.nome === data.loja) || {}).id;
+                var lojaId = ( (window.lojasIniciais || lojasIniciais).find(l => l.nome === data.loja) || {}).id;
                 window.planejamentoCache.push({ docId: docSnap.id, lojaId: lojaId, ...data });
             });
             
-            // Popular filtros
+            // Re-popular filtros caso equipe tenha carregado
             window.popularFiltrosPlanejamento();
             
             window.renderizarTabelaPlanejamento();
@@ -29,31 +31,42 @@ window.initPlanejamentoListeners = function () {
 }
 
 window.popularFiltrosPlanejamento = function() {
-    // Regional
-    const selReg = document.getElementById('planFilterRegional');
-    if (selReg) {
-        selReg.innerHTML = '<option value="">Todas Regionais</option>';
-        const estados = [...new Set(window.lojasIniciais.map(l => l.estado))].sort();
-        estados.forEach(est => {
-            const opt = document.createElement('option');
-            opt.value = est;
-            opt.textContent = est;
-            selReg.appendChild(opt);
-        });
-    }
-
-    // Auditor
-    const selAud = document.getElementById('planFilterAuditor');
-    if (selAud) {
-        selAud.innerHTML = '<option value="">Todos Auditores</option>';
-        if (window.audiEquipe) {
-            window.audiEquipe.forEach(m => {
+    try {
+        const lojas = window.lojasIniciais || lojasIniciais || [];
+        
+        // Regional
+        const selReg = document.getElementById('planFilterRegional');
+        if (selReg && lojas.length > 0) {
+            const currentVal = selReg.value;
+            selReg.innerHTML = '<option value="">Todas Regionais</option>';
+            const estados = [...new Set(lojas.map(l => l.estado))].filter(e => e).sort();
+            estados.forEach(est => {
                 const opt = document.createElement('option');
-                opt.value = m.nome;
-                opt.textContent = m.nome;
-                selAud.appendChild(opt);
+                opt.value = est;
+                opt.textContent = est;
+                selReg.appendChild(opt);
             });
+            if (currentVal) selReg.value = currentVal;
         }
+
+        // Auditor
+        const selAud = document.getElementById('planFilterAuditor');
+        if (selAud) {
+            const currentVal = selAud.value;
+            selAud.innerHTML = '<option value="">Todos Auditores</option>';
+            const equipe = window.audiEquipe || [];
+            if (equipe.length > 0) {
+                equipe.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.nome;
+                    opt.textContent = m.nome;
+                    selAud.appendChild(opt);
+                });
+            }
+            if (currentVal) selAud.value = currentVal;
+        }
+    } catch (e) {
+        console.error("Erro ao popular filtros planejamento:", e);
     }
 };
 
@@ -126,7 +139,9 @@ window.renderizarTabelaPlanejamento = function () {
     // Filtros
     rows = rows.filter(function (r) {
         const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => 
-            r.nome.toLowerCase().includes(term) || r.regional.toLowerCase().includes(term)
+            (r.nome || "").toLowerCase().includes(term) || 
+            (r.regional || "").toLowerCase().includes(term) ||
+            (r.auditor || "").toLowerCase().includes(term)
         );
         const matchesRegional = !filterRegional || r.regional === filterRegional;
         const matchesAuditor = !filterAuditor || r.auditor === filterAuditor;
