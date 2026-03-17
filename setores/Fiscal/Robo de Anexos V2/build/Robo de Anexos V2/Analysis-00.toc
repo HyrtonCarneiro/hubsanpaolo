@@ -16,10 +16,7 @@
  {},
  0,
  [],
- [('config.ini',
-   'G:\\Meu Drive\\SANPAOLO\\Dev\\hubsanpaolo\\setores\\Fiscal\\Robo de Anexos '
-   'V2\\config.ini',
-   'DATA')],
+ [],
  '3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit '
  '(AMD64)]',
  [('pyi_rth_inspect',
@@ -1582,13 +1579,13 @@
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\tracemalloc.py',
    'PYMODULE'),
-  ('_py_abc',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_py_abc.py',
-   'PYMODULE'),
   ('stringprep',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\stringprep.py',
+   'PYMODULE'),
+  ('_py_abc',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_py_abc.py',
    'PYMODULE'),
   ('selenium.webdriver.chrome.options',
    'C:\\Users\\Hyrton '
@@ -2048,61 +2045,57 @@
    'BINARY')],
  [],
  [],
- [('config.ini',
-   'G:\\Meu Drive\\SANPAOLO\\Dev\\hubsanpaolo\\setores\\Fiscal\\Robo de Anexos '
-   'V2\\config.ini',
-   'DATA'),
-  ('selenium\\webdriver\\common\\macos\\selenium-manager',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\macos\\selenium-manager',
-   'DATA'),
-  ('selenium\\webdriver\\common\\linux\\selenium-manager',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\linux\\selenium-manager',
-   'DATA'),
-  ('selenium\\webdriver\\remote\\getAttribute.js',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\remote\\getAttribute.js',
-   'DATA'),
-  ('selenium\\webdriver\\remote\\findElements.js',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\remote\\findElements.js',
-   'DATA'),
-  ('selenium\\webdriver\\common\\devtools\\v144\\py.typed',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v144\\py.typed',
-   'DATA'),
-  ('selenium\\webdriver\\firefox\\webdriver_prefs.json',
+ [('selenium\\webdriver\\firefox\\webdriver_prefs.json',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\firefox\\webdriver_prefs.json',
-   'DATA'),
-  ('selenium\\webdriver\\common\\devtools\\v143\\py.typed',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v143\\py.typed',
-   'DATA'),
-  ('selenium\\py.typed',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\py.typed',
-   'DATA'),
-  ('selenium\\webdriver\\common\\devtools\\v145\\py.typed',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v145\\py.typed',
    'DATA'),
   ('selenium\\webdriver\\remote\\isDisplayed.js',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\remote\\isDisplayed.js',
    'DATA'),
+  ('selenium\\webdriver\\remote\\findElements.js',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\remote\\findElements.js',
+   'DATA'),
+  ('selenium\\webdriver\\remote\\getAttribute.js',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\remote\\getAttribute.js',
+   'DATA'),
+  ('selenium\\webdriver\\common\\linux\\selenium-manager',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\linux\\selenium-manager',
+   'DATA'),
+  ('selenium\\webdriver\\common\\devtools\\v143\\py.typed',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v143\\py.typed',
+   'DATA'),
+  ('selenium\\webdriver\\common\\devtools\\v145\\py.typed',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v145\\py.typed',
+   'DATA'),
+  ('selenium\\webdriver\\common\\devtools\\v144\\py.typed',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\devtools\\v144\\py.typed',
+   'DATA'),
+  ('selenium\\py.typed',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\py.typed',
+   'DATA'),
+  ('selenium\\webdriver\\common\\macos\\selenium-manager',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\macos\\selenium-manager',
+   'DATA'),
   ('selenium\\webdriver\\common\\mutation-listener.js',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\selenium\\webdriver\\common\\mutation-listener.js',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\METADATA',
    'C:\\Users\\Hyrton '
@@ -2112,46 +2105,58 @@
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\INSTALLER',
    'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\licenses\\LICENSE',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\RECORD',
+   'DATA'),
+  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\REQUESTED',
    'DATA'),
   ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\WHEEL',
-   'DATA'),
-  ('setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\importlib_metadata-8.7.1.dist-info\\top_level.txt',
    'DATA'),
   ('setuptools\\_vendor\\jaraco\\text\\Lorem ipsum.txt',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\setuptools\\_vendor\\jaraco\\text\\Lorem '
    'ipsum.txt',
    'DATA'),
-  ('certifi\\cacert.pem',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\certifi\\cacert.pem',
-   'DATA'),
   ('certifi\\py.typed',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\certifi\\py.typed',
+   'DATA'),
+  ('certifi\\cacert.pem',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\certifi\\cacert.pem',
    'DATA'),
   ('base_library.zip',
    'G:\\Meu Drive\\SANPAOLO\\Dev\\hubsanpaolo\\setores\\Fiscal\\Robo de Anexos '
    'V2\\build\\Robo de Anexos V2\\base_library.zip',
    'DATA')],
- [('genericpath',
+ [('posixpath',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\genericpath.py',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\posixpath.py',
+   'PYMODULE'),
+  ('keyword',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\keyword.py',
+   'PYMODULE'),
+  ('enum',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\enum.py',
+   'PYMODULE'),
+  ('stat',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\stat.py',
    'PYMODULE'),
   ('copyreg',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\copyreg.py',
    'PYMODULE'),
-  ('sre_compile',
+  ('functools',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sre_compile.py',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\functools.py',
    'PYMODULE'),
   ('collections.abc',
    'C:\\Users\\Hyrton '
@@ -2161,29 +2166,13 @@
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\collections\\__init__.py',
    'PYMODULE'),
-  ('codecs',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\codecs.py',
-   'PYMODULE'),
-  ('types',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\types.py',
-   'PYMODULE'),
   ('_weakrefset',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_weakrefset.py',
    'PYMODULE'),
-  ('io',
+  ('sre_compile',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\io.py',
-   'PYMODULE'),
-  ('stat',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\stat.py',
-   'PYMODULE'),
-  ('functools',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\functools.py',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sre_compile.py',
    'PYMODULE'),
   ('locale',
    'C:\\Users\\Hyrton '
@@ -2193,77 +2182,13 @@
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\warnings.py',
    'PYMODULE'),
-  ('re._parser',
+  ('ntpath',
    'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_parser.py',
-   'PYMODULE'),
-  ('re._constants',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_constants.py',
-   'PYMODULE'),
-  ('re._compiler',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_compiler.py',
-   'PYMODULE'),
-  ('re._casefix',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_casefix.py',
-   'PYMODULE'),
-  ('re',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\__init__.py',
-   'PYMODULE'),
-  ('enum',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\enum.py',
-   'PYMODULE'),
-  ('keyword',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\keyword.py',
-   'PYMODULE'),
-  ('_collections_abc',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_collections_abc.py',
-   'PYMODULE'),
-  ('reprlib',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\reprlib.py',
-   'PYMODULE'),
-  ('weakref',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\weakref.py',
-   'PYMODULE'),
-  ('heapq',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\heapq.py',
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ntpath.py',
    'PYMODULE'),
   ('sre_parse',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sre_parse.py',
-   'PYMODULE'),
-  ('sre_constants',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sre_constants.py',
-   'PYMODULE'),
-  ('posixpath',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\posixpath.py',
-   'PYMODULE'),
-  ('abc',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\abc.py',
-   'PYMODULE'),
-  ('operator',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\operator.py',
-   'PYMODULE'),
-  ('linecache',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\linecache.py',
-   'PYMODULE'),
-  ('ntpath',
-   'C:\\Users\\Hyrton '
-   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ntpath.py',
    'PYMODULE'),
   ('encodings.zlib_codec',
    'C:\\Users\\Hyrton '
@@ -2752,6 +2677,74 @@
   ('encodings',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\encodings\\__init__.py',
+   'PYMODULE'),
+  ('heapq',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\heapq.py',
+   'PYMODULE'),
+  ('reprlib',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\reprlib.py',
+   'PYMODULE'),
+  ('sre_constants',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sre_constants.py',
+   'PYMODULE'),
+  ('weakref',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\weakref.py',
+   'PYMODULE'),
+  ('abc',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\abc.py',
+   'PYMODULE'),
+  ('genericpath',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\genericpath.py',
+   'PYMODULE'),
+  ('codecs',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\codecs.py',
+   'PYMODULE'),
+  ('io',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\io.py',
+   'PYMODULE'),
+  ('_collections_abc',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_collections_abc.py',
+   'PYMODULE'),
+  ('re._parser',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_parser.py',
+   'PYMODULE'),
+  ('re._constants',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_constants.py',
+   'PYMODULE'),
+  ('re._compiler',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_compiler.py',
+   'PYMODULE'),
+  ('re._casefix',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_casefix.py',
+   'PYMODULE'),
+  ('re',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\__init__.py',
+   'PYMODULE'),
+  ('types',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\types.py',
+   'PYMODULE'),
+  ('linecache',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\linecache.py',
+   'PYMODULE'),
+  ('operator',
+   'C:\\Users\\Hyrton '
+   'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\operator.py',
    'PYMODULE'),
   ('traceback',
    'C:\\Users\\Hyrton '
