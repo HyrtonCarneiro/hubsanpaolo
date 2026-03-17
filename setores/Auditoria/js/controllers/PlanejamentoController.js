@@ -16,6 +16,10 @@ window.initPlanejamentoListeners = function () {
                 var lojaId = (window.lojasIniciais.find(l => l.nome === data.loja) || {}).id;
                 window.planejamentoCache.push({ docId: docSnap.id, lojaId: lojaId, ...data });
             });
+            
+            // Popular filtros
+            window.popularFiltrosPlanejamento();
+            
             window.renderizarTabelaPlanejamento();
             if (typeof window.renderDashboard === 'function') window.renderDashboard();
         }, function (err) { console.error("Erro Planejamento:", err); });
@@ -23,6 +27,35 @@ window.initPlanejamentoListeners = function () {
         console.error("Erro ao iniciar listener planejamento", e);
     }
 }
+
+window.popularFiltrosPlanejamento = function() {
+    // Regional
+    const selReg = document.getElementById('planFilterRegional');
+    if (selReg) {
+        selReg.innerHTML = '<option value="">Todas Regionais</option>';
+        const estados = [...new Set(window.lojasIniciais.map(l => l.estado))].sort();
+        estados.forEach(est => {
+            const opt = document.createElement('option');
+            opt.value = est;
+            opt.textContent = est;
+            selReg.appendChild(opt);
+        });
+    }
+
+    // Auditor
+    const selAud = document.getElementById('planFilterAuditor');
+    if (selAud) {
+        selAud.innerHTML = '<option value="">Todos Auditores</option>';
+        if (window.audiEquipe) {
+            window.audiEquipe.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.nome;
+                opt.textContent = m.nome;
+                selAud.appendChild(opt);
+            });
+        }
+    }
+};
 
 function getUltimaAuditoria(nomeLoja) {
     var notasCache = window.notasCache || [];
@@ -51,13 +84,33 @@ window.renderizarTabelaPlanejamento = function () {
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    var pesqEl = document.getElementById('pesquisaPlanejamento');
-    var filtro = (pesqEl ? pesqEl.value : '').toLowerCase();
+    var pesqEl = document.getElementById('planSearch');
+    var filterRegional = document.getElementById('planFilterRegional')?.value;
+    var filterAuditor = document.getElementById('planFilterAuditor')?.value;
+    var filterStatus = document.getElementById('planFilterStatus')?.value;
+    
+    var searchTerms = (pesqEl ? pesqEl.value : '').toLowerCase().split(' ').filter(t => t);
 
     // Preparar array enriquecido
     var rows = lojasIniciais.map(function (lojaBase) {
         var cfg = (window.planejamentoCache || []).find(function (p) { return p.loja === lojaBase.nome; }) || {};
         var ultimaRaw = getUltimaAuditoria(lojaBase.nome);
+        
+        // Determinar status para filtro
+        let status = "NAO_AGENDADA";
+        if (cfg.dataProxima) {
+            var mesProx = cfg.dataProxima.substring(0, 7);
+            var realizadoNoMes = (window.historicoMapeamento || []).find(function(m) {
+                return m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesProx);
+            });
+            if (realizadoNoMes) {
+                status = "CONCLUIDA";
+            } else {
+                var hoje = new Date().toISOString().substring(0, 10);
+                status = hoje > cfg.dataProxima ? "ATRASADA" : "AGENDADA";
+            }
+        }
+
         return {
             nome: lojaBase.nome,
             regional: window.getLojaRegional(lojaBase.nome),
@@ -65,16 +118,22 @@ window.renderizarTabelaPlanejamento = function () {
             proximaRaw: cfg.dataProxima || '',
             auditor: cfg.auditor || '',
             docId: cfg.docId || null,
-            lojaId: (window.lojasIniciais.find(l => l.nome === lojaBase.nome) || {}).id
+            lojaId: (window.lojasIniciais.find(l => l.nome === lojaBase.nome) || {}).id,
+            status: status
         };
     });
 
-    // Filtro de texto
-    if (filtro) {
-        rows = rows.filter(function (r) {
-            return r.nome.toLowerCase().includes(filtro) || r.regional.toLowerCase().includes(filtro) || r.auditor.toLowerCase().includes(filtro);
-        });
-    }
+    // Filtros
+    rows = rows.filter(function (r) {
+        const matchesSearch = searchTerms.length === 0 || searchTerms.every(term => 
+            r.nome.toLowerCase().includes(term) || r.regional.toLowerCase().includes(term)
+        );
+        const matchesRegional = !filterRegional || r.regional === filterRegional;
+        const matchesAuditor = !filterAuditor || r.auditor === filterAuditor;
+        const matchesStatus = !filterStatus || r.status === filterStatus;
+
+        return matchesSearch && matchesRegional && matchesAuditor && matchesStatus;
+    });
 
     // Sorting
     rows.sort(function (a, b) {

@@ -21,7 +21,7 @@ window.lojasIniciais = [
     { id: 48, estado: 'PE', nome: 'CARUARU' }, { id: 49, estado: 'PE', nome: 'MAURICIO DE NASSAU' }, { id: 50, estado: 'PE', nome: 'PATTEO OLINDA' }, { id: 51, estado: 'PB', nome: 'MANAIRA' },
     { id: 52, estado: 'PB', nome: 'ORIGENS' }, { id: 53, estado: 'PB', nome: 'CAMPINA GRANDE' }, { id: 54, estado: 'PA', nome: 'UMARIZAL' }, { id: 55, estado: 'PA', nome: 'GRAO PARA' },
     { id: 56, estado: 'PA', nome: 'PARQUE SHOPPING' }, { id: 57, estado: 'PA', nome: 'BOULEVARD' }, { id: 58, estado: 'RN', nome: 'MIDWAY' }, { id: 59, estado: 'RN', nome: 'MOSSORO' },
-    { id: 60, estado: 'RN', nome: 'LAGOA MALL' }, { id: 61, estado: 'RN', nome: 'NATAL SHOPPING' }, { id: 62, estado: 'RN', nome: 'PARNAMIRIM' }, { id: 63, estado: 'AM', nome: 'MANAUS - PONTA NEGRA' },
+    { id: 60, estado: 'RN', nome: 'LAGOA MALL' }, { id: 61, estado: 'RN', nome: 'NATAL SHOPPING' }, { id: 62, estado: 'RN', nome: 'PARNAMIRIM' }, { id: 63, estado: 'AM', nome: 'PONTA NEGRA' },
     { id: 64, estado: 'AM', nome: 'VIERALVES' }, { id: 65, estado: 'SE', nome: 'RIOMAR ARACAJU' }, { id: 66, estado: 'SE', nome: 'JARDINS' }, { id: 67, estado: 'MT', nome: 'PANTANAL SHOPPING / CUIABA' },
     { id: 68, estado: 'MT', nome: 'SHOPPING ESTAÇÃO CUIABA' }, { id: 69, estado: 'AL', nome: 'PARQUE SHOPPING MACEIO' },
     { id: 70, estado: 'RMA', nome: 'CSC' }
