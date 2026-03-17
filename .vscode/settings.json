@@ -1,0 +1,21 @@
+{
+    "python.defaultInterpreterPath": "C:\\Users\\Hyrton Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/setores/Fiscal/Robo de Anexos V2"
+    ],
+    "javascript.implicitProjectConfig.checkJs": false,
+    "python.analysis.diagnosticSeverityOverrides": {
+        "reportMissingImports": "none",
+        "reportUndefinedVariable": "none"
+    },
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/.pytest_cache": true,
+        "**/node_modules": false,
+        "**/build": true,
+        "**/dist": true
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    }
+}

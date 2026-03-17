@@ -146,7 +146,7 @@ window.adicionarMembro = async function() {
     }
     try {
         await addDoc(collection(db, "fiscal_equipe"), { nome });
-        document.getElementById('novoMembroNome').value = '';
+        document.getElementById('novoMembroSelecionado').value = '';
         showToast("Membro adicionado!");
     } catch(e) {
         console.error(e);
