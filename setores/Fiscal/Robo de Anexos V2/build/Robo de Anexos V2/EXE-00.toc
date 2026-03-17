@@ -85,7 +85,7 @@
  [],
  False,
  False,
- 1773756116,
+ 1773756529,
  [('run.exe',
    'C:\\Users\\Hyrton '
    'Carneiro\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',

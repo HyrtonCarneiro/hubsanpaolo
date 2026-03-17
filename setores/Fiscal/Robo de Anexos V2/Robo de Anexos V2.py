@@ -9,6 +9,7 @@ try:
     from selenium import webdriver
     from selenium.webdriver.common.by import By
     from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.chrome.options import Options
 except ImportError as e:
     print(f"\nERRO DE BIBLIOTECA: {str(e)}")
     print("Certifique-se de instalar as dependencias:")
@@ -76,7 +77,7 @@ def run_robo():
     
     driver = None
     try:
-        options = webdriver.ChromeOptions()
+        options = Options()
         # Adiciona algumas opcoes para estabilidade
         options.add_argument('--log-level=3')
         options.add_argument('--silent')
