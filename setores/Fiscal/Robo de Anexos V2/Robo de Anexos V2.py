@@ -7,6 +7,7 @@ import traceback
 try:
     import requests
     from selenium import webdriver
+    import selenium.webdriver.chrome.webdriver # Explicit import for PyInstaller
     from selenium.webdriver.common.by import By
     from selenium.webdriver.chrome.service import Service
     from selenium.webdriver.chrome.options import Options
@@ -62,7 +63,7 @@ def run_robo():
     else:
         config.read(config_path)
     
-    web_base_url = "https://app.trilogo.com.br" 
+    web_base_url = "https://sanpaolo.trilogo.app" 
 
     ticket_id = input("\nDigite o numero do Ticket Trílogo: ").strip()
     if not ticket_id:
@@ -88,6 +89,13 @@ def run_robo():
         options = Options()
         options.add_argument('--log-level=3')
         options.add_argument('--silent')
+        
+        # Define pasta para salvar perfil do Chrome (mantem login)
+        perfil_path = os.path.join(os.path.abspath('.'), 'perfil_chrome')
+        if not os.path.exists(perfil_path):
+            os.makedirs(perfil_path)
+        options.add_argument(f"--user-data-dir={perfil_path}")
+        options.add_argument("--profile-directory=Default")
         
         # Usando ChromeDriverManager para evitar problemas de compatibilidade e binarios ausentes
         service = Service(ChromeDriverManager().install())
