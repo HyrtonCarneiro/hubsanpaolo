@@ -28,7 +28,8 @@ Após os testes de unidade, verifique internamente no navegador:
 
 ### Passo 6 — Finalização
 1. Informe o usuário sobre as alterações concluídas.
-2. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
+2. **Teste Manual OBRIGATÓRIO**: Ao finalizar a modificação, você deve abrir um navegador local com o sistema/aplicação para que o usuário possa testar manualmente.
+3. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
 
 ## Arquitetura
 - **Zero-build**: Projeto roda diretamente via `file://` no navegador, sem Node.js, sem bundler
