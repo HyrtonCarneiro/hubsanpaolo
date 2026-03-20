@@ -106,7 +106,20 @@ window.deletarAudiProjeto = async function (firebaseId) {
 function renderizarAudiProjetosList() {
     var container = document.getElementById('audi-projetos-list');
     if (!container) return;
-    var projs = window.audiProjetos[window.audiCurrentMember] || [];
+    
+    // Normalizar para garantir que o match funcione (ex: Hyrton vs HYRTON)
+    var currentMemberKey = window.audiCurrentMember ? window.audiCurrentMember.toString().toUpperCase() : null;
+    var projs = [];
+    
+    // Tentar encontrar os projetos usando comparação de string normalizada
+    if (currentMemberKey) {
+        Object.keys(window.audiProjetos).forEach(function(memberKey) {
+            if (memberKey.toString().toUpperCase() === currentMemberKey) {
+                projs = window.audiProjetos[memberKey];
+            }
+        });
+    }
+
     container.innerHTML = '';
 
     if (projs.length === 0) {
