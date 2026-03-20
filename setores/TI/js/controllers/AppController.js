@@ -69,6 +69,7 @@ function initApp() {
     if (typeof window.initLojasChamadosListeners === 'function') window.initLojasChamadosListeners();
     if (typeof window.initProjetosEquipeListeners === 'function') window.initProjetosEquipeListeners();
     if (typeof window.initAtasListeners === 'function') window.initAtasListeners();
+    if (typeof window.initAtividadesListener === 'function') window.initAtividadesListener();
 
     window.switchView('analytics');
 }

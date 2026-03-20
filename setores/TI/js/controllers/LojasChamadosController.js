@@ -230,6 +230,9 @@ window.salvarComentario = async function () {
         if (inputAnexo) inputAnexo.value = '';
         window.toggleFormOcorrencia(); // Esconder após salvar
         showToast("Ocorrência registrada");
+        if (typeof window.registrarAtividade === 'function') {
+            window.registrarAtividade('chamado', `Novo chamado para ${document.getElementById('modalTitle').innerText}: ${texto.substring(0, 30)}...`);
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao registrar no servidor", "error");
@@ -243,6 +246,9 @@ window.resolverComentario = async function (firebaseId) {
             resolvido: true, autorResolucao: currentUser, dataResolucao: dataResolucao
         });
         showToast("Ocorrência marcada como resolvida");
+        if (typeof window.registrarAtividade === 'function') {
+            window.registrarAtividade('chamado', `Chamado resolvido por ${currentUser}`);
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar registro", "error");

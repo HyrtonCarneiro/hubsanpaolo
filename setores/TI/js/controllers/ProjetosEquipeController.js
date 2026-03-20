@@ -87,13 +87,17 @@ window.salvarProjeto = async function () {
             dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
             desc: desc, demandante: dem, status: status,
             anexoUrl: anexoUrl, autor: currentUser, timestamp: Date.now(),
-            comentarios: []
+            comentarios: [],
+            checklist: []
         });
         document.getElementById('projDesc').value = '';
         document.getElementById('projDemand').value = '';
         document.getElementById('projStatus').value = 'Pendente';
         if (fileInput) fileInput.value = '';
         showToast("Tarefa registrada");
+        if (typeof window.registrarAtividade === 'function') {
+            window.registrarAtividade('projeto', `${currentUser} atribuiu nova tarefa para ${resp}: ${desc.substring(0, 30)}...`);
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao registrar tarefa", "error");
@@ -111,12 +115,55 @@ window.deletarProjeto = async function (firebaseId) {
     }
 }
 
+// ====== DRAG AND DROP HELPERS ======
+window.handleDragStart = function (e, id) {
+    e.dataTransfer.setData('projectId', id);
+    e.currentTarget.classList.add('opacity-40');
+};
+
+window.handleDragEnd = function (e) {
+    e.currentTarget.classList.remove('opacity-40');
+};
+
+window.handleDragOver = function (e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('bg-[var(--primary)]/5');
+};
+
+window.handleDragLeave = function (e) {
+    e.currentTarget.classList.remove('bg-[var(--primary)]/5');
+};
+
+window.handleDrop = async function (e, newStatus) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('bg-[var(--primary)]/5');
+    const id = e.dataTransfer.getData('projectId');
+    if (!id) return;
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { status: newStatus });
+        showToast("Status atualizado!");
+        if (typeof window.registrarAtividade === 'function') {
+            window.registrarAtividade('projeto', `${window.currentUser} moveu uma tarefa para ${newStatus}`);
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Erro ao mover tarefa", "error");
+    }
+};
+
 function renderizarProjetosList() {
     var container = document.getElementById('projetos-list');
     if (!container) return;
-    var projs = window.sysProjetos[window.currentMember] || [];
+    
     container.innerHTML = '';
 
+    if (window.currentMember === 'Geral') {
+        renderizarVisaoUnificada(container);
+        return;
+    }
+
+    var projs = window.sysProjetos[window.currentMember] || [];
     if (projs.length === 0) {
         container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] col-span-1 lg:col-span-3 rounded-xl border border-dashed border-[var(--border)] w-full"><i class="ph ph-kanban text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum registro para ' + (window.currentMember || 'esta equipe') + '</h2></div>';
         return;
@@ -132,7 +179,11 @@ function renderizarProjetosList() {
         var projsNestaColuna = projs.filter(function (p) { return (p.status || 'Pendente') === col.id; });
 
         var colDiv = document.createElement('div');
-        colDiv.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl flex flex-col h-full overflow-hidden shadow-sm';
+        colDiv.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl flex flex-col h-full overflow-hidden shadow-sm min-h-[400px] transition-colors';
+        colDiv.ondragover = (e) => window.handleDragOver(e);
+        colDiv.ondragleave = (e) => window.handleDragLeave(e);
+        colDiv.ondrop = (e) => window.handleDrop(e, col.id);
+
         colDiv.innerHTML =
             '<div class="px-5 py-4 border-b border-[var(--border)] flex justify-between items-center bg-black/5 dark:bg-black/20" style="border-top: 3px solid ' + col.borderColor + '">' +
                 '<h3 class="text-lg font-bold text-[var(--text-main)] m-0 flex items-center gap-2">' +
@@ -142,62 +193,134 @@ function renderizarProjetosList() {
                 '<span class="bg-[var(--bg-color)] px-2.5 py-1 rounded-md text-xs font-bold text-[var(--text-main)] border border-[var(--border)] shadow-sm">' + projsNestaColuna.length + '</span>' +
             '</div>' +
             '<div class="flex-1 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-3 kanban-items bg-[var(--bg-color)]/50"></div>';
+        
         var itemsContainer = colDiv.querySelector('.kanban-items');
 
         projsNestaColuna.forEach(function (p) {
-            var div = document.createElement('div');
-            div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-move group relative';
-
-            var actionBtns = '';
-            actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil"></i></button>';
-            actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
-
-            var urlBadge = '';
-            if (p.anexoUrl) {
-                var isImg = p.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
-                if (isImg) {
-                    urlBadge = '<a href="' + p.anexoUrl + '" target="_blank" class="shrink-0"><img src="' + p.anexoUrl + '" class="h-6 rounded border border-[var(--border)] object-cover shadow-sm hover:opacity-80 transition-opacity"></a>';
-                } else {
-                    urlBadge = '<a href="' + p.anexoUrl + '" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--bg-color)] text-[var(--text-main)] text-xs font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline shrink-0"><i class="ph ph-link"></i> Link</a>';
-                }
-            }
-
-            var totalComments = (p.comentarios || []).length;
-            var recentCommentsHtml = '';
-            var lastTwo = (p.comentarios || []).slice(-2).reverse();
-            if (lastTwo.length > 0) {
-                recentCommentsHtml = '<div class="mt-2 mb-3 flex flex-col gap-1.5">';
-                lastTwo.forEach(c => {
-                    recentCommentsHtml += 
-                        '<div class="text-[0.65rem] text-[var(--text-muted)] italic line-clamp-1 border-l-2 border-[var(--primary)]/30 pl-2">' +
-                            '<span class="font-bold not-italic text-[var(--primary)]">' + c.autor + ':</span> ' + c.texto +
-                        '</div>';
-                });
-                recentCommentsHtml += '</div>';
-            }
-
-            var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
-
-            div.innerHTML =
-                '<div class="flex justify-between items-start mb-3">' +
-                    '<div class="flex flex-col gap-1">' +
-                        '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</span>' +
-                        '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ' + col.classBadge + '"><i class="ph ph-calendar"></i> ' + p.dataAtv + '</span>' +
-                    '</div>' +
-                    '<div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">' + actionBtns + '</div>' +
-                '</div>' +
-                '<h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">' + p.desc + '</h4>' +
-                '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-2 gap-2">' +
-                    '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
-                    urlBadge +
-                '</div>' +
-                recentCommentsHtml +
-                '<div class="flex justify-end pt-2 border-t border-[var(--border)] border-dashed mt-auto">' + commentBadge + '</div>';
-            itemsContainer.appendChild(div);
+            itemsContainer.appendChild(criarCardTarefa(p, col.classBadge));
         });
 
         container.appendChild(colDiv);
     });
+}
+
+function criarCardTarefa(p, classBadge) {
+    var div = document.createElement('div');
+    div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-move group relative';
+    div.draggable = true;
+    div.ondragstart = (e) => window.handleDragStart(e, p.firebaseId);
+    div.ondragend = (e) => window.handleDragEnd(e);
+
+    var actionBtns = '';
+    actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil"></i></button>';
+    actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
+
+    var urlBadge = '';
+    if (p.anexoUrl) {
+        var isImg = p.anexoUrl.match(/\.(jpeg|jpg|gif|png|webp|bmp)(\?.*)?$/i);
+        if (isImg) {
+            urlBadge = '<a href="' + p.anexoUrl + '" target="_blank" class="shrink-0"><img src="' + p.anexoUrl + '" class="h-6 rounded border border-[var(--border)] object-cover shadow-sm hover:opacity-80 transition-opacity"></a>';
+        } else {
+            urlBadge = '<a href="' + p.anexoUrl + '" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[var(--bg-color)] text-[var(--text-main)] text-xs font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline shrink-0"><i class="ph ph-link"></i> Link</a>';
+        }
+    }
+
+    var totalComments = (p.comentarios || []).length;
+    var recentCommentsHtml = '';
+    var lastTwo = (p.comentarios || []).slice(-2).reverse();
+    if (lastTwo.length > 0) {
+        recentCommentsHtml = '<div class="mt-2 mb-3 flex flex-col gap-1.5">';
+        lastTwo.forEach(c => {
+            recentCommentsHtml += 
+                '<div class="text-[0.65rem] text-[var(--text-muted)] italic line-clamp-1 border-l-2 border-[var(--primary)]/30 pl-2">' +
+                    '<span class="font-bold not-italic text-[var(--primary)]">' + c.autor + ':</span> ' + c.texto +
+                '</div>';
+        });
+        recentCommentsHtml += '</div>';
+    }
+
+    var commentBadge = '<button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-chat-centered-text text-sm"></i> ' + (totalComments > 0 ? totalComments : 'Comentar') + '</button>';
+
+    div.innerHTML =
+        '<div class="flex justify-between items-start mb-3">' +
+            '<div class="flex flex-col gap-1">' +
+                '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</span>' +
+                '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ' + classBadge + '"><i class="ph ph-calendar"></i> ' + p.dataAtv + '</span>' +
+            '</div>' +
+            '<div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">' + actionBtns + '</div>' +
+        '</div>' +
+        '<h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">' + p.desc + '</h4>' +
+        '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-2 gap-2">' +
+            '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
+            urlBadge +
+        '</div>' +
+        recentCommentsHtml +
+        '<div class="flex justify-end pt-2 border-t border-[var(--border)] border-dashed mt-auto">' + commentBadge + '</div>';
+    return div;
+}
+
+function renderizarVisaoUnificada(container) {
+    container.classList.remove('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+    container.className = 'flex flex-col gap-8 w-full';
+
+    const colunas = [
+        { id: 'Pendente', titulo: 'Pendentes', badge: 'bg-red-50 text-red-600 border-red-100' },
+        { id: 'Em Andamento', titulo: 'Em Andamento', badge: 'bg-blue-50 text-blue-600 border-blue-100' },
+        { id: 'Concluído', titulo: 'Concluídos', badge: 'bg-green-50 text-green-600 border-green-100' }
+    ];
+
+    window.membrosEquipe.forEach(m => {
+        const projs = window.sysProjetos[m.nome] || [];
+        if (projs.length === 0) return;
+
+        const row = document.createElement('div');
+        row.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl overflow-hidden shadow-sm';
+        
+        let rowHtml = `
+            <div class="px-6 py-4 bg-[var(--bg-color)]/50 border-b border-[var(--border)] flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold shadow-sm">${m.nome.charAt(0)}</div>
+                <div>
+                    <h3 class="text-lg font-bold text-[var(--text-main)] m-0 uppercase tracking-tight">${m.nome}</h3>
+                    <p class="text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-widest">${projs.length} Tarefas Ativas</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 divide-x divide-[var(--border)] bg-[var(--bg-color)]/20">
+        `;
+
+        colunas.forEach(col => {
+            const pNestaColuna = projs.filter(p => (p.status || 'Pendente') === col.id);
+            rowHtml += `
+                <div class="p-4 flex flex-col gap-3 min-h-[150px]">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[0.650rem] font-extrabold uppercase tracking-tighter px-2 py-0.5 rounded border ${col.badge}">${col.titulo}</span>
+                        <span class="text-[0.65rem] text-[var(--text-muted)] font-bold">${pNestaColuna.length}</span>
+                    </div>
+            `;
+            
+            pNestaColuna.forEach(p => {
+                // Card simplificado para visão geral
+                rowHtml += `
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-3 shadow-sm hover:border-[var(--primary)] transition-all cursor-pointer" onclick="window.abrirModalEditProj('${p.firebaseId}')">
+                        <div class="text-[0.75rem] font-bold text-[var(--text-main)] mb-1 line-clamp-2">${p.desc}</div>
+                        <div class="flex justify-between items-center text-[0.65rem] text-[var(--text-muted)]">
+                            <span><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
+                            <span>#${p.demandante}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            rowHtml += `</div>`;
+        });
+
+        rowHtml += `</div>`;
+        row.innerHTML = rowHtml;
+        container.appendChild(row);
+    });
+
+    if (container.children.length === 0) {
+        container.innerHTML = '<div class="p-20 text-center text-[var(--text-muted)]">Nenhuma tarefa registrada na equipe.</div>';
+    }
 }
 
 // ====== COMENTÁRIOS DE PROJETOS ======
@@ -328,6 +451,9 @@ window.abrirModalEditProj = function (firebaseId) {
     // Comentários no detalhe
     renderizarComentariosTarefaDetalhe(p.comentarios || []);
 
+    // Checklist no detalhe
+    renderizarChecklistView(p.checklist || []);
+
     // Reset para modo visualização
     var editMode = document.getElementById('taskEditMode');
     var viewMode = document.getElementById('taskViewMode');
@@ -344,6 +470,125 @@ window.abrirModalEditProj = function (firebaseId) {
     document.getElementById('modalEditProj').classList.add('show');
 }
 
+function renderizarChecklistView(checklist) {
+    const container = document.getElementById('listaChecklistView');
+    const wrapper = document.getElementById('checklistViewContainer');
+    if (!container || !wrapper) return;
+
+    if (!checklist || checklist.length === 0) {
+        wrapper.classList.add('hidden');
+        return;
+    }
+
+    wrapper.classList.remove('hidden');
+    container.innerHTML = checklist.map((item, idx) => `
+        <div class="flex items-center gap-2 group p-1">
+            <input type="checkbox" id="chk_v_${idx}" ${item.concluido ? 'checked' : ''} 
+                onchange="window.toggleItemChecklist(${idx})"
+                class="w-4 h-4 rounded border-[var(--border)] text-[var(--primary)] focus:ring-[var(--primary)] cursor-pointer">
+            <label for="chk_v_${idx}" class="text-sm ${item.concluido ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-main)]'} cursor-pointer transition-all flex-1">
+                ${item.texto}
+            </label>
+        </div>
+    `).join('');
+}
+
+window.renderizarChecklistEdit = function() {
+    const id = document.getElementById('editProjId').value;
+    let p = null;
+    Object.keys(window.sysProjetos).forEach(m => {
+        const found = window.sysProjetos[m].find(x => x.firebaseId === id);
+        if (found) p = found;
+    });
+
+    const container = document.getElementById('listaChecklistEdit');
+    if (!container || !p) return;
+
+    const checklist = p.checklist || [];
+    container.innerHTML = checklist.map((item, idx) => `
+        <div class="flex items-center gap-2 bg-[var(--surface)] p-2 rounded-lg border border-[var(--border)]">
+            <span class="text-sm flex-1 ${item.concluido ? 'line-through text-[var(--text-muted)]' : ''}">${item.texto}</span>
+            <button class="text-red-500 hover:bg-red-50 p-1 rounded transition-colors" onclick="window.removerItemChecklist(${idx})">
+                <i class="ph ph-trash"></i>
+            </button>
+        </div>
+    `).join('');
+};
+
+window.adicionarItemChecklist = async function() {
+    const id = document.getElementById('editProjId').value;
+    const input = document.getElementById('novoItemChecklist');
+    const texto = input.value.trim();
+    if (!texto || !id) return;
+
+    let p = null;
+    Object.keys(window.sysProjetos).forEach(m => {
+        const found = window.sysProjetos[m].find(x => x.firebaseId === id);
+        if (found) p = found;
+    });
+
+    const checklist = p.checklist || [];
+    checklist.push({ texto, concluido: false });
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { checklist });
+        input.value = '';
+        window.renderizarChecklistEdit();
+        renderizarChecklistView(checklist);
+    } catch (err) {
+        console.error(err);
+        showToast("Erro ao adicionar item", "error");
+    }
+};
+
+window.toggleItemChecklist = async function(idx) {
+    const id = document.getElementById('editProjId').value;
+    if (!id) return;
+
+    let p = null;
+    Object.keys(window.sysProjetos).forEach(m => {
+        const found = window.sysProjetos[m].find(x => x.firebaseId === id);
+        if (found) p = found;
+    });
+
+    const checklist = p.checklist || [];
+    if (checklist[idx]) {
+        checklist[idx].concluido = !checklist[idx].concluido;
+    }
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { checklist });
+        window.renderizarChecklistEdit();
+        renderizarChecklistView(checklist);
+    } catch (err) {
+        console.error(err);
+        showToast("Erro ao atualizar item", "error");
+    }
+};
+
+window.removerItemChecklist = async function(idx) {
+    const id = document.getElementById('editProjId').value;
+    if (!id) return;
+
+    let p = null;
+    Object.keys(window.sysProjetos).forEach(m => {
+        const found = window.sysProjetos[m].find(x => x.firebaseId === id);
+        if (found) p = found;
+    });
+
+    const checklist = p.checklist || [];
+    checklist.splice(idx, 1);
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { checklist });
+        window.renderizarChecklistEdit();
+        renderizarChecklistView(checklist);
+    } catch (err) {
+        console.error(err);
+        showToast("Erro ao remover item", "error");
+    }
+};
+
 window.toggleEditModeProj = function() {
     var editMode = document.getElementById('taskEditMode');
     var viewMode = document.getElementById('taskViewMode');
@@ -356,6 +601,7 @@ window.toggleEditModeProj = function() {
         viewMode.classList.add('hidden');
         btnSwitch.classList.add('hidden');
         title.innerText = 'Editar Tarefa';
+        window.renderizarChecklistEdit();
     } else {
         editMode.classList.add('hidden');
         viewMode.classList.remove('hidden');
