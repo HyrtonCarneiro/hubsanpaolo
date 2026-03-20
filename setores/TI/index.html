@@ -45,6 +45,32 @@
         }
     </script>
     <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        .rich-text-editor:empty:before {
+            content: "Descreva os tópicos abordados nesta reunião...";
+            color: var(--text-muted);
+            opacity: 0.7;
+            pointer-events: none;
+            display: block;
+        }
+        .rich-text-editor {
+            transition: all 0.2s ease;
+        }
+        .rich-text-editor:focus {
+            background: var(--surface);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .rich-text-content ul, .rich-text-editor ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .rich-text-content ol, .rich-text-editor ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
 </head>
 
 <body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
@@ -286,11 +312,34 @@
                     </h3>
                     <input type="text" id="ataTitulo" placeholder="Título / Assunto Principal"
                         class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none font-bold">
-                    <textarea id="ataTexto" rows="5" placeholder="Descreva os tópicos abordados nesta reunião..."
-                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[120px]"></textarea>
-                    <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarAta()">
-                        <i class="ph ph-floppy-disk text-lg"></i> Registrar Ata
-                    </button>
+                    <div class="flex flex-col gap-2 mb-4">
+                        <div id="ataToolbar" class="flex flex-wrap gap-2 p-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-t-lg border-b-0">
+                            <button type="button" onclick="window.formatDoc('bold')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Negrito"><i class="ph ph-text-bolder text-lg"></i></button>
+                            <button type="button" onclick="window.formatDoc('italic')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Itálico"><i class="ph ph-text-italic text-lg"></i></button>
+                            <button type="button" onclick="window.formatDoc('underline')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Sublinhado"><i class="ph ph-text-underline text-lg"></i></button>
+                            <div class="w-px h-6 bg-[var(--border)] mx-1 self-center"></div>
+                            <select onchange="window.formatDoc('fontSize', this.value); this.selectedIndex=0;" class="px-2 py-1 text-xs border border-[var(--border)] rounded bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)]">
+                                <option value="" selected disabled>Tamanho</option>
+                                <option value="1">Muito Pequeno</option>
+                                <option value="3">Normal</option>
+                                <option value="5">Grande</option>
+                                <option value="7">Enorme</option>
+                            </select>
+                            <div class="w-px h-6 bg-[var(--border)] mx-1 self-center"></div>
+                            <button type="button" onclick="window.formatDoc('insertUnorderedList')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Lista Marcadores"><i class="ph ph-list-bullets text-lg"></i></button>
+                            <button type="button" onclick="window.formatDoc('insertOrderedList')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Lista Numerada"><i class="ph ph-list-numbers text-lg"></i></button>
+                        </div>
+                        <div id="ataTexto" contenteditable="true" class="w-full px-4 py-3 bg-[var(--bg-color)] border border-[var(--border)] rounded-b-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[150px] overflow-y-auto shadow-inner rich-text-editor"></div>
+                    </div>
+                    <input type="hidden" id="editAtaId">
+                    <div class="flex gap-3">
+                        <button id="btnSalvarAta" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarAta()">
+                            <i class="ph ph-floppy-disk text-lg"></i> <span id="btnSalvarAtaText">Registrar Ata</span>
+                        </button>
+                        <button id="btnCancelarEdicao" class="hidden flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.cancelarEdicaoAta()">
+                            Cancelar Edição
+                        </button>
+                    </div>
                 </div>
                 <div id="listaAtasContainer" class="flex flex-col gap-4">
                     <!-- Populado JS -->
