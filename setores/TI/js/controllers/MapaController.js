@@ -4,6 +4,7 @@
 window.mapaTI = null;
 window.marcadoresMapa = {};
 window.camadaEstados = null;
+window.camadaMascara = null;
 
 // Mapeamento de regionais customizadas para siglas padrão do IBGE
 const MAPA_ESTADOS_TI = {
@@ -28,11 +29,44 @@ window.initMapa = function () {
         return;
     }
 
-    window.mapaTI = L.map('mapContainer').setView([-15.7801, -47.9292], 4);
+    // Configurações para manter o foco no Brasil
+    const sulBr = [-33.74, -73.98];
+    const norteBr = [5.27, -28.84];
+    const boundsBr = L.latLngBounds(sulBr, norteBr);
+
+    window.mapaTI = L.map('mapContainer', {
+        minZoom: 4,
+        maxBounds: boundsBr,
+        maxBoundsViscosity: 1.0,
+        zoomSnap: 0.5
+    }).setView([-15.7801, -47.9292], 4);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(window.mapaTI);
+
+    // Carregar Máscara (apenas Brasil visível)
+    fetch('https://raw.githubusercontent.com/codeforamerica/click_near_here/master/public/data/brazil-boundary.json')
+        .then(response => response.json())
+        .then(data => {
+            const worldCoords = [
+                [90, -180], [90, 180], [-90, 180], [-90, -180]
+            ];
+            
+            // O GeoJSON pode ter múltiplas partes (MultiPolygon)
+            const holeCoords = data.features[0].geometry.coordinates.map(poly => {
+                return poly[0].map(coord => [coord[1], coord[0]]);
+            });
+
+            // Criar polígono invertido (Mundo - Brasil)
+            window.camadaMascara = L.polygon([worldCoords, ...holeCoords], {
+                color: 'transparent',
+                fillColor: '#f1f5f9', // slate-100 (neutro)
+                fillOpacity: 1,
+                interactive: false,
+                pane: 'overlayPane'
+            }).addTo(window.mapaTI);
+        });
 
     // Carregar GeoJSON dos estados brasileiros
     fetch('https://raw.githubusercontent.com/codeforgermany/click_that_hood/master/public/data/brazil-states.geojson')
@@ -50,6 +84,7 @@ window.initMapa = function () {
 
     const style = document.createElement('style');
     style.innerHTML = `
+        #mapContainer { background: #f1f5f9 !important; }
         .marker-pin {
             width: 26px; height: 26px; border-radius: 50% 50% 50% 0;
             background: #c30b82; position: absolute; transform: rotate(-45deg);
