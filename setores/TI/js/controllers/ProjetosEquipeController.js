@@ -3,6 +3,7 @@
 
 window.sysProjetos = {};
 window.membrosEquipe = [];
+window.tempChecklist = []; // Armazena itens de checklist durante a criação de uma nova tarefa
 
 window.initProjetosEquipeListeners = function () {
     try {
@@ -40,6 +41,8 @@ window.initProjetosEquipeListeners = function () {
 
 window.switchMember = function (name) {
     window.currentMember = name;
+    window.tempChecklist = []; // Limpa ao trocar de contexto ou membro
+    renderizarChecklistCreation();
     renderizarBotoesEquipe();
     renderizarProjetosList();
 }
@@ -103,8 +106,10 @@ window.salvarProjeto = async function () {
             desc: desc, demandante: dem, status: status,
             anexoUrl: anexoUrl, autor: currentUser, timestamp: Date.now(),
             comentarios: [],
-            checklist: []
+            checklist: window.tempChecklist || []
         });
+        window.tempChecklist = [];
+        renderizarChecklistCreation();
         document.getElementById('projDesc').value = '';
         document.getElementById('projDemand').value = '';
         document.getElementById('projStatus').value = 'Pendente';
@@ -816,3 +821,36 @@ window.exportarProjetosCSV = function () {
     showToast("Download de tarefas iniciado");
 }
 
+// ====== CHECKLIST NA CRIAÇÃO ======
+window.addCheckItemCreation = function() {
+    var input = document.getElementById('newCheckItemCreation');
+    if (!input || !input.value.trim()) return;
+    window.tempChecklist.push({ texto: input.value.trim(), concluido: false });
+    input.value = '';
+    renderizarChecklistCreation();
+};
+
+window.removeCheckItemCreation = function(index) {
+    window.tempChecklist.splice(index, 1);
+    renderizarChecklistCreation();
+};
+
+function renderizarChecklistCreation() {
+    var container = document.getElementById('creationChecklistList');
+    if (!container) return;
+    container.innerHTML = '';
+    
+    if (window.tempChecklist.length === 0) {
+        container.innerHTML = '<p class="text-[0.65rem] text-[var(--text-muted)] italic ml-1">Nenhum item adicionado.</p>';
+        return;
+    }
+
+    window.tempChecklist.forEach(function(item, index) {
+        var div = document.createElement('div');
+        div.className = 'flex items-center justify-between p-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg group hover:border-[var(--primary)] transition-colors';
+        div.innerHTML = 
+            '<span class="text-xs text-[var(--text-main)] flex items-center gap-2 font-medium"><i class="ph ph-circle text-[var(--text-muted)]"></i> ' + item.texto + '</span>' +
+            '<button class="text-[var(--text-muted)] hover:text-red-500 transition-colors p-1" onclick="window.removeCheckItemCreation(' + index + ')"><i class="ph ph-x-circle"></i></button>';
+        container.appendChild(div);
+    });
+}

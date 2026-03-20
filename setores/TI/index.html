@@ -329,6 +329,18 @@
                     <input type="url" id="projAnexo" placeholder="Link para visualização/anexo (Opcional)"
                         class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none">
 
+                    <!-- Checklist durante a criação -->
+                    <div class="mb-4 p-4 bg-[var(--bg-color)]/50 rounded-lg border border-[var(--border)] border-dashed">
+                        <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase mb-2 block">Checklist da Tarefa (Opcional)</label>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="newCheckItemCreation" placeholder="Adicionar sub-tarefa..." class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-md text-sm outline-none focus:border-[var(--primary)]" onkeypress="if(event.key==='Enter') window.addCheckItemCreation()">
+                            <button class="px-4 py-2 bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] rounded-md hover:bg-[var(--primary)] hover:text-white transition-all text-sm font-bold shadow-sm" onclick="window.addCheckItemCreation()"><i class="ph ph-plus"></i> Adicionar</button>
+                        </div>
+                        <div id="creationChecklistList" class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                            <!-- Itens adicionados aparecem aqui -->
+                        </div>
+                    </div>
+
                     <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarProjeto()">
                         <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
                     </button>
