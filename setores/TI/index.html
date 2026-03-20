@@ -171,9 +171,6 @@
                     <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.abrirModalEquipe()">
                             <i class="ph ph-users"></i> Gerenciar Equipe
                         </button>
-                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.switchView('lojas')">
-                            <i class="ph ph-plus"></i> Novo Chamado
-                        </button>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -248,9 +245,14 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Monitoramento de Lojas</h1>
                     </div>
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarLojasExcel()">
-                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
-                    </button>
+                    <div class="flex gap-3">
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
+                            <i class="ph ph-plus"></i> Novo Chamado
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarLojasExcel()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
