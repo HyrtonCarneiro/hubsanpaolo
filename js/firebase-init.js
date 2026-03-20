@@ -73,6 +73,8 @@ window.query = function(collRef) {
             q = q.where(c.field, c.op, c.value);
         } else if (c._type === 'orderBy') {
             q = q.orderBy(c.field, c.direction || 'asc');
+        } else if (c._type === 'limit') {
+            q = q.limit(c.value);
         }
     }
     return q;
@@ -86,6 +88,11 @@ window.where = function(field, op, value) {
 /** orderBy(field, direction?) → constraint object */
 window.orderBy = function(field, direction) {
     return { _type: 'orderBy', field: field, direction: direction || 'asc' };
+};
+
+/** limit(count) → constraint object */
+window.limit = function(count) {
+    return { _type: 'limit', value: count };
 };
 
 /** serverTimestamp() → firebase.firestore.FieldValue.serverTimestamp() */
