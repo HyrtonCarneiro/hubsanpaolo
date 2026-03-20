@@ -223,18 +223,18 @@ window.renderizarMapeamento = function() {
             '<span class="text-[var(--sp-red)] font-bold">Atrasado</span>';
             
         const realizedBadge = h.realizada === 'SIM' ? 
-            '<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-[10px] font-bold">SIM</span>' : 
-            '<span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-[10px] font-bold">NÃO</span>';
+            '<span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-1 rounded-xl text-[10px] font-bold border border-green-200 dark:border-green-800">SIM</span>' : 
+            '<span class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 px-2 py-1 rounded-xl text-[10px] font-bold border border-red-200 dark:border-red-800">NÃO</span>';
 
         const dataMes = h.dataTentativa.substring(0, 7);
         const jaTemNota = (window.notasCache || []).find(n => n.loja === h.nomeLoja && n.data.startsWith(dataMes));
         const isCritico = h.realizada === 'NÃO' && (h.nTentativa >= 2);
         
         const actionNota = h.realizada === 'SIM' ? 
-            `<button onclick="window.navegarParaLancarNota('${h.nomeLoja}')" 
-                class="p-1.5 ${jaTemNota ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-500'} rounded-lg transition-colors" 
+            `<button onclick="window.navegarParaLancarNota('${h.nomeLoja.replace(/'/g, "\\'")}')" 
+                class="p-1.5 ${jaTemNota ? 'text-green-600 bg-green-50 dark:bg-green-900/20' : 'text-gray-400 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'} rounded-xl transition-all active:scale-95" 
                 title="${jaTemNota ? 'Nota já lançada: ' + jaTemNota.nota : 'Lançar Nota'}">
-                <i class="ph ${jaTemNota ? 'ph-check-circle' : 'ph-scroll'}"></i>
+                <i class="ph ${jaTemNota ? 'ph-check-circle' : 'ph-scroll'} text-lg"></i>
             </button>` : '';
 
         const rowClass = isCritico ? 'bg-red-50/50 hover:bg-red-100/50' : 'hover:bg-black/5';
@@ -261,7 +261,7 @@ window.renderizarMapeamento = function() {
                     <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa} ${h.horario || ''}</div>
                 </td>
                 <td class="p-4 text-center">
-                    <div class="w-8 h-8 rounded-full ${isCritico ? 'bg-red-100 text-red-600 border-red-200' : 'bg-blue-50 text-blue-600 border-blue-100'} flex items-center justify-center font-bold border">${h.nTentativa}</div>
+                    <div class="w-8 h-8 rounded-xl ${isCritico ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800'} flex items-center justify-center font-bold border shadow-sm">${h.nTentativa}</div>
                 </td>
                 <td class="p-4">
                     <div class="font-medium text-[var(--text-main)] text-sm">${h.estado}</div>
@@ -282,8 +282,8 @@ window.renderizarMapeamento = function() {
                 <td class="p-4 text-right">
                     <div class="flex items-center justify-end gap-1">
                         ${actionNota}
-                        <button onclick="window.MapeamentoService.excluirRegistro('${h.id}')" class="p-1.5 text-red-400 hover:text-red-600 transition-colors" title="Excluir">
-                            <i class="ph ph-trash"></i>
+                        <button onclick="window.MapeamentoService.excluirRegistro('${h.id}')" class="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all active:scale-95" title="Excluir">
+                            <i class="ph ph-trash text-lg"></i>
                         </button>
                     </div>
                 </td>

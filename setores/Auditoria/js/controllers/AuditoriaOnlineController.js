@@ -111,10 +111,10 @@ function renderizarHistoricoNotas() {
 
         var actionButtons = `
             <div class="flex items-center justify-center gap-1">
-                <button onclick="window.abrirModalEditarNota('${nota.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Editar">
+                <button onclick="window.abrirModalEditarNota('${nota.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all active:scale-95" title="Editar">
                     <i class="ph ph-pencil-simple text-lg"></i>
                 </button>
-                <button onclick="window.excluirNota('${nota.id}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Excluir">
+                <button onclick="window.excluirNota('${nota.id}')" class="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all active:scale-95" title="Excluir">
                     <i class="ph ph-trash text-lg"></i>
                 </button>
             </div>

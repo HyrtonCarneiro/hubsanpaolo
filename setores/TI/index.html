@@ -178,11 +178,11 @@
                 <div class="mb-3 text-[var(--text-muted)] text-sm">Logado como: <strong id="loggedUserName"
                         class="text-[var(--text-main)]">...</strong></div>
                 <div class="flex flex-col gap-2">
-                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]"
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 shadow-sm active:scale-95"
                         onclick="window.toggleDarkMode()">
                         <i class="ph ph-moon"></i> Tema Escuro
                     </button>
-                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]"
+                    <button class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 shadow-sm active:scale-95"
                         onclick="window.logout()">
                         <i class="ph ph-sign-out"></i> Sair
                     </button>
@@ -194,12 +194,13 @@
             <div id="view-analytics">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Visão Geral</h1>
                     </div>
-                <div class="flex gap-3">
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.abrirModalEquipe()">
+                    <div class="flex gap-3">
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 shadow-sm active:scale-95 shadow-sm" onclick="window.abrirModalEquipe()">
                             <i class="ph ph-users"></i> Gerenciar Equipe
                         </button>
                     </div>
@@ -280,34 +281,35 @@
             <div id="view-lojas" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Monitoramento de Lojas</h1>
                     </div>
                     <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
                             <i class="ph ph-plus"></i> Novo Chamado
                         </button>
-                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarLojasExcel()">
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarLojasExcel()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                         </button>
                     </div>
                 </div>
 
-                <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
+                <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm">
                     <div class="relative w-full md:flex-1 max-w-lg">
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
                         <input type="text" id="searchInput" placeholder="Buscar por loja ou estado..."
-                            class="w-full pl-10 pr-4 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg transition-colors focus:border-[var(--primary)] focus:ring-2 focus:ring-[rgba(var(--primary-rgb),0.1)] outline-none"
+                            class="w-full pl-11 pr-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl focus:border-[var(--primary)] outline-none transition-all duration-300 shadow-sm"
                             oninput="window.renderizarLojas()">
                     </div>
                     <div class="flex gap-2 flex-wrap w-full md:w-auto">
-                        <select id="statusFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
+                        <select id="statusFilter" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-semibold text-[var(--text-main)] shadow-sm" onchange="window.renderizarLojas()">
                             <option value="todos">Todos os Status</option>
                             <option value="pendente" selected>Apenas Pendentes</option>
                             <option value="resolvido">Apenas Resolvidos</option>
                         </select>
-                        <select id="tagFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
+                        <select id="tagFilter" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-semibold text-[var(--text-main)] shadow-sm" onchange="window.renderizarLojas()">
                             <option value="todas">Todas as Tags</option>
                             <option value="Hardware">Hardware</option>
                             <option value="Software">Software</option>
@@ -316,7 +318,7 @@
                             <option value="3S">3S</option>
                             <option value="POS">POS</option>
                         </select>
-                        <select id="setorFilter" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.renderizarLojas()">
+                        <select id="setorFilter" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-semibold text-[var(--text-main)] shadow-sm" onchange="window.renderizarLojas()">
                             <option value="todos">Todos os Setores</option>
                             <option value="Financeiro">Financeiro</option>
                             <option value="Fiscal">Fiscal</option>
@@ -328,13 +330,13 @@
                             <option value="Operação">Operação</option>
                             <option value="CD">CD</option>
                         </select>
-                        <select id="sortOrder" class="px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm font-semibold text-[var(--primary)]" onchange="window.renderizarLojas()">
+                        <select id="sortOrder" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-bold text-[var(--primary)] shadow-sm" onchange="window.renderizarLojas()">
                             <option value="recentes" selected>Atualizações Recentes</option>
                             <option value="pendentes-topo">Prioridade (Pendentes p/ Topo)</option>
                             <option value="loja-az">Lojas (A-Z)</option>
                             <option value="estado-az">Regional (A-Z)</option>
                         </select>
-                        <button onclick="window.limparFiltrosLojas()" class="p-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--danger)] hover:border-[var(--danger)] transition-all flex items-center gap-2 text-sm font-bold shadow-sm px-3" title="Limpar Filtros">
+                        <button onclick="window.limparFiltrosLojas()" class="px-4 py-2.5 rounded-xl bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 transition-all duration-300 flex items-center gap-2 text-sm font-bold shadow-sm active:scale-95" title="Limpar Filtros">
                             <i class="ph ph-trash"></i> <span class="hidden lg:inline">Limpar</span>
                         </button>
                     </div>
@@ -347,19 +349,20 @@
 
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <div class="relative hidden lg:block">
-                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+                            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
                             <input type="text" id="taskSearchInput" placeholder="Buscar tarefa..." 
-                                class="pl-9 pr-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm transition-all focus:border-[var(--primary)] outline-none w-48 focus:w-64"
+                                class="pl-11 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-sm transition-all duration-300 focus:border-[var(--primary)] outline-none w-48 focus:w-64 shadow-sm"
                                 oninput="window.renderizarProjetosList()">
                         </div>
-                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosExcel()">
-                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Excel</span>
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarProjetosExcel()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Exportar Excel</span>
                         </button>
                     </div>
                 </div>
@@ -380,22 +383,22 @@
                         <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Registrar Nova Demanda</h3>
                     </div>
                     <input type="text" id="projDesc" placeholder="Descrição da tarefa ou projeto"
-                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none">
+                        class="w-full px-4 py-3 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-3 transition-all duration-300 focus:border-[var(--primary)] outline-none font-medium shadow-sm">
                     <div class="flex flex-wrap gap-3 mb-3">
-                        <input type="text" id="projDemand" placeholder="Demandante" class="flex-2 min-w-[150px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        <input type="text" id="projDemand" placeholder="Demandante" class="flex-2 min-w-[150px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
                         <div class="flex-1 min-w-[120px] flex flex-col gap-1">
-                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</label>
-                            <input type="date" id="projDate" class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Prazo Sugerido</label>
+                            <input type="date" id="projDate" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
                         </div>
                         <div class="flex-1 min-w-[150px] flex flex-col gap-1">
-                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Responsáveis</label>
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Membros Responsáveis</label>
                             <div id="selectedResponsaveisCreation" class="flex flex-wrap gap-1 mt-1 mb-2"></div>
-                            <select id="projResp" class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none" onchange="window.adicionarResponsavelCriacao(this.value); this.value='';">
+                            <select id="projResp" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm" onchange="window.adicionarResponsavelCriacao(this.value); this.value='';">
                                 <option value="">+ Adicionar Responsável</option>
                                 <!-- Populado via JS -->
                             </select>
                         </div>
-                        <select id="projStatus" class="flex-1 min-w-[120px] px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        <select id="projStatus" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm font-bold">
                             <option value="Pendente">Pendente</option>
                             <option value="Em Andamento">Em Andamento</option>
                             <option value="Concluído">Concluído</option>
@@ -440,17 +443,17 @@
                     <h3 class="text-lg font-bold text-[var(--text-main)] m-0 mb-4 flex items-center gap-2"><i class="ph ph-file-text text-[var(--primary)] text-xl"></i> Nova Ata Documentada
                     </h3>
                     <input type="text" id="ataTitulo" placeholder="Título / Assunto Principal"
-                        class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none font-bold">
+                        class="w-full px-4 py-3 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-4 transition-all duration-300 focus:border-[var(--primary)] outline-none font-bold shadow-sm">
                     <div class="flex flex-col gap-0 shadow-sm border border-[var(--border)] rounded-xl overflow-hidden focus-within:border-[var(--primary)] transition-all">
-                        <div id="ataToolbar" class="flex flex-wrap items-center gap-1 p-2 bg-[var(--bg-color)]/50 border-b border-[var(--border)]">
-                            <button type="button" onclick="window.formatDoc('bold')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Negrito"><i class="ph-bold ph-text-bolder"></i></button>
-                            <button type="button" onclick="window.formatDoc('italic')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Itálico"><i class="ph-bold ph-text-italic"></i></button>
-                            <button type="button" onclick="window.formatDoc('underline')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Sublinhado"><i class="ph-bold ph-text-underline"></i></button>
-                            <div class="w-px h-6 bg-[var(--border)] mx-1"></div>
-                            <button type="button" onclick="window.formatDoc('insertUnorderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Lista Marcadores"><i class="ph-bold ph-list-bullets"></i></button>
-                            <button type="button" onclick="window.formatDoc('insertOrderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Lista Numerada"><i class="ph-bold ph-list-numbers"></i></button>
-                            <div class="w-px h-6 bg-[var(--border)] mx-1"></div>
-                            <select onchange="window.formatDoc('fontSize', this.value); this.selectedIndex=0;" class="px-3 py-1.5 text-xs border border-[var(--border)] rounded-lg bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] font-bold cursor-pointer">
+                        <div id="ataToolbar" class="flex flex-wrap items-center gap-1.5 p-2.5 bg-[var(--bg-color)]/50 border-b border-[var(--border)]">
+                            <button type="button" onclick="window.formatDoc('bold')" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all duration-300 shadow-sm active:scale-90" title="Negrito"><i class="ph-bold ph-text-bolder"></i></button>
+                            <button type="button" onclick="window.formatDoc('italic')" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all duration-300 shadow-sm active:scale-90" title="Itálico"><i class="ph-bold ph-text-italic"></i></button>
+                            <button type="button" onclick="window.formatDoc('underline')" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all duration-300 shadow-sm active:scale-90" title="Sublinhado"><i class="ph-bold ph-text-underline"></i></button>
+                            <div class="w-px h-8 bg-[var(--border)] mx-1 opacity-50"></div>
+                            <button type="button" onclick="window.formatDoc('insertUnorderedList')" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all duration-300 shadow-sm active:scale-90" title="Lista Marcadores"><i class="ph-bold ph-list-bullets"></i></button>
+                            <button type="button" onclick="window.formatDoc('insertOrderedList')" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all duration-300 shadow-sm active:scale-90" title="Lista Numerada"><i class="ph-bold ph-list-numbers"></i></button>
+                            <div class="w-px h-8 bg-[var(--border)] mx-1 opacity-50"></div>
+                            <select onchange="window.formatDoc('fontSize', this.value); this.selectedIndex=0;" class="px-4 py-2 text-xs border border-[var(--border)] rounded-xl bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] font-bold cursor-pointer shadow-sm transition-all duration-300 hover:border-[var(--primary)]">
                                 <option value="" selected disabled>Tamanho</option>
                                 <option value="3">Padrão</option>
                                 <option value="5">Médio</option>
@@ -461,10 +464,10 @@
                     </div>
                     <input type="hidden" id="editAtaId">
                     <div class="flex gap-3">
-                        <button id="btnSalvarAta" class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarAta()">
-                            <i class="ph ph-floppy-disk text-lg"></i> <span id="btnSalvarAtaText">Registrar Ata</span>
+                        <button id="btnSalvarAta" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarAta()">
+                            <i class="ph ph-floppy-disk text-xl"></i> <span id="btnSalvarAtaText">Registrar Ata</span>
                         </button>
-                        <button id="btnCancelarEdicao" class="hidden flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.cancelarEdicaoAta()">
+                        <button id="btnCancelarEdicao" class="hidden flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] font-bold shadow-sm transition-all duration-300 hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.cancelarEdicaoAta()">
                             Cancelar Edição
                         </button>
                     </div>
@@ -519,8 +522,8 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">BI Tiaguinho (Gestão TI)</h1>
                     </div>
-                    <button onclick="window.toggleFullscreenBI()" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
-                        <i class="ph ph-arrows-out text-lg"></i> Expandir Dashboard
+                    <button onclick="window.toggleFullscreenBI()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-bold shadow-sm hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 transition-all duration-300 active:scale-95">
+                        <i class="ph ph-arrows-out text-xl"></i> Expandir Dashboard
                     </button>
                 </div>
                 <div id="tiaguinhoContainer"
@@ -538,7 +541,7 @@
     </div>
 
     <div id="modalLoja" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
-        <div class="bg-[var(--surface)] w-[650px] max-w-full max-h-[90vh] flex flex-col rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content">
+        <div class="bg-[var(--surface)] w-[650px] max-w-full max-h-[90vh] flex flex-col rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
             <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 z-10">
                 <div>
                     <h2 id="modalTitle" class="text-xl font-bold text-[var(--text-main)] m-0">Nome da Loja</h2>
@@ -550,32 +553,32 @@
             <div class="flex-1 overflow-y-auto p-6 scroll-smooth">
                 <!-- Botão para mostrar formulário de nova ocorrência -->
                 <div id="btnNovaOcorrenciaContainer" class="mb-4">
-                    <button class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[var(--surface)] text-[var(--primary)] border-1.5 border-dashed border-[var(--primary)] font-bold hover:bg-[var(--primary)]/5 transition-all" onclick="window.toggleFormOcorrencia()">
-                        <i class="ph ph-plus-circle text-lg"></i> Registrar Nova Ocorrência
+                    <button class="w-full flex items-center justify-center gap-3 px-5 py-3.5 rounded-xl bg-[var(--surface)] text-[var(--primary)] border-2 border-dashed border-[var(--primary)] font-bold hover:bg-[var(--primary)]/5 hover:scale-[1.01] transition-all duration-300 shadow-sm active:scale-95 group" onclick="window.toggleFormOcorrencia()">
+                        <i class="ph ph-plus-circle text-2xl group-hover:rotate-90 transition-transform duration-300"></i> Registrar Nova Ocorrência
                     </button>
                 </div>
 
                 <div id="formNovaOcorrencia" class="mb-6 hidden animate-fadeIn">
                     <textarea id="novoComentario" rows="3"
-                        placeholder="Descreva a ocorrência ou atualização técnica..." class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[80px]"></textarea>
+                        placeholder="Descreva a ocorrência ou atualização técnica..." class="w-full px-4 py-3 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-3 transition-all duration-300 focus:border-[var(--primary)] outline-none resize-y min-h-[80px] shadow-sm"></textarea>
                     <input type="url" id="anexoComentario" placeholder="Link de imagem/anexo (Opcional)"
-                        class="w-full px-4 py-2 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none">
+                        class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-3 transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</label>
-                            <input type="date" id="tagPrazoLog" class="w-full px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Prazo Acordado</label>
+                            <input type="date" id="tagPrazoLog" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm shadow-sm">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Responsáveis</label>
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Responsáveis</label>
                             <div id="selectedResponsaveisLogCreation" class="flex flex-wrap gap-1 mt-1 mb-2"></div>
-                            <select id="tagRespLog" class="w-full px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.adicionarResponsavelLogCriacao(this.value); this.value='';">
-                                <option value="">+ Selecionar...</option>
+                            <select id="tagRespLog" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm shadow-sm" onchange="window.adicionarResponsavelLogCriacao(this.value); this.value='';">
+                                <option value="">+ Adicionar Responsável</option>
                                 <!-- Populado JS: Padrão quem criou -->
                             </select>
                         </div>
                     </div>
                     <div class="flex gap-3 mt-2 flex-wrap sm:flex-nowrap">
-                        <select id="tagComentario" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                        <select id="tagComentario" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-bold shadow-sm">
                             <option value="Hardware">Hardware</option>
                             <option value="Software">Software</option>
                             <option value="Degust">Degust</option>
@@ -583,7 +586,7 @@
                             <option value="3S">3S</option>
                             <option value="POS">POS</option>
                         </select>
-                        <select id="setorComentario" class="flex-1 min-w-[120px] px-3 py-2 border-1.5 border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                        <select id="setorComentario" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none transition-all duration-300 focus:border-[var(--primary)] text-sm font-semibold shadow-sm">
                             <option value="">Setor (Opcional)</option>
                             <option value="Financeiro">Financeiro</option>
                             <option value="Fiscal">Fiscal</option>

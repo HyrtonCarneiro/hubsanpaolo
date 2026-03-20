@@ -40,6 +40,24 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
 - Isolate business logic (Hooks) from the UI (Components).
 - All responses must be technical, direct, and focused on code efficiency.
 
+## UI/UX & Design Philosophy
+
+1.  **Premium Aesthetics (Wow Factor):**
+    *   Use curated, harmonious color palettes (avoid default red/blue/green).
+    *   Prioritize `rounded-xl` or `rounded-2xl` for containers and buttons.
+    *   Apply subtle shadows (`shadow-sm`, `shadow-md`) and glassmorphism where appropriate.
+    *   Use Phosphor Icons for a consistent, modern look.
+
+2.  **Zero-Learning Intuitivity:**
+    *   Buttons and critical information MUST be natively visible (avoid "show on hover" for core data).
+    *   Use clear, descriptive calls to action (CTAs).
+    *   Maintain consistency: same icons, colors, and patterns across all sectors.
+
+3.  **Dynamic & Responsive Design:**
+    *   Implement micro-animations for feedback (e.g., `hover:-translate-y-1`, `hover:scale-105`).
+    *   Use `transition-all` for smooth state changes.
+    *   Declutter: use toggleable forms or modais for complex inputs instead of large fixed blocks.
+
 ## Metodologia de Testes Ágeis
 
 1.  **Isolamento de Lógica Pura**: Sempre que possível, extraia a lógica de negócio para arquivos em `js/logic/`. Eles devem ser agnósticos ao DOM/Firebase.

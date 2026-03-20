@@ -8,8 +8,15 @@ window.currentMember = currentMember;
 
 function showToast(msg, type = 'success') {
     Toastify({
-        text: msg, duration: 3000, gravity: "bottom", position: "right",
-        style: { background: type === 'success' ? "var(--success)" : "var(--danger)", borderRadius: "6px", fontFamily: "Inter" }
+        text: msg, duration: 4000, gravity: "bottom", position: "right",
+        style: { 
+            background: type === 'success' ? "var(--success)" : "var(--danger)", 
+            borderRadius: "12px", 
+            fontFamily: "Inter",
+            fontWeight: "bold",
+            fontSize: "14px",
+            boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)"
+        }
     }).showToast();
 }
 window.showToast = showToast;
@@ -58,7 +65,7 @@ function initApp() {
         if (!container.closest('.mb-8')) return;
         if (container.querySelector('.btn-hub')) return;
         var btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
+        btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all duration-300 shadow-sm btn-hub active:scale-90';
         btn.title = 'Escolha de Setores';
         btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
         btn.onclick = function () { window.location.href = '../../index.html?hub=1'; };

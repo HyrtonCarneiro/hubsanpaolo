@@ -60,8 +60,8 @@ function renderizarBotoesEquipe() {
     // Botão Geral (Gestor)
     var btnGeral = document.createElement('button');
     btnGeral.className = window.currentMember === 'Geral'
-        ? 'px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-bold shadow-md transition-all text-sm flex items-center gap-2'
-        : 'px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] text-sm flex items-center gap-2';
+        ? 'px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white border border-[var(--primary)] font-bold shadow-md transition-all duration-300 text-sm flex items-center gap-2 active:scale-95'
+        : 'px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 text-sm flex items-center gap-2 active:scale-95 shadow-sm';
     btnGeral.innerHTML = '<i class="ph-fill ph-users-three"></i> GERAL';
     btnGeral.onclick = function () { window.switchMember('Geral'); };
     container.appendChild(btnGeral);
@@ -74,8 +74,8 @@ function renderizarBotoesEquipe() {
     window.membrosEquipe.forEach(function (m) {
         var btn = document.createElement('button');
         btn.className = m.nome === window.currentMember
-            ? 'px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all text-sm'
-            : 'px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] text-sm';
+            ? 'px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white border border-[var(--primary)] font-bold shadow-md transition-all duration-300 text-sm active:scale-95'
+            : 'px-5 py-2.5 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 text-sm active:scale-95 shadow-sm';
         btn.innerText = m.nome;
         btn.onclick = function () { window.switchMember(m.nome); };
         container.appendChild(btn);
@@ -306,7 +306,7 @@ function renderizarProjetosList() {
 
 function criarCardTarefa(p, classBadge) {
     var div = document.createElement('div');
-    div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-lg p-4 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-move group relative';
+    div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 cursor-move group relative active:scale-[0.98]';
     div.draggable = true;
     div.ondragstart = (e) => window.handleDragStart(e, p.firebaseId);
     div.ondragend = (e) => window.handleDragEnd(e);
@@ -322,7 +322,7 @@ function criarCardTarefa(p, classBadge) {
     }).join(' ');
 
     var actionBtns = '';
-    actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
+    actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-300 shadow-sm active:scale-90" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
 
     var urlBadge = '';
     if (p.anexoUrl) {
@@ -440,12 +440,12 @@ function renderizarVisaoUnificada(container) {
 
                 // Card simplificado para visão geral
                 rowHtml += `
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-3 shadow-sm hover:border-[var(--primary)] transition-all cursor-pointer" onclick="window.abrirModalEditProj('${p.firebaseId}')">
-                        <div class="text-[0.75rem] font-bold text-[var(--text-main)] mb-1 line-clamp-2">${p.desc}</div>
-                        <div class="flex flex-wrap gap-1 mb-2">${badges}</div>
-                        <div class="flex justify-between items-center text-[0.65rem] text-[var(--text-muted)]">
-                            <span><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
-                            <span>#${p.demandante}</span>
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md hover:border-[var(--primary)] transition-all duration-300 cursor-pointer active:scale-[0.98]" onclick="window.abrirModalEditProj('${p.firebaseId}')">
+                        <div class="text-[0.8rem] font-bold text-[var(--text-main)] mb-2 line-clamp-2 leading-snug">${p.desc}</div>
+                        <div class="flex flex-wrap gap-1.5 mb-3">${badges}</div>
+                        <div class="flex justify-between items-center text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-tight">
+                            <span class="flex items-center gap-1"><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
+                            <span class="opacity-60">#${p.demandante}</span>
                         </div>
                     </div>
                 `;
@@ -495,16 +495,16 @@ function renderizarComentariosTarefa(comentarios) {
 
     comentarios.forEach(function (c) {
         var div = document.createElement('div');
-        div.className = 'mb-4 last:mb-0';
+        div.className = 'mb-4 last:mb-0 animate-fadeIn';
         div.innerHTML =
             '<div class="flex gap-3">' +
-                '<div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0">' + (c.autor ? c.autor.charAt(0).toUpperCase() : '?') + '</div>' +
+                '<div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">' + (c.autor ? c.autor.charAt(0).toUpperCase() : '?') + '</div>' +
                 '<div class="flex-1">' +
-                    '<div class="flex items-center gap-2 mb-1">' +
+                    '<div class="flex items-center gap-2 mb-1.5">' +
                         '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
-                        '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+                        '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium underline underline-offset-2 decoration-[var(--border)]">' + c.data + '</span>' +
                     '</div>' +
-                    '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + c.texto + '</div>' +
+                    '<div class="bg-[var(--bg-color)] p-3.5 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm leading-relaxed">' + c.texto + '</div>' +
                 '</div>' +
             '</div>';
         container.appendChild(div);
@@ -654,10 +654,10 @@ window.renderizarChecklistEdit = function() {
 
     const checklist = p.checklist || [];
     container.innerHTML = checklist.map((item, idx) => `
-        <div class="flex items-center gap-2 bg-[var(--surface)] p-2 rounded-lg border border-[var(--border)]">
-            <span class="text-sm flex-1 ${item.concluido ? 'line-through text-[var(--text-muted)]' : ''}">${item.texto}</span>
-            <button class="text-red-500 hover:bg-red-50 p-1 rounded transition-colors" onclick="window.removerItemChecklist(${idx})">
-                <i class="ph ph-trash"></i>
+        <div class="flex items-center gap-3 bg-[var(--surface)] p-3 rounded-xl border border-[var(--border)] shadow-sm group">
+            <span class="text-sm flex-1 font-medium ${item.concluido ? 'line-through text-[var(--text-muted)]' : 'text-[var(--text-main)]'}">${item.texto}</span>
+            <button class="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-50 transition-all duration-300 active:scale-90" onclick="window.removerItemChecklist(${idx})">
+                <i class="ph ph-trash text-lg"></i>
             </button>
         </div>
     `).join('');
@@ -770,13 +770,13 @@ function renderizarComentariosTarefaDetalhe(comentarios) {
 
     comentarios.forEach(function (c) {
         var div = document.createElement('div');
-        div.className = 'p-3 bg-black/5 dark:bg-white/5 rounded-xl border border-[var(--border)] text-sm';
+        div.className = 'p-4 bg-[var(--bg-color)]/50 rounded-xl border border-[var(--border)] text-sm shadow-sm animate-fadeIn';
         div.innerHTML = 
-            '<div class="flex justify-between mb-1">' +
-                '<span class="font-bold text-xs text-[var(--primary)]">' + c.autor + '</span>' +
-                '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+            '<div class="flex justify-between items-center mb-2">' +
+                '<span class="font-bold text-xs text-[var(--primary)] uppercase tracking-tight">' + c.autor + '</span>' +
+                '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium">' + c.data + '</span>' +
             '</div>' +
-            '<div class="text-[var(--text-main)]">' + c.texto + '</div>';
+            '<div class="text-[var(--text-main)] leading-relaxed">' + c.texto + '</div>';
         container.appendChild(div);
     });
 }

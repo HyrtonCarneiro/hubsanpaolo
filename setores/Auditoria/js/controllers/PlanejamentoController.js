@@ -175,7 +175,7 @@ window.renderizarTabelaPlanejamento = function () {
     rows.forEach(function (r) {
         var ultimaStr = r.ultimaRaw ? r.ultimaRaw.split('-').reverse().join('/') : 'Nunca';
         var proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span class="text-[var(--text-muted)] font-normal text-xs">Não agendado</span>';
-        var audStr = r.auditor || '<span class="text-[var(--text-muted)] font-normal text-xs text-center border border-[var(--border)] rounded-full px-2 py-0.5">A Definir</span>';
+        var audStr = r.auditor || '<span class="text-[var(--text-muted)] font-normal text-xs text-center border border-[var(--border)] rounded-xl px-2 py-0.5 shadow-sm">A Definir</span>';
 
         // Lógica de Status Baseado no Mapeamento
         var statusHtml = '';
@@ -204,16 +204,16 @@ window.renderizarTabelaPlanejamento = function () {
         
         var actionButtons = `
             <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onclick="window.navegarParaMapear('${r.lojaId}')" class="p-1.5 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="Mapear Visita">
+                <button onclick="window.navegarParaMapear('${r.lojaId}')" class="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all active:scale-95" title="Mapear Visita">
                     <i class="ph ph-map-trifold text-lg"></i>
                 </button>
-                <button onclick="window.navegarParaLancarNota('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-green-500 hover:bg-green-50 rounded-lg transition-colors" title="Lançar Nota">
+                <button onclick="window.navegarParaLancarNota('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-xl transition-all active:scale-95" title="Lançar Nota">
                     <i class="ph ph-scroll text-lg"></i>
                 </button>
-                <button onclick="window.abrirModalEditPlanejamento('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-lg transition-colors" title="Editar Agendamento">
+                <button onclick="window.abrirModalEditPlanejamento('${r.nome.replace(/'/g, "\\'")}')" class="p-1.5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 rounded-xl transition-all active:scale-95" title="Editar Agendamento">
                     <i class="ph ph-pencil-simple text-lg"></i>
                 </button>
-                <button onclick="window.excluirPlanejamento('${r.docId}')" class="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors ${r.docId ? '' : 'hidden'}" title="Excluir Planejamento">
+                <button onclick="window.excluirPlanejamento('${r.docId}')" class="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all active:scale-95 ${r.docId ? '' : 'hidden'}" title="Excluir Planejamento">
                     <i class="ph ph-trash text-lg"></i>
                 </button>
             </div>
@@ -221,7 +221,7 @@ window.renderizarTabelaPlanejamento = function () {
 
         tr.innerHTML =
             '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + r.nome + '</td>' +
-            '<td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-md">' + r.regional + '</span></td>' +
+            '<td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-xl shadow-sm border border-brandBlue/20">' + r.regional + '</span></td>' +
             '<td class="p-4 text-sm font-medium text-[var(--text-main)]">' + ultimaStr + '</td>' +
             '<td class="p-4 text-sm">' +
                 '<div class="font-bold text-[var(--primary)]">' + proxStr + '</div>' +

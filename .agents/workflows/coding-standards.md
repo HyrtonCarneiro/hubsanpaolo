@@ -38,11 +38,19 @@ Após os testes de unidade, verifique internamente no navegador:
 - **Ordem de carregamento dos scripts**: firebase-init.js → data.js → controllers → app.js
 
 ## Estilização
-- **Tailwind CSS via CDN**: Usar classes utilitárias diretamente no HTML
-- **Variáveis CSS**: Definidas em `css/styles.css` (ex: `var(--primary)`, `var(--sp-red)`, etc.)
-- **Classe `.active`**: Usada para nav items ativos na sidebar (regras CSS em `styles.css`)
-- **Visibilidade de views**: Usar `style.display = 'none'/'block'/'flex'` (NÃO `class="hidden"`)
-- **Dark mode**: Toggle via `document.body.classList.toggle('dark-mode')`
+- **Tailwind CSS via CDN**: Usar classes utilitárias diretamente no HTML.
+- **Variáveis CSS**: Definidas em `css/styles.css` (ex: `var(--primary)`, `var(--sp-red)`, etc.).
+- **Estética Premium**: Priorizar `rounded-xl`, `shadow-sm` e `hover:scale-105` para interatividade.
+- **Classe `.active`**: Usada para nav items ativos na sidebar (regras CSS em `styles.css`).
+- **Visibilidade de views**: Usar `style.display = 'none'/'block'/'flex'` (NÃO `class="hidden"`).
+- **Dark mode**: Toggle via `document.body.classList.toggle('dark-mode')`.
+
+## Princípios de UX/UI (Obrigatórios)
+1. **Intutitividade Total**: Se um novo usuário não souber o que o botão faz em 2 segundos, o design falhou.
+2. **Sem Informação Escondida**: Cards e botões devem mostrar informações críticas nativamente (excluir "show on hover" para dados base).
+3. **Feedback Instantâneo**: Todo clique ou hover deve ter uma transição suave (`transition-all`).
+4. **Limpeza Visual (Declutter)**: Se uma tela tiver muitos campos, use botões de expansão (toggle) ou modais.
+5. **Busca e Filtros**: Telas com mais de 10 itens DEVEM ter campo de busca e botão "Limpar Filtros".
 
 ## Estrutura de Pastas
 ```

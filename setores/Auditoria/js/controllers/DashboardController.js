@@ -113,12 +113,12 @@ window.renderDashboard = function () {
             bodyCriticas.innerHTML = '<div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada.</div>';
         } else {
             bodyCriticas.innerHTML = criticas.map(([nome, dados]) => `
-                <div class="bg-red-50 border border-red-100 rounded-lg p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all">
+                <div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold border border-red-200">${dados.maxTentativa}</div>
+                        <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center font-bold border border-red-200 dark:border-red-800">${dados.maxTentativa}</div>
                         <div>
-                            <div class="font-bold text-red-900">${nome}</div>
-                            <div class="text-[10px] text-red-700 uppercase font-semibold">Tentativas sem sucesso</div>
+                            <div class="font-bold text-red-900 dark:text-red-300">${nome}</div>
+                            <div class="text-[10px] text-red-700 dark:text-red-400 uppercase font-semibold tracking-wider">Tentativas sem sucesso</div>
                         </div>
                     </div>
                     <i class="ph ph-warning-octagon text-red-400 text-xl"></i>
@@ -148,7 +148,7 @@ window.renderDashboard = function () {
         if (chartMediaRegionalInst) chartMediaRegionalInst.destroy();
         chartMediaRegionalInst = new Chart(canvasRegional, {
             type: 'bar',
-            data: { labels: regionais, datasets: [{ label: 'Média', data: mediasRegionais, backgroundColor: coresBarras, borderRadius: 6, barThickness: 25 }] },
+            data: { labels: regionais, datasets: [{ label: 'Média', data: mediasRegionais, backgroundColor: coresBarras, borderRadius: 8, barThickness: 25 }] },
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { color: textColor, font: { weight: 'bold' }, anchor: 'end', align: 'end' }}, scales: { x: { min: 0, max: 10, ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
         });
     }
@@ -187,7 +187,7 @@ window.renderDashboard = function () {
             type: 'bar',
             data: {
                 labels: ranking.map(n => n.loja),
-                datasets: [{ data: ranking.map(n => n.nota), backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), borderRadius: 4, barThickness: 15 }]
+                datasets: [{ data: ranking.map(n => n.nota), backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), borderRadius: 8, barThickness: 15 }]
             },
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { x: { min: 0, max: 10, ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } } } } }
         });
@@ -247,7 +247,7 @@ window.renderDashboard = function () {
             type: 'bar',
             data: {
                 labels: membros,
-                datasets: [{ label: 'Tarefas Ativas', data: qtds, backgroundColor: '#8b5cf6', borderRadius: 6, barThickness: 25 }]
+                datasets: [{ label: 'Tarefas Ativas', data: qtds, backgroundColor: '#8b5cf6', borderRadius: 8, barThickness: 25 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,

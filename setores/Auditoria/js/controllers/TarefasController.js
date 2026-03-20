@@ -54,8 +54,8 @@ function renderizarBotoesAudiEquipe() {
     window.audiEquipe.forEach(function (m) {
         var btn = document.createElement('button');
         btn.className = m.nome === window.audiCurrentMember
-            ? 'px-4 py-2 rounded-full font-semibold transition-colors bg-[var(--primary)] text-white shadow-sm border border-[var(--primary)]'
-            : 'px-4 py-2 rounded-full font-semibold transition-colors bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm';
+            ? 'px-4 py-2 rounded-xl font-semibold transition-all bg-[var(--primary)] text-white shadow-sm border border-[var(--primary)] active:scale-95'
+            : 'px-4 py-2 rounded-xl font-semibold transition-all bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm active:scale-95';
         btn.innerText = m.nome;
         btn.onclick = function () { window.switchAudiMember(m.nome); };
         container.appendChild(btn);
@@ -139,11 +139,11 @@ function renderizarAudiProjetosList() {
 
         projsNestaColuna.forEach(function (p) {
             var div = document.createElement('div');
-            div.className = 'bg-[var(--surface)] border-l-4 border-transparent hover:border-[var(--primary)] p-4 rounded-lg border border-[var(--border)] shadow-sm hover:shadow-md transition-all group flex flex-col gap-2 relative';
+            div.className = 'bg-[var(--surface)] border-l-4 border-transparent hover:border-[var(--primary)] p-4 rounded-xl border border-[var(--border)] shadow-sm hover:shadow-md transition-all group flex flex-col gap-2 relative';
 
             var actionBtns = '';
-            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Editar" onclick="window.abrirModalEditAudiProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil-simple text-sm"></i></button>';
-            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Remover" onclick="window.deletarAudiProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash text-sm"></i></button>';
+            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Editar" onclick="window.abrirModalEditAudiProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil-simple text-sm"></i></button>';
+            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Remover" onclick="window.deletarAudiProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash text-sm"></i></button>';
 
             var urlBadge = '';
             if (p.anexoUrl) {
@@ -157,8 +157,8 @@ function renderizarAudiProjetosList() {
 
             div.innerHTML =
                 '<div class="flex justify-between items-start gap-2">' +
-                    '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold ' + col.badgeBg + '"><i class="ph ph-calendar-blank"></i> ' + p.dataAtv + '</span>' +
-                    '<div class="flex items-center gap-1 bg-[var(--surface)] rounded-lg shadow-sm border border-[var(--border)] ml-auto absolute top-2 right-2 p-0.5 pointer-events-none group-hover:pointer-events-auto">' + actionBtns + '</div>' +
+                    '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold ' + col.badgeBg + ' shadow-sm"><i class="ph ph-calendar-blank"></i> ' + p.dataAtv + '</span>' +
+                    '<div class="flex items-center gap-1 bg-[var(--surface)] rounded-xl shadow-sm border border-[var(--border)] ml-auto absolute top-2 right-2 p-0.5 pointer-events-none group-hover:pointer-events-auto">' + actionBtns + '</div>' +
                 '</div>' +
                 '<h4 class="mt-2 mb-1 font-semibold text-sm text-[var(--text-main)] leading-relaxed break-words">' + p.desc + '</h4>' +
                 (urlBadge ? '<div>' + urlBadge + '</div>' : '') +
@@ -293,10 +293,10 @@ function renderizarListaAudiEquipeGerenciar() {
 
     window.audiEquipe.forEach(function (m) {
         var div = document.createElement('div');
-        div.className = 'flex justify-between items-center py-2.5 px-3 mb-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] group hover:border-[var(--primary)] transition-colors';
+        div.className = 'flex justify-between items-center py-2.5 px-3 mb-2 rounded-xl bg-[var(--bg-color)] border border-[var(--border)] group hover:border-[var(--primary)] transition-colors shadow-sm';
         div.innerHTML =
             '<span class="font-semibold text-[var(--text-main)] flex items-center gap-2"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors"></i> ' + m.nome + '</span>' +
-            '<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100" onclick="window.removerAudiMembro(\'' + m.firebaseId + '\', \'' + m.nome + '\')">' +
+            '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100" onclick="window.removerAudiMembro(\'' + m.firebaseId + '\', \'' + m.nome + '\')">' +
                 '<i class="ph ph-trash"></i>' +
             '</button>';
         container.appendChild(div);
