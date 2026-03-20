@@ -9,6 +9,18 @@ window.registrarAtividade = async function (tipo, descricao) {
             usuario: window.currentUser || 'Sistema',
             timestamp: Date.now()
         });
+
+        // Limpeza: Manter apenas os 10 mais recentes
+        var qAtv = query(collection(db, "atividades"), orderBy("timestamp", "desc"));
+        var snapshot = await getDocs(qAtv);
+        if (snapshot.size > 10) {
+            var docs = [];
+            snapshot.forEach(function(d) { docs.push(d); });
+            // Deletar a partir do índice 10
+            for (var i = 10; i < docs.length; i++) {
+                await deleteDoc(doc(db, "atividades", docs[i].id));
+            }
+        }
     } catch (e) {
         console.error("Erro ao registrar atividade:", e);
     }
@@ -16,7 +28,7 @@ window.registrarAtividade = async function (tipo, descricao) {
 
 window.initAtividadesListener = function () {
     try {
-        var qAtv = query(collection(db, "atividades"), orderBy("timestamp", "desc"), limit(6));
+        var qAtv = query(collection(db, "atividades"), orderBy("timestamp", "desc"), limit(10));
         onSnapshot(qAtv, function (snapshot) {
             var atividades = [];
             snapshot.forEach(function (docSnap) {
@@ -34,13 +46,14 @@ function renderizarFeed(atividades) {
     if (!container) return;
 
     if (atividades.length === 0) {
-        container.innerHTML = '<p class="text-[0.7rem] text-[var(--text-muted)] text-center py-4">Nenhuma atividade recente.</p>';
+        container.innerHTML = '<p class="text-sm text-[var(--text-muted)] text-center py-8 col-span-full font-medium">Nenhuma atividade recente registrada.</p>';
         return;
     }
 
     var html = atividades.map(function (atv) {
         var icon = 'ph-clock';
         var color = 'text-[var(--text-muted)]';
+        var bgColor = 'bg-[var(--bg-color)]';
         
         if (atv.tipo === 'chamado') { icon = 'ph-warning-circle'; color = 'text-red-500'; }
         if (atv.tipo === 'projeto') { icon = 'ph-kanban'; color = 'text-blue-500'; }
@@ -51,13 +64,13 @@ function renderizarFeed(atividades) {
         var time = date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
 
         return (
-            '<div class="flex items-start gap-3 py-3 border-b border-[var(--border)] last:border-0 group">' +
-                '<div class="w-8 h-8 rounded-lg bg-[var(--bg-color)] flex items-center justify-center shrink-0 border border-[var(--border)] group-hover:border-[var(--primary)] transition-colors">' +
-                    '<i class="ph ' + icon + ' ' + color + ' text-lg"></i>' +
+            '<div class="flex items-start gap-4 p-4 rounded-xl border border-[var(--border)] bg-[var(--bg-color)] shadow-sm hover:border-[var(--primary)] hover:shadow-md transition-all group">' +
+                '<div class="w-10 h-10 rounded-xl bg-[var(--surface)] flex items-center justify-center shrink-0 border border-[var(--border)] group-hover:border-[var(--primary)] transition-colors">' +
+                    '<i class="ph ' + icon + ' ' + color + ' text-xl"></i>' +
                 '</div>' +
                 '<div class="flex-1 min-w-0">' +
-                    '<div class="text-[0.75rem] text-[var(--text-main)] leading-tight font-medium mb-0.5 line-clamp-2">' + atv.descricao + '</div>' +
-                    '<div class="flex items-center gap-2 text-[0.6rem] text-[var(--text-muted)] font-bold uppercase tracking-wider">' +
+                    '<div class="text-sm text-[var(--text-main)] leading-snug font-semibold mb-1 line-clamp-2">' + atv.descricao + '</div>' +
+                    '<div class="flex items-center gap-2 text-[0.65rem] text-[var(--text-muted)] font-extrabold uppercase tracking-widest">' +
                         '<span>' + (atv.usuario || 'Sistema') + '</span>' +
                         '<span class="w-1 h-1 rounded-full bg-[var(--border)]"></span>' +
                         '<span>' + time + '</span>' +

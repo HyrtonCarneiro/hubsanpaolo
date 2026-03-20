@@ -48,6 +48,21 @@ function renderizarBotoesEquipe() {
     var container = document.getElementById('membrosEquipeContainer');
     if (!container) return;
     container.innerHTML = '';
+
+    // Botão Geral (Gestor)
+    var btnGeral = document.createElement('button');
+    btnGeral.className = window.currentMember === 'Geral'
+        ? 'px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-bold shadow-md transition-all text-sm flex items-center gap-2'
+        : 'px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)] text-sm flex items-center gap-2';
+    btnGeral.innerHTML = '<i class="ph-fill ph-users-three"></i> GERAL';
+    btnGeral.onclick = function () { window.switchMember('Geral'); };
+    container.appendChild(btnGeral);
+
+    // Divisor
+    var divider = document.createElement('div');
+    divider.className = 'w-px h-8 bg-[var(--border)] mx-2 hidden sm:block';
+    container.appendChild(divider);
+
     window.membrosEquipe.forEach(function (m) {
         var btn = document.createElement('button');
         btn.className = m.nome === window.currentMember

@@ -28,7 +28,7 @@ Após os testes de unidade, verifique internamente no navegador:
 
 ### Passo 6 — Finalização
 1. Informe o usuário sobre as alterações concluídas.
-2. **Teste Manual OBRIGATÓRIO**: Ao finalizar a modificação, você deve abrir um navegador local com o sistema/aplicação para que o usuário possa testar manualmente.
+2. **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar a modificação, você deve apenas abrir um navegador local com o sistema/aplicação. Não utilize o subagente para testes automáticos; o usuário fará o teste de forma livre.
 3. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
 
 ## Arquitetura

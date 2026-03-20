@@ -50,4 +50,4 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
 
 - **Git:** Do NOT perform `git commit` or `git push` automatically. Always wait for explicit user instruction.
 - **Verification:** Perform tests and verification internally. Do NOT attach screenshots or recordings to the `walkthrough.md` unless explicitly requested by the user.
-- **Manual Testing:** Ao finalizar a modificação, você DEVE abrir um navegador local com o sistema/aplicação para que o usuário realize o teste manual. (Não deve ser um teste automatizado).
+- **Manual Testing:** Ao finalizar a modificação, você DEVE abrir um navegador local com o sistema/aplicação para que o usuário realize o teste manual. O teste é EXCLUSIVO do usuário; não utilize subagentes para interações automáticas após abrir o link.
