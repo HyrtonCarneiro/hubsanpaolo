@@ -25,7 +25,7 @@ window.initLojasChamadosListeners = function () {
     }
 }
 
-function criarCardLojaHTML(loja, logs) {
+window.criarCardLojaHTML = function (loja, logs) {
     var pendentes = logs.filter(function (l) { return !l.resolvido; });
     var temPendente = pendentes.length > 0;
     var statusColor = logs.length > 0 ? (temPendente ? 'var(--sp-red)' : 'var(--success)') : 'var(--border)';

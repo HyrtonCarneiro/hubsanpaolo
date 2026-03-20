@@ -70,6 +70,21 @@ window.initMapa = function () {
         .marker-red { background: #ef4444 !important; }
         .leaflet-interactive { transition: fill-opacity 0.3s, fill 0.3s; cursor: pointer !important; }
         .leaflet-interactive:hover { fill-opacity: 0.25 !important; }
+        
+        .map-card-popup .leaflet-popup-content-wrapper {
+            padding: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            background: transparent;
+            box-shadow: none;
+        }
+        .map-card-popup .leaflet-popup-content {
+            margin: 0;
+            width: 350px !important;
+        }
+        .map-card-popup .leaflet-popup-tip-container {
+            display: none;
+        }
     `;
     document.head.appendChild(style);
 };
@@ -200,10 +215,25 @@ window.renderizarMarcadoresMapa = function () {
 
         if (window.marcadoresMapa[loja.id]) {
             window.marcadoresMapa[loja.id].setIcon(customIcon);
-            window.marcadoresMapa[loja.id].getPopup().setContent(`<strong>${loja.nome}</strong><br>${statusTexto}`);
+            const card = window.criarCardLojaHTML(loja, logs);
+            card.style.width = '350px';
+            card.style.margin = '0';
+            card.style.boxShadow = 'none';
+            card.classList.remove('hover:-translate-y-1');
+            window.marcadoresMapa[loja.id].getPopup().setContent(card);
         } else {
+            const card = window.criarCardLojaHTML(loja, logs);
+            card.style.width = '350px';
+            card.style.margin = '0';
+            card.style.boxShadow = 'none';
+            card.classList.remove('hover:-translate-y-1');
+
             const marker = L.marker([loja.lat, loja.lng], { icon: customIcon })
-                .bindPopup(`<strong>${loja.nome}</strong><br>${statusTexto}`)
+                .bindPopup(card, { 
+                    maxWidth: 400, 
+                    minWidth: 350,
+                    className: 'map-card-popup'
+                })
                 .addTo(window.mapaTI);
             window.marcadoresMapa[loja.id] = marker;
         }
