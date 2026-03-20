@@ -121,9 +121,6 @@
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('mapa')" id="nav-mapa">
                     <i class="ph ph-map-trifold text-xl"></i> <span class="font-medium">Mapa Interativo</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('bi')" id="nav-bi">
-                    <i class="ph ph-presentation-chart text-xl"></i> <span class="font-medium">Power BI da TI</span>
-                </div>
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('tiaguinho')" id="nav-tiaguinho">
                     <i class="ph ph-user-gear text-xl"></i> <span class="font-medium">BI Tiaguinho</span>
                 </div>
@@ -406,22 +403,6 @@
                 </div>
                 <!-- Mapa container -->
                 <div id="mapContainer" class="w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)] z-0"></div>
-            </div>
-
-            <div id="view-bi" style="display: none; height: 100%;">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                    <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Power BI da TI</h1>
-                    </div>
-                </div>
-                <div
-                    class="w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)]">
-                    <iframe title="Power BI da TI" width="100%" height="100%"
-                        src="https://app.powerbi.com/view?r=eyJrIjoiY2NkNzdmYmQtMWMwNS00NzU0LWFmMGMtNWViM2Q3NzBkZWRjIiwidCI6IjE3ZmUxNDY1LWZlNjEtNGVmMy1hYThlLWZhOWU5YzY1MGJiOSJ9"
-                        frameborder="0" allowFullScreen="true" class="border-none w-full h-full"></iframe>
-                </div>
             </div>
 
             <div id="view-tiaguinho" style="display: none; height: 100%;">
