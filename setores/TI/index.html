@@ -91,6 +91,22 @@
             padding-left: 1.5rem;
             margin-bottom: 0.5rem;
         }
+        /* Custom Fullscreen for BI */
+        .bi-expanded {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            background: var(--bg-color);
+        }
+        .bi-expanded iframe {
+            height: 100% !important;
+            width: 100% !important;
+        }
     </style>
 </head>
 
@@ -300,9 +316,15 @@
                     class="flex gap-2 mb-6 flex-wrap">
                     <!-- Carregado via JS -->
                 </div>
-                <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
-                    <div
-                        class="flex justify-between items-center mb-4">
+                <!-- Botão para mostrar formulário de nova tarefa -->
+                <div id="btnNovaTarefaContainer" class="mb-6">
+                    <button class="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-[var(--surface)] text-[var(--primary)] border-2 border-dashed border-[var(--primary)] font-bold text-lg hover:bg-[var(--primary)]/5 hover:scale-[1.01] transition-all shadow-sm group" onclick="window.toggleFormTarefa()">
+                        <i class="ph ph-plus-circle text-2xl group-hover:rotate-90 transition-transform duration-300"></i> Nova Demanda / Tarefa
+                    </button>
+                </div>
+
+                <div id="formNovaTarefa" class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm hidden animate-fadeIn">
+                    <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Registrar Nova Demanda</h3>
                     </div>
                     <input type="text" id="projDesc" placeholder="Descrição da tarefa ou projeto"
@@ -346,6 +368,7 @@
                     <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarProjeto()">
                         <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
                     </button>
+                    <button class="ml-3 px-5 py-2.5 rounded-lg bg-[var(--bg-color)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.toggleFormTarefa()">Cancelar</button>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden" id="projetos-list">
@@ -445,9 +468,15 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">BI Tiaguinho (Gestão TI)</h1>
                     </div>
+                    <button onclick="window.toggleFullscreenBI()" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+                        <i class="ph ph-arrows-out text-lg"></i> Expandir Dashboard
+                    </button>
                 </div>
-                <div
-                    class="w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)]">
+                <div id="tiaguinhoContainer"
+                    class="w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)] relative transition-all duration-300">
+                    <button onclick="window.toggleFullscreenBI()" class="hidden md:group-hover:flex absolute top-4 right-10 z-[10000] items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-black/80 backdrop-blur-md shadow-2xl border border-[var(--border)] text-[var(--text-main)] font-bold hover:scale-105 transition-all exit-bi-btn">
+                        <i class="ph ph-arrows-in text-xl font-bold"></i> Recolher Tela
+                    </button>
                     <iframe title="BI Tiaguinho" width="100%" height="100%"
                         src="https://dashboardti10.vercel.app"
                         frameborder="0" allowFullScreen="true" class="border-none w-full h-full"></iframe>

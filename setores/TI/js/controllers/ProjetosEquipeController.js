@@ -135,6 +135,20 @@ window.removerResponsavelEdit = function (nome) {
     renderizarTagsResponsaveis('selectedResponsaveisEdit', window.tempResponsaveisEdit, 'window.removerResponsavelEdit');
 }
 
+window.toggleFormTarefa = function() {
+    var form = document.getElementById('formNovaTarefa');
+    var btn = document.getElementById('btnNovaTarefaContainer');
+    if (!form || !btn) return;
+
+    if (form.classList.contains('hidden')) {
+        form.classList.remove('hidden');
+        btn.classList.add('hidden');
+    } else {
+        form.classList.add('hidden');
+        btn.classList.remove('hidden');
+    }
+}
+
 window.salvarProjeto = async function () {
     if (!window.currentMember) return showToast("Selecione ou crie um membro da equipe antes", "error");
     var desc = document.getElementById('projDesc').value;
@@ -166,6 +180,8 @@ window.salvarProjeto = async function () {
         window.tempResponsaveisCriacao = window.currentMember !== 'Geral' ? [window.currentMember] : [];
         renderizarChecklistCreation();
         renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
+        
+        window.toggleFormTarefa(); // Esconder após salvar
         showToast("Tarefa registrada");
         if (typeof window.registrarAtividade === 'function') {
             window.registrarAtividade('projeto', `${currentUser} atribuiu nova tarefa para ${window.tempResponsaveisCriacao.join(', ')}: ${desc.substring(0, 30)}...`);

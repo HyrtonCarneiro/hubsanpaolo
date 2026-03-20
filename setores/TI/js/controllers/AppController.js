@@ -104,6 +104,22 @@ window.switchView = function (view) {
     if (view === 'mapa' && typeof window.initMapa === 'function') window.initMapa();
 }
 
+window.toggleFullscreenBI = function() {
+    const container = document.getElementById('tiaguinhoContainer');
+    if (!container) return;
+
+    if (container.classList.contains('bi-expanded')) {
+        container.classList.remove('bi-expanded');
+        // Remover classe hidden do botão de recolher (caso queira forçar visibilidade via CSS, mas aqui controlamos o estado)
+        const exitBtn = container.querySelector('.exit-bi-btn');
+        if (exitBtn) exitBtn.classList.add('hidden');
+    } else {
+        container.classList.add('bi-expanded');
+        const exitBtn = container.querySelector('.exit-bi-btn');
+        if (exitBtn) exitBtn.classList.remove('hidden');
+    }
+}
+
 window.toggleSidebar = function () {
     var sidebar = document.getElementById('appSidebar');
     var overlay = document.getElementById('sidebarOverlay');
