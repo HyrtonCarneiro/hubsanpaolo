@@ -17,6 +17,7 @@ window.initLojasChamadosListeners = function () {
             });
             window.renderizarLojas();
             if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
+            if (typeof window.renderizarMarcadoresMapa === 'function') window.renderizarMarcadoresMapa();
             if (lojaAtualId !== null) renderizarComentarios(window.sysLogs[lojaAtualId] || []);
         });
     } catch (e) {

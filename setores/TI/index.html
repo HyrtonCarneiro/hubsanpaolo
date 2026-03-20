@@ -15,6 +15,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <!-- Leaflet Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
     <!-- Firebase Compat SDK (works on file:// protocol) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -96,6 +100,9 @@
                 </div>
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('metapwr')" id="nav-metapwr">
                     <i class="ph ph-target text-xl"></i> <span class="font-medium">Meta PWR</span>
+                </div>
+                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('mapa')" id="nav-mapa">
+                    <i class="ph ph-map-trifold text-xl"></i> <span class="font-medium">Mapa Interativo</span>
                 </div>
                 <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('bi')" id="nav-bi">
                     <i class="ph ph-presentation-chart text-xl"></i> <span class="font-medium">Power BI da TI</span>
@@ -360,6 +367,28 @@
                     <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">Acompanhamento das Metas
                         PWR da Tecnologia (TI) será liberado em breve.</p>
                 </div>
+            </div>
+
+            <div id="view-mapa" style="display: none; height: 100%;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
+                                class="ph ph-list text-xl"></i></button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapa Interativo</h1>
+                    </div>
+                    <div class="flex items-center gap-4 bg-[var(--surface)] px-4 py-2 rounded-lg border border-[var(--border)] shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <span class="text-xs font-bold text-[var(--text-muted)]">Tudo OK</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <span class="text-xs font-bold text-[var(--text-muted)]">Chamado Aberto</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Mapa container -->
+                <div id="mapContainer" class="w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)] z-0"></div>
             </div>
 
             <div id="view-bi" style="display: none; height: 100%;">
@@ -675,6 +704,7 @@
     <script src="js/controllers/DashboardController.js"></script>
     <script src="js/controllers/ProjetosEquipeController.js"></script>
     <script src="js/controllers/AtasController.js"></script>
+    <script src="js/controllers/MapaController.js"></script>
     <script src="js/controllers/ExportController.js"></script>
     <script src="js/ti-main.js"></script>
 

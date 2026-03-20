@@ -76,7 +76,7 @@ window.initApp = initApp;
 
 window.switchView = function (view) {
     // Esconder todas as views
-    const views = ['analytics', 'lojas', 'projetos', 'atas', 'bi', 'metapwr', 'tiaguinho'];
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'bi', 'metapwr', 'tiaguinho', 'mapa'];
     views.forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.style.display = 'none';
@@ -100,6 +100,7 @@ window.switchView = function (view) {
     if (view === 'lojas') window.renderizarLojas();
     if (view === 'projetos') window.switchMember(window.currentMember || 'Hyrton');
     if (view === 'atas' && typeof window.renderizarAtas === 'function') window.renderizarAtas();
+    if (view === 'mapa' && typeof window.initMapa === 'function') window.initMapa();
 }
 
 window.toggleSidebar = function () {
