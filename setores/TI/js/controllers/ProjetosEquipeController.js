@@ -232,9 +232,13 @@ function criarCardTarefa(p, classBadge) {
     div.draggable = true;
     div.ondragstart = (e) => window.handleDragStart(e, p.firebaseId);
     div.ondragend = (e) => window.handleDragEnd(e);
+    div.onclick = (e) => {
+        // Evitar abrir se clicou em botões ou links
+        if (e.target.closest('button') || e.target.closest('a')) return;
+        window.abrirModalEditProj(p.firebaseId);
+    };
 
     var actionBtns = '';
-    actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" onclick="window.abrirModalEditProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil"></i></button>';
     actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
 
     var urlBadge = '';
