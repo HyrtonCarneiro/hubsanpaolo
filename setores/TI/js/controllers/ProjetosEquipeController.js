@@ -4,6 +4,8 @@
 window.sysProjetos = {};
 window.membrosEquipe = [];
 window.tempChecklist = []; // Armazena itens de checklist durante a criação de uma nova tarefa
+window.tempResponsaveisCriacao = []; // Responsáveis selecionados na criação
+window.tempResponsaveisEdit = [];    // Responsáveis selecionados na edição
 
 window.initProjetosEquipeListeners = function () {
     try {
@@ -13,10 +15,11 @@ window.initProjetosEquipeListeners = function () {
             snapshot.forEach(function (docSnap) {
                 var data = docSnap.data();
                 data.firebaseId = docSnap.id;
-                if (!window.sysProjetos[data.membroResponsavel]) {
-                    window.sysProjetos[data.membroResponsavel] = [];
-                }
-                window.sysProjetos[data.membroResponsavel].push(data);
+                var resps = data.responsaveis && data.responsaveis.length > 0 ? data.responsaveis : [data.membroResponsavel || 'Geral'];
+                resps.forEach(function(r) {
+                    if (!window.sysProjetos[r]) window.sysProjetos[r] = [];
+                    window.sysProjetos[r].push(data);
+                });
             });
             renderizarProjetosList();
             if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
@@ -42,7 +45,9 @@ window.initProjetosEquipeListeners = function () {
 window.switchMember = function (name) {
     window.currentMember = name;
     window.tempChecklist = []; // Limpa ao trocar de contexto ou membro
+    window.tempResponsaveisCriacao = name !== 'Geral' ? [name] : []; // Pre-povoar com o membro atual se não for Geral
     renderizarChecklistCreation();
+    renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
     renderizarBotoesEquipe();
     renderizarProjetosList();
 }
@@ -78,11 +83,56 @@ function renderizarBotoesEquipe() {
 }
 
 function renderizarSelectResponsaveis() {
-    var select = document.getElementById('projResp');
-    if (!select) return;
-    select.innerHTML = window.membrosEquipe.map(function (m) {
-        return '<option value="' + m.nome + '" ' + (m.nome === window.currentMember ? 'selected' : '') + '>' + m.nome + '</option>';
-    }).join('');
+    const ids = ['projResp', 'editProjMember'];
+    ids.forEach(id => {
+        var select = document.getElementById(id);
+        if (!select) return;
+        var options = '<option value="" selected disabled>+ Adicionar Responsável</option>';
+        options += window.membrosEquipe.map(function (m) {
+            return '<option value="' + m.nome + '">' + m.nome + '</option>';
+        }).join('');
+        select.innerHTML = options;
+    });
+
+    // Resetar tags de criação para o membro atual se estiver vazio
+    if (window.tempResponsaveisCriacao.length === 0 && window.currentMember && window.currentMember !== 'Geral') {
+        window.tempResponsaveisCriacao = [window.currentMember];
+        renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
+    }
+}
+
+function renderizarTagsResponsaveis(containerId, lista, removeFnName) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    lista.forEach(function (nome) {
+        var tag = document.createElement('span');
+        tag.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--primary)] text-white text-xs font-bold shadow-sm animate-fadeIn';
+        tag.innerHTML = '<span>' + nome + '</span><i class="ph ph-x cursor-pointer hover:text-black/50 transition-colors" onclick="' + removeFnName + '(\'' + nome + '\')"></i>';
+        container.appendChild(tag);
+    });
+}
+
+window.adicionarResponsavelCriacao = function (nome) {
+    if (!nome || window.tempResponsaveisCriacao.indexOf(nome) !== -1) return;
+    window.tempResponsaveisCriacao.push(nome);
+    renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
+}
+
+window.removerResponsavelCriacao = function (nome) {
+    window.tempResponsaveisCriacao = window.tempResponsaveisCriacao.filter(function (n) { return n !== nome; });
+    renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
+}
+
+window.adicionarResponsavelEdit = function (nome) {
+    if (!nome || window.tempResponsaveisEdit.indexOf(nome) !== -1) return;
+    window.tempResponsaveisEdit.push(nome);
+    renderizarTagsResponsaveis('selectedResponsaveisEdit', window.tempResponsaveisEdit, 'window.removerResponsavelEdit');
+}
+
+window.removerResponsavelEdit = function (nome) {
+    window.tempResponsaveisEdit = window.tempResponsaveisEdit.filter(function (n) { return n !== nome; });
+    renderizarTagsResponsaveis('selectedResponsaveisEdit', window.tempResponsaveisEdit, 'window.removerResponsavelEdit');
 }
 
 window.salvarProjeto = async function () {
@@ -93,30 +143,32 @@ window.salvarProjeto = async function () {
     var status = document.getElementById('projStatus').value;
     var fileInput = document.getElementById('projAnexo');
 
-    var resp = document.getElementById('projResp').value;
-
-    if (!desc || !dem || !dt || !resp) return showToast("Preencha os dados do projeto", "error");
+    if (!desc || !dem || !dt || window.tempResponsaveisCriacao.length === 0) return showToast("Preencha todos os dados (incluindo responsáveis)", "error");
     var parts = dt.split('-');
+    var dAtv = parts[2] + '/' + parts[1] + '/' + parts[0];
     var anexoUrl = fileInput ? fileInput.value.trim() : null;
 
     try {
         await addDoc(collection(db, "projetos"), {
-            membroResponsavel: resp,
-            dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
-            desc: desc, demandante: dem, status: status,
-            anexoUrl: anexoUrl, autor: currentUser, timestamp: Date.now(),
-            comentarios: [],
-            checklist: window.tempChecklist || []
+            desc, demandante: dem, dataAtv: dAtv, status,
+            membroResponsavel: window.tempResponsaveisCriacao[0],
+            responsaveis: window.tempResponsaveisCriacao,
+            anexoUrl: anexoUrl || null,
+            checklist: window.tempChecklist || [],
+            autor: currentUser,
+            timestamp: Date.now()
         });
-        window.tempChecklist = [];
-        renderizarChecklistCreation();
         document.getElementById('projDesc').value = '';
         document.getElementById('projDemand').value = '';
-        document.getElementById('projStatus').value = 'Pendente';
+        document.getElementById('projDate').value = '';
         if (fileInput) fileInput.value = '';
+        window.tempChecklist = [];
+        window.tempResponsaveisCriacao = window.currentMember !== 'Geral' ? [window.currentMember] : [];
+        renderizarChecklistCreation();
+        renderizarTagsResponsaveis('selectedResponsaveisCreation', window.tempResponsaveisCriacao, 'window.removerResponsavelCriacao');
         showToast("Tarefa registrada");
         if (typeof window.registrarAtividade === 'function') {
-            window.registrarAtividade('projeto', `${currentUser} atribuiu nova tarefa para ${resp}: ${desc.substring(0, 30)}...`);
+            window.registrarAtividade('projeto', `${currentUser} atribuiu nova tarefa para ${window.tempResponsaveisCriacao.join(', ')}: ${desc.substring(0, 30)}...`);
         }
     } catch (e) {
         console.error(e);
@@ -238,6 +290,11 @@ function criarCardTarefa(p, classBadge) {
         window.abrirModalEditProj(p.firebaseId);
     };
 
+    var resps = p.responsaveis && p.responsaveis.length > 0 ? p.responsaveis : [p.membroResponsavel || 'Geral'];
+    var responsavelBadges = resps.map(function(r) {
+        return '<span class="px-2 py-0.5 rounded-md bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] text-[0.6rem] font-bold border border-[var(--primary)]/20">' + r + '</span>';
+    }).join(' ');
+
     var actionBtns = '';
     actionBtns += '<button class="w-7 h-7 flex items-center justify-center rounded-md bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors" onclick="window.deletarProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
 
@@ -300,7 +357,7 @@ function criarCardTarefa(p, classBadge) {
                 '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</span>' +
                 '<span class="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-bold border ' + classBadge + '"><i class="ph ph-calendar"></i> ' + p.dataAtv + '</span>' +
             '</div>' +
-            '<div class="flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">' + actionBtns + '</div>' +
+            '<div class="flex items-center gap-1 opacity-100 transition-opacity">' + actionBtns + '</div>' +
         '</div>' +
         '<h4 class="text-sm font-semibold text-[var(--text-main)] m-0 mb-3 leading-snug break-words group-hover:text-[var(--primary)] transition-colors">' + p.desc + '</h4>' +
         '<div class="flex justify-between items-center py-3 border-y border-[var(--border)] mb-2 gap-2">' +
@@ -352,10 +409,14 @@ function renderizarVisaoUnificada(container) {
             `;
             
             pNestaColuna.forEach(p => {
+                const resps = p.responsaveis && p.responsaveis.length > 0 ? p.responsaveis : [p.membroResponsavel || 'Geral'];
+                const badges = resps.map(r => `<span class="px-1.5 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)] text-[0.6rem] font-bold border border-[var(--primary)]/20">${r}</span>`).join(' ');
+
                 // Card simplificado para visão geral
                 rowHtml += `
                     <div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-3 shadow-sm hover:border-[var(--primary)] transition-all cursor-pointer" onclick="window.abrirModalEditProj('${p.firebaseId}')">
                         <div class="text-[0.75rem] font-bold text-[var(--text-main)] mb-1 line-clamp-2">${p.desc}</div>
+                        <div class="flex flex-wrap gap-1 mb-2">${badges}</div>
                         <div class="flex justify-between items-center text-[0.65rem] text-[var(--text-muted)]">
                             <span><i class="ph ph-calendar"></i> ${p.dataAtv}</span>
                             <span>#${p.demandante}</span>
@@ -486,9 +547,16 @@ window.abrirModalEditProj = function (firebaseId) {
     // Preencher campos de visualização (Detail View)
     document.getElementById('viewProjDemand').innerText = p.demandante;
     document.getElementById('viewProjDate').innerText = p.dataAtv;
-    document.getElementById('viewProjResp').innerText = p.membroResponsavel;
+    
+    const viewResps = p.responsaveis && p.responsaveis.length > 0 ? p.responsaveis : [p.membroResponsavel || 'Geral'];
+    document.getElementById('viewProjResp').innerHTML = viewResps.map(r => `<span class="px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold border border-[var(--primary)]/20">${r}</span>`).join(' ');
+
     document.getElementById('viewProjStatus').innerText = p.status;
     document.getElementById('viewProjDesc').innerText = p.desc;
+    
+    // Configurar modo edição
+    window.tempResponsaveisEdit = [...viewResps];
+    renderizarTagsResponsaveis('selectedResponsaveisEdit', window.tempResponsaveisEdit, 'window.removerResponsavelEdit');
     
     // Anexo
     var anexoDiv = document.getElementById('viewProjAnexo');
@@ -728,15 +796,16 @@ window.confirmarEdicaoProj = async function () {
     var dem = document.getElementById('editProjDemand').value;
     var dt = document.getElementById('editProjDate').value;
     var status = document.getElementById('editProjStatus').value;
-    var newMember = document.getElementById('editProjMember').value;
 
-    if (!desc || !dem || !dt || !newMember) return showToast("Preencha todos os campos da tarefa", "error");
+    if (!desc || !dem || !dt || window.tempResponsaveisEdit.length === 0) return showToast("Preencha todos os campos (incluindo responsáveis)", "error");
     var parts = dt.split('-');
 
     try {
         await updateDoc(doc(db, "projetos", id), {
             desc: desc, demandante: dem, dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
-            status: status, membroResponsavel: newMember
+            status: status, 
+            membroResponsavel: window.tempResponsaveisEdit[0],
+            responsaveis: window.tempResponsaveisEdit
         });
         window.fecharModalEditProj();
         showToast("Tarefa atualizada com sucesso!");

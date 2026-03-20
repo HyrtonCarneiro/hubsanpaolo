@@ -3,6 +3,45 @@
 
 window.sysLogs = {};
 let lojaAtualId = null;
+window.tempResponsaveisLogCriacao = [];
+window.tempResponsaveisLogEdit = [];
+
+function renderizarTagsResponsaveisLog(containerId, lista, removeFnName) {
+    var container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    lista.forEach(function (nome) {
+        var tag = document.createElement('span');
+        tag.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--primary)] text-white text-xs font-bold shadow-sm animate-fadeIn';
+        tag.innerHTML = '<span>' + nome + '</span><i class="ph ph-x cursor-pointer hover:text-black/50 transition-colors" onclick="' + removeFnName + '(\'' + nome + '\')"></i>';
+        container.appendChild(tag);
+    });
+}
+
+window.adicionarResponsavelLogCriacao = function (nome) {
+    if (!nome || window.tempResponsaveisLogCriacao.indexOf(nome) !== -1) return;
+    window.tempResponsaveisLogCriacao.push(nome);
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogCreation', window.tempResponsaveisLogCriacao, 'window.removerResponsavelLogCriacao');
+}
+
+window.removerResponsavelLogLogCriacao = function (nome) {
+    window.tempResponsaveisLogCriacao = window.tempResponsaveisLogCriacao.filter(function (n) { return n !== nome; });
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogCreation', window.tempResponsaveisLogCriacao, 'window.removerResponsavelLogLogCriacao');
+}
+
+// Pequeno fix no nome para bater com o onchange do HTML
+window.removerResponsavelLogCriacao = window.removerResponsavelLogLogCriacao;
+
+window.adicionarResponsavelLogEdit = function (nome) {
+    if (!nome || window.tempResponsaveisLogEdit.indexOf(nome) !== -1) return;
+    window.tempResponsaveisLogEdit.push(nome);
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogEdit', window.tempResponsaveisLogEdit, 'window.removerResponsavelLogEdit');
+}
+
+window.removerResponsavelLogEdit = function (nome) {
+    window.tempResponsaveisLogEdit = window.tempResponsaveisLogEdit.filter(function (n) { return n !== nome; });
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogEdit', window.tempResponsaveisLogEdit, 'window.removerResponsavelLogEdit');
+}
 
 window.initLojasChamadosListeners = function () {
     try {
@@ -19,6 +58,13 @@ window.initLojasChamadosListeners = function () {
             if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
             if (typeof window.renderizarMarcadoresMapa === 'function') window.renderizarMarcadoresMapa();
             if (lojaAtualId !== null) renderizarComentarios(window.sysLogs[lojaAtualId] || []);
+
+            // Executar correção retroativa uma única vez se necessário
+            if (!localStorage.getItem('fix_resolucao_20260320')) {
+                window.corrigirResolvidosRetroativo().then(() => {
+                    localStorage.setItem('fix_resolucao_20260320', 'true');
+                });
+            }
         });
     } catch (e) {
         console.error("Erro ao iniciar listener logs", e);
@@ -160,14 +206,22 @@ function abrirModal(id, nome, estado) {
     document.getElementById('modalEstado').innerText = estado;
     
     // Popular responsáveis
-    var select = document.getElementById('tagRespLog');
-    if (select) {
-        var user = sessionStorage.getItem('loggedUser') || '';
-        select.innerHTML = (window.membrosEquipe || []).map(function (m) {
-            var isMe = m.nome === user;
-            return '<option value="' + m.nome + '" ' + (isMe ? 'selected' : '') + '>' + m.nome + '</option>';
-        }).join('');
+    var ids = ['tagRespLog', 'editLogResp'];
+    ids.forEach(id => {
+        var select = document.getElementById(id);
+        if (select) {
+            select.innerHTML = '<option value="" selected disabled>+ Selecionar...</option>' + (window.membrosEquipe || []).map(function (m) {
+                return '<option value="' + m.nome + '">' + m.nome + '</option>';
+            }).join('');
+        }
+    });
+
+    // Inicializar responsáveis na criação com o usuário logado
+    var user = sessionStorage.getItem('loggedUser') || '';
+    if (user && window.tempResponsaveisLogCriacao.length === 0) {
+        window.tempResponsaveisLogCriacao = [user];
     }
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogCreation', window.tempResponsaveisLogCriacao, 'window.removerResponsavelLogCriacao');
 
     document.getElementById('modalLoja').classList.add('show');
     
@@ -205,10 +259,9 @@ window.salvarComentario = async function () {
     var setor = document.getElementById('setorComentario').value;
     var inputAnexo = document.getElementById('anexoComentario');
     var anexoUrl = inputAnexo ? inputAnexo.value.trim() : null;
-    if (!texto.trim()) return showToast("A descrição é obrigatória", "error");
+    if (!texto.trim() || window.tempResponsaveisLogCriacao.length === 0) return showToast("Descrição e responsáveis são obrigatórios", "error");
 
     var dt = document.getElementById('tagPrazoLog').value;
-    var resp = document.getElementById('tagRespLog').value;
     var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     var prazoFormatado = null;
@@ -222,12 +275,19 @@ window.salvarComentario = async function () {
             lojaId: lojaAtualId, dataStr: dStr, texto: texto, tag: tag,
             setor: setor, anexoUrl: anexoUrl || null, resolvido: false,
             autor: currentUser, timestamp: Date.now(),
-            prazo: prazoFormatado, responsavel: resp,
+            prazo: prazoFormatado, 
+            responsavel: window.tempResponsaveisLogCriacao[0],
+            responsaveis: window.tempResponsaveisLogCriacao,
             atualizacoes: []
         });
         document.getElementById('novoComentario').value = '';
         document.getElementById('setorComentario').value = '';
+        document.getElementById('tagPrazoLog').value = '';
         if (inputAnexo) inputAnexo.value = '';
+        
+        window.tempResponsaveisLogCriacao = [sessionStorage.getItem('loggedUser') || ''];
+        renderizarTagsResponsaveisLog('selectedResponsaveisLogCreation', window.tempResponsaveisLogCriacao, 'window.removerResponsavelLogCriacao');
+        
         window.toggleFormOcorrencia(); // Esconder após salvar
         showToast("Ocorrência registrada");
         if (typeof window.registrarAtividade === 'function') {
@@ -241,17 +301,58 @@ window.salvarComentario = async function () {
 
 window.resolverComentario = async function (firebaseId) {
     try {
+        // Encontrar o log nos dados locais para pegar os responsáveis
+        var log = null;
+        Object.keys(window.sysLogs).forEach(function(lojaId) {
+            var found = window.sysLogs[lojaId].find(function(l) { return l.firebaseId === firebaseId; });
+            if (found) log = found;
+        });
+
+        if (!log) return showToast("Log não encontrado", "error");
+
+        var resps = log.responsaveis && log.responsaveis.length > 0 ? log.responsaveis : [log.responsavel || log.autor];
+        var autores = resps.join(', ');
+
         var dataResolucao = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
         await updateDoc(doc(db, "logs", firebaseId), {
-            resolvido: true, autorResolucao: currentUser, dataResolucao: dataResolucao
+            resolvido: true, 
+            autorResolucao: autores, 
+            dataResolucao: dataResolucao
         });
         showToast("Ocorrência marcada como resolvida");
         if (typeof window.registrarAtividade === 'function') {
-            window.registrarAtividade('chamado', `Chamado resolvido por ${currentUser}`);
+            window.registrarAtividade('chamado', `Chamado resolvido (Atribuído a ${autores}) por ${currentUser}`);
         }
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar registro", "error");
+    }
+}
+
+// Função para corrigir chamados já resolvidos retroativamente
+window.corrigirResolvidosRetroativo = async function() {
+    try {
+        showToast("Iniciando correção retroativa...");
+        const qSnapshot = await getDocs(collection(db, "logs"));
+        let count = 0;
+        
+        for (const docSnap of qSnapshot.docs) {
+            const data = docSnap.data();
+            if (data.resolvido && data.autorResolucao) {
+                const resps = data.responsaveis && data.responsaveis.length > 0 ? data.responsaveis : [data.responsavel || data.autor];
+                const novoAutor = resps.join(', ');
+                
+                // Só atualiza se for diferente para evitar gravações desnecessárias
+                if (data.autorResolucao !== novoAutor) {
+                    await updateDoc(doc(db, "logs", docSnap.id), { autorResolucao: novoAutor });
+                    count++;
+                }
+            }
+        }
+        showToast("Correção finalizada! " + count + " chamados atualizados.");
+    } catch (e) {
+        console.error("Erro na correção retroativa:", e);
+        showToast("Erro ao processar correção retroativa", "error");
     }
 }
 
@@ -285,7 +386,9 @@ function renderizarComentarios(hist) {
         div.style.borderLeftWidth = '4px';
 
         var badgePrazo = c.prazo ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-black/5 dark:bg-white/10 border border-[var(--border)] text-[var(--text-main)]"><i class="ph ph-calendar"></i> ' + c.prazo + '</span>' : '';
-        var badgeResp = c.responsavel ? '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-[var(--primary)] text-white border border-[var(--primary)]"><i class="ph ph-user-check"></i> ' + c.responsavel + '</span>' : '';
+        
+        var resps = c.responsaveis && c.responsaveis.length > 0 ? c.responsaveis : [c.responsavel || c.autor];
+        var badgeResp = resps.map(r => '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-[var(--primary)] text-white border border-[var(--primary)]"><i class="ph ph-user-check"></i> ' + r + '</span>').join(' ');
 
         var totalComments = (c.atualizacoes || []).length;
         var commentBtn = '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsLog(\'' + c.firebaseId + '\')"><i class="ph ph-chat-centered-dots"></i> ' + (totalComments > 0 ? totalComments + ' Atzs' : 'Atualizar') + '</button>';
@@ -345,7 +448,7 @@ function renderizarComentarios(hist) {
                     resolveSection +
                     commentBtn +
                 '</div>' +
-                '<div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end opacity-0 group-hover:opacity-100 transition-opacity">' +
+                '<div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end transition-opacity">' +
                     badgePrazo + ' ' + badgeResp + ' ' + htmlButtons +
                 '</div>' +
             '</div>';
@@ -362,14 +465,9 @@ window.abrirModalEditLog = function (firebaseId) {
     document.getElementById('editLogTag').value = log.tag || 'Hardware';
     document.getElementById('editLogSetor').value = log.setor || '';
     
-    // Popular responsáveis na edição
-    var selectEdit = document.getElementById('editLogResp');
-    if (selectEdit) {
-        selectEdit.innerHTML = (window.membrosEquipe || []).map(function (m) {
-            return '<option value="' + m.nome + '" ' + (m.nome === log.responsavel ? 'selected' : '') + '>' + m.nome + '</option>';
-        }).join('');
-        if (!log.responsavel) selectEdit.value = log.autor; // Fallback para o autor se não houver responsável
-    }
+    var viewResps = log.responsaveis && log.responsaveis.length > 0 ? log.responsaveis : [log.responsavel || log.autor];
+    window.tempResponsaveisLogEdit = [...viewResps];
+    renderizarTagsResponsaveisLog('selectedResponsaveisLogEdit', window.tempResponsaveisLogEdit, 'window.removerResponsavelLogEdit');
 
     // Datas na edição
     if (log.prazo) {
@@ -388,13 +486,9 @@ window.fecharModalEditLog = function () {
 
 window.confirmarEdicaoLog = async function () {
     var id = document.getElementById('editLogId').value;
-    var texto = document.getElementById('editLogTexto').value;
-    var tag = document.getElementById('editLogTag').value;
-    var setor = document.getElementById('editLogSetor').value;
     var dt = document.getElementById('editLogPrazo').value;
-    var resp = document.getElementById('editLogResp').value;
 
-    if (!texto.trim()) return showToast("A descrição é obrigatória", "error");
+    if (!texto.trim() || window.tempResponsaveisLogEdit.length === 0) return showToast("Descrição e responsáveis são obrigatórios", "error");
 
     var prazoFormatado = null;
     if (dt) {
@@ -405,7 +499,9 @@ window.confirmarEdicaoLog = async function () {
     try {
         await updateDoc(doc(db, "logs", id), { 
             texto: texto, tag: tag, setor: setor,
-            prazo: prazoFormatado, responsavel: resp
+            prazo: prazoFormatado, 
+            responsavel: window.tempResponsaveisLogEdit[0],
+            responsaveis: window.tempResponsaveisLogEdit
         });
         window.fecharModalEditLog();
         showToast("Chamado atualizado com sucesso!");
