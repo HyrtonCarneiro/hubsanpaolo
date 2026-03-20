@@ -10,7 +10,8 @@ window.camadaMascara = null;
 const MAPA_ESTADOS_TI = {
     'CE2': 'CE',
     'CE3': 'CE',
-    'RMA': 'CE' // CSC está em Fortaleza/CE conforme coordenadas
+    'RMA': 'CE',
+    'RRPART': 'CE' // CSC categorizado como RRPART, mas fisicamente no CE
 };
 
 function getEstadoPadrao(sigla) {
