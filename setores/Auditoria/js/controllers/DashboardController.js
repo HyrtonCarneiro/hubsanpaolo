@@ -37,8 +37,7 @@ window.renderDashboard = function () {
         var media = somaNotas / notasCache.length;
         var elMedia = document.getElementById('kpiMediaRede');
         if (elMedia) {
-            elMedia.textContent = media.toFixed(1);
-            elMedia.className = media >= 8.5 ? 'text-3xl font-bold mt-1.5 text-spPistache' : (media >= 7 ? 'text-3xl font-bold mt-1.5 text-spLaranja' : 'text-3xl font-bold mt-1.5 text-spRed');
+            elMedia.className = media >= 8.5 ? 'text-3xl font-black m-0 leading-none text-spPistache' : (media >= 7 ? 'text-3xl font-black m-0 leading-none text-spLaranja' : 'text-3xl font-black m-0 leading-none text-spRed');
         }
         var ultimaPorLoja = {};
         notasCache.forEach(function (n) { if (!ultimaPorLoja[n.loja] || n.data > ultimaPorLoja[n.loja].data) ultimaPorLoja[n.loja] = n; });
@@ -113,15 +112,18 @@ window.renderDashboard = function () {
             bodyCriticas.innerHTML = '<div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada.</div>';
         } else {
             bodyCriticas.innerHTML = criticas.map(([nome, dados]) => `
-                <div class="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 rounded-xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all active:scale-[0.98]">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 flex items-center justify-center font-bold border border-red-200 dark:border-red-800">${dados.maxTentativa}</div>
-                        <div>
-                            <div class="font-bold text-red-900 dark:text-red-300">${nome}</div>
-                            <div class="text-[10px] text-red-700 dark:text-red-400 uppercase font-semibold tracking-wider">Tentativas sem sucesso</div>
-                        </div>
+                <div class="bg-[var(--surface)] p-5 rounded-2xl border border-[var(--border)] flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden">
+                    <div class="absolute -right-4 -bottom-4 text-7xl text-red-500 opacity-[0.03] group-hover:opacity-[0.07] transition-all duration-500">
+                        <i class="ph-fill ph-warning-octagon"></i>
                     </div>
-                    <i class="ph ph-warning-octagon text-red-400 text-xl"></i>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl bg-red-500/10 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-500 shadow-inner shrink-0">
+                        ${dados.maxTentativa}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-black text-[var(--text-main)] text-sm truncate mb-1">${nome}</h4>
+                        <p class="text-[0.6rem] font-black uppercase tracking-widest text-red-500 opacity-70">Tentativas sem sucesso</p>
+                    </div>
+                    <i class="ph ph-caret-right text-red-300 group-hover:text-red-500 transition-colors"></i>
                 </div>
             `).join('');
         }

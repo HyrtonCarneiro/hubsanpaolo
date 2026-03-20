@@ -174,8 +174,8 @@ window.renderizarTabelaPlanejamento = function () {
 
     rows.forEach(function (r) {
         var ultimaStr = r.ultimaRaw ? r.ultimaRaw.split('-').reverse().join('/') : 'Nunca';
-        var proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span class="text-[var(--text-muted)] font-normal text-xs">Não agendado</span>';
-        var audStr = r.auditor || '<span class="text-[var(--text-muted)] font-normal text-xs text-center border border-[var(--border)] rounded-xl px-2 py-0.5 shadow-sm">A Definir</span>';
+        var proxStr = r.proximaRaw ? r.proximaRaw.split('-').reverse().join('/') : '<span class="text-[var(--text-muted)] font-black text-[10px] uppercase tracking-widest opacity-60">Não agendado</span>';
+        var audStr = r.auditor || '<span class="text-[var(--text-muted)] font-black text-[10px] uppercase tracking-widest text-center border border-[var(--border)] rounded-2xl px-2.5 py-1 shadow-sm bg-black/5 dark:bg-white/5 opacity-60">A Definir</span>';
 
         // Lógica de Status Baseado no Mapeamento
         var statusHtml = '';
@@ -186,16 +186,16 @@ window.renderizarTabelaPlanejamento = function () {
             });
 
             if (realizadoNoMes) {
-                var slaColor = realizadoNoMes.sla ? 'text-green-600' : 'text-orange-500';
+                var slaColor = realizadoNoMes.sla ? 'text-spPistache' : 'text-spLaranja';
                 var slaTxt = realizadoNoMes.sla ? 'No Prazo' : 'Fora do Prazo';
-                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full bg-green-500"></span><span class="text-[10px] font-bold uppercase ' + slaColor + '">Concluída (' + slaTxt + ')</span></div>';
+                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full bg-spPistache shadow-[0_0_8px_rgba(141,181,107,0.5)]"></span><span class="text-[10px] font-black uppercase tracking-wider ' + slaColor + '">Concluída (' + slaTxt + ')</span></div>';
             } else {
                 var hoje = new Date().toISOString().substring(0, 10);
                 var isAtrasado = hoje > r.proximaRaw;
-                var dotColor = isAtrasado ? 'bg-red-500' : 'bg-gray-400';
+                var dotColor = isAtrasado ? 'bg-spRed shadow-[0_0_8px_rgba(218,13,23,0.4)]' : 'bg-gray-400';
                 var txtLabel = isAtrasado ? 'Atrasada' : 'Agendada';
-                var txtColor = isAtrasado ? 'text-red-500' : 'text-[var(--text-muted)]';
-                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full ' + dotColor + '"></span><span class="text-[10px] font-bold uppercase ' + txtColor + '">' + txtLabel + '</span></div>';
+                var txtColor = isAtrasado ? 'text-spRed' : 'text-[var(--text-muted)]';
+                statusHtml = '<div class="mt-1 flex items-center gap-1.5"><span class="flex h-2 w-2 rounded-full ' + dotColor + '"></span><span class="text-[10px] font-black uppercase tracking-wider ' + txtColor + '">' + txtLabel + '</span></div>';
             }
         }
 
@@ -221,7 +221,7 @@ window.renderizarTabelaPlanejamento = function () {
 
         tr.innerHTML =
             '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + r.nome + '</td>' +
-            '<td class="p-4 text-sm font-medium text-brandBlue"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-2 py-1 rounded-xl shadow-sm border border-brandBlue/20">' + r.regional + '</span></td>' +
+            '<td class="p-4 text-sm font-black text-brandBlue uppercase tracking-tighter"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-3 py-1 rounded-2xl shadow-inner border border-brandBlue/20">' + r.regional + '</span></td>' +
             '<td class="p-4 text-sm font-medium text-[var(--text-main)]">' + ultimaStr + '</td>' +
             '<td class="p-4 text-sm">' +
                 '<div class="font-bold text-[var(--primary)]">' + proxStr + '</div>' +

@@ -223,8 +223,8 @@ window.renderizarMapeamento = function() {
             '<span class="text-[var(--sp-red)] font-bold">Atrasado</span>';
             
         const realizedBadge = h.realizada === 'SIM' ? 
-            '<span class="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 px-2 py-1 rounded-xl text-[10px] font-bold border border-green-200 dark:border-green-800">SIM</span>' : 
-            '<span class="bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400 px-2 py-1 rounded-xl text-[10px] font-bold border border-red-200 dark:border-red-800">NÃO</span>';
+            '<span class="bg-spPistache/10 text-spPistache px-3 py-1 rounded-2xl text-[10px] font-black border border-spPistache/20 shadow-sm uppercase tracking-wider">Sim</span>' : 
+            '<span class="bg-spRed/10 text-spRed px-3 py-1 rounded-2xl text-[10px] font-black border border-spRed/20 shadow-sm uppercase tracking-wider">Não</span>';
 
         const dataMes = h.dataTentativa.substring(0, 7);
         const jaTemNota = (window.notasCache || []).find(n => n.loja === h.nomeLoja && n.data.startsWith(dataMes));
@@ -261,7 +261,7 @@ window.renderizarMapeamento = function() {
                     <div class="text-[10px] text-[var(--text-muted)]">${h.dataTentativa} ${h.horario || ''}</div>
                 </td>
                 <td class="p-4 text-center">
-                    <div class="w-8 h-8 rounded-xl ${isCritico ? 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800' : 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-800'} flex items-center justify-center font-bold border shadow-sm">${h.nTentativa}</div>
+                    <div class="w-9 h-9 rounded-2xl ${isCritico ? 'bg-spRed/10 text-spRed border-spRed/20 shadow-inner' : 'bg-brandBlue/10 text-brandBlue border-brandBlue/20 shadow-inner'} flex items-center justify-center font-black border tracking-tighter mx-auto">${h.nTentativa}</div>
                 </td>
                 <td class="p-4">
                     <div class="font-medium text-[var(--text-main)] text-sm">${h.estado}</div>

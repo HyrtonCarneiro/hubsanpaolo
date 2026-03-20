@@ -110,7 +110,7 @@ function renderizarHistoricoNotas() {
         }
 
         var actionButtons = `
-            <div class="flex items-center justify-center gap-1">
+            <div class="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onclick="window.abrirModalEditarNota('${nota.id}')" class="p-1.5 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-xl transition-all active:scale-95" title="Editar">
                     <i class="ph ph-pencil-simple text-lg"></i>
                 </button>
@@ -121,10 +121,10 @@ function renderizarHistoricoNotas() {
         `;
 
         tr.innerHTML =
-            '<td class="p-4 text-sm text-[var(--text-main)]">' + displayData + '</td>' +
-            '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + nota.loja + '</td>' +
-            '<td class="p-4 text-sm text-[var(--text-muted)]"><i class="ph ph-user"></i> ' + nota.auditor + '</td>' +
-            '<td class="p-4 text-lg font-bold text-right ' + colorClass + '">' + nota.nota.toFixed(1) + '</td>' +
+            '<td class="p-4 text-sm font-medium text-[var(--text-muted)]">' + displayData + '</td>' +
+            '<td class="p-4 text-sm font-black text-[var(--text-main)] uppercase tracking-tight">' + nota.loja + '</td>' +
+            '<td class="p-4 text-xs font-bold text-[var(--text-muted)] opacity-60 flex items-center gap-1.5 mt-1.5"><i class="ph-fill ph-user-circle text-lg"></i> ' + nota.auditor + '</td>' +
+            '<td class="p-4 text-lg font-black text-right ' + colorClass + ' tracking-tighter">' + nota.nota.toFixed(1) + '</td>' +
             '<td class="p-4 text-center">' + actionButtons + '</td>';
         tbody.appendChild(tr);
     });

@@ -54,8 +54,8 @@ function renderizarBotoesAudiEquipe() {
     window.audiEquipe.forEach(function (m) {
         var btn = document.createElement('button');
         btn.className = m.nome === window.audiCurrentMember
-            ? 'px-4 py-2 rounded-xl font-semibold transition-all bg-[var(--primary)] text-white shadow-sm border border-[var(--primary)] active:scale-95'
-            : 'px-4 py-2 rounded-xl font-semibold transition-all bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm active:scale-95';
+            ? 'px-5 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] transition-all bg-[var(--primary)] text-white shadow-lg shadow-[var(--primary)]/20 border border-[var(--primary)] active:scale-95'
+            : 'px-5 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-[0.15em] transition-all bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm active:scale-95 hover:-translate-y-0.5';
         btn.innerText = m.nome;
         btn.onclick = function () { window.switchAudiMember(m.nome); };
         container.appendChild(btn);
@@ -111,10 +111,12 @@ function renderizarAudiProjetosList() {
 
     if (projs.length === 0) {
         container.innerHTML =
-            '<div class="flex flex-col items-center justify-center p-10 w-full bg-[var(--surface)] rounded-xl border border-[var(--border)] border-dashed text-center">' +
-                '<i class="ph ph-kanban text-4xl text-[var(--primary)] mb-3 opacity-50"></i>' +
-                '<h2 class="text-lg font-bold text-[var(--text-main)] m-0">Nenhum registro para ' + (window.audiCurrentMember || 'esta equipe') + '</h2>' +
-                '<p class="text-sm text-[var(--text-muted)] mt-1">Clique e registre uma nova demanda acima para começar a preencher o quadro.</p>' +
+            '<div class="flex flex-col items-center justify-center p-12 w-full bg-[var(--surface)] rounded-2xl border border-[var(--border)] border-dashed text-center shadow-inner opacity-60">' +
+                '<div class="w-20 h-20 rounded-3xl bg-[var(--bg-color)] flex items-center justify-center mb-4 shadow-sm border border-[var(--border)]">' +
+                    '<i class="ph ph-kanban text-4xl text-[var(--primary)]"></i>' +
+                '</div>' +
+                '<h2 class="text-xl font-black text-[var(--text-main)] m-0 uppercase tracking-tight">Vazio, por enquanto...</h2>' +
+                '<p class="text-xs text-[var(--text-muted)] mt-2 max-w-[250px] font-medium leading-relaxed">Nenhuma tarefa registrada para ' + (window.audiCurrentMember || 'esta equipe') + '. Tente adicionar uma nova demanda acima.</p>' +
             '</div>';
         return;
     }
@@ -128,22 +130,22 @@ function renderizarAudiProjetosList() {
     colunas.forEach(function (col) {
         var projsNestaColuna = projs.filter(function (p) { return (p.status || 'Pendente') === col.id; });
         var colDiv = document.createElement('div');
-        colDiv.className = 'flex flex-col flex-1 min-w-[300px] bg-black/5 dark:bg-white/5 rounded-xl border border-[var(--border)] overflow-hidden';
+        colDiv.className = 'flex flex-col flex-1 min-w-[320px] bg-black/5 dark:bg-white/5 rounded-2xl border border-[var(--border)] overflow-hidden shadow-inner';
         colDiv.innerHTML =
-            '<div class="px-4 py-3 flex justify-between items-center border-b border-[var(--border)] bg-[var(--surface)]">' +
-                '<h3 class="m-0 font-bold text-[var(--text-main)] text-sm flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-current ' + col.iconColor + '"></div> ' + col.titulo + '</h3>' +
-                '<span class="bg-[var(--bg-color)] text-[var(--text-muted)] text-xs font-bold px-2.5 py-1 rounded-full border border-[var(--border)]">' + projsNestaColuna.length + '</span>' +
+            '<div class="px-5 py-4 flex justify-between items-center border-b border-[var(--border)] bg-[var(--surface)]">' +
+                '<h3 class="m-0 font-black text-[var(--text-main)] text-[10px] uppercase tracking-[0.2em] flex items-center gap-2.5 opacity-60"><div class="w-2.5 h-2.5 rounded-full ' + col.iconColor + ' shadow-[0_0_8px_currentColor]"></div> ' + col.titulo + '</h3>' +
+                '<span class="bg-[var(--bg-color)] text-[var(--text-main)] text-[10px] font-black px-3 py-1 rounded-2xl border border-[var(--border)] shadow-sm">' + projsNestaColuna.length + '</span>' +
             '</div>' +
-            '<div class="kanban-items p-3 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-3 min-h-[300px]"></div>';
+            '<div class="kanban-items p-4 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-4 min-h-[400px]"></div>';
         var itemsContainer = colDiv.querySelector('.kanban-items');
 
         projsNestaColuna.forEach(function (p) {
             var div = document.createElement('div');
-            div.className = 'bg-[var(--surface)] border-l-4 border-transparent hover:border-[var(--primary)] p-4 rounded-xl border border-[var(--border)] shadow-sm hover:shadow-md transition-all group flex flex-col gap-2 relative';
+            div.className = 'bg-[var(--surface)] border-l-4 border-transparent hover:border-[var(--primary)] p-5 rounded-2xl border border-[var(--border)] shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col gap-2 relative hover:-translate-y-1';
 
             var actionBtns = '';
-            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Editar" onclick="window.abrirModalEditAudiProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil-simple text-sm"></i></button>';
-            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Remover" onclick="window.deletarAudiProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash text-sm"></i></button>';
+            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Editar" onclick="window.abrirModalEditAudiProj(\'' + p.firebaseId + '\')"><i class="ph ph-pencil-simple text-sm"></i></button>';
+            actionBtns += '<button class="w-8 h-8 flex items-center justify-center rounded-xl bg-transparent border border-transparent text-[var(--text-muted)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100" title="Remover" onclick="window.deletarAudiProjeto(\'' + p.firebaseId + '\')"><i class="ph ph-trash text-sm"></i></button>';
 
             var urlBadge = '';
             if (p.anexoUrl) {
@@ -157,13 +159,13 @@ function renderizarAudiProjetosList() {
 
             div.innerHTML =
                 '<div class="flex justify-between items-start gap-2">' +
-                    '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold ' + col.badgeBg + ' shadow-sm"><i class="ph ph-calendar-blank"></i> ' + p.dataAtv + '</span>' +
-                    '<div class="flex items-center gap-1 bg-[var(--surface)] rounded-xl shadow-sm border border-[var(--border)] ml-auto absolute top-2 right-2 p-0.5 pointer-events-none group-hover:pointer-events-auto">' + actionBtns + '</div>' +
+                    '<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-[10px] font-black uppercase tracking-widest ' + col.badgeBg + ' shadow-sm"><i class="ph ph-calendar-blank"></i> ' + p.dataAtv + '</span>' +
+                    '<div class="flex items-center gap-1 bg-[var(--surface)] rounded-xl shadow-inner border border-[var(--border)] ml-auto mt-[-4px] overflow-hidden translate-x-2 opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-0">' + actionBtns + '</div>' +
                 '</div>' +
-                '<h4 class="mt-2 mb-1 font-semibold text-sm text-[var(--text-main)] leading-relaxed break-words">' + p.desc + '</h4>' +
+                '<h4 class="mt-3 mb-1 font-black text-sm text-[var(--text-main)] leading-relaxed break-words">' + p.desc + '</h4>' +
                 (urlBadge ? '<div>' + urlBadge + '</div>' : '') +
-                '<div class="mt-3 pt-3 border-t border-dashed border-[var(--border)] flex justify-between items-center text-xs text-[var(--text-muted)]">' +
-                    '<span class="flex items-center gap-1" title="Demandante"><i class="ph-fill ph-user-circle text-lg"></i> <span class="font-medium text-[var(--text-main)] truncate max-w-[120px]">' + p.demandante + '</span></span>' +
+                '<div class="mt-4 pt-4 border-t border-dashed border-[var(--border)] flex justify-between items-center text-[10px] text-[var(--text-muted)] font-black uppercase tracking-widest">' +
+                    '<span class="flex items-center gap-2" title="Demandante"><i class="ph-fill ph-user-circle text-xl opacity-40"></i> <span class="text-[var(--text-main)] truncate max-w-[130px]">' + p.demandante + '</span></span>' +
                 '</div>';
             itemsContainer.appendChild(div);
         });

@@ -57,41 +57,60 @@
         
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
         
-        <aside class="w-64 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0" id="appSidebar">
-            <div class="p-6 font-bold text-xl text-[var(--primary)] flex items-center gap-3 border-b border-[var(--border)]">
-                <i class="ph-fill ph-magnifying-glass text-2xl"></i> San Paolo Auditoria
+        <aside class="w-68 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 shadow-xl md:shadow-none" id="appSidebar">
+            <div class="p-8 font-black text-2xl text-[var(--text-main)] flex items-center gap-3 border-b border-[var(--border)] bg-[var(--bg-color)]/30">
+                <div class="w-10 h-10 bg-[var(--brandRed)] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[var(--brandRed)]/20 rotate-3">
+                    <i class="ph-fill ph-magnifying-glass text-2xl"></i>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-[0.6rem] uppercase tracking-[0.3em] text-[var(--brandRed)] font-black mb-1">San Paolo</span>
+                    <span class="italic font-black tracking-tight">AUDITORIA</span>
+                </div>
             </div>
             
-            <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-3">
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95 active-nav" onclick="window.switchView('dashboard')" id="nav-dashboard">
-                    <i class="ph ph-chart-pie-slice text-xl"></i> Dashboard
+            <div class="flex-1 overflow-y-auto py-6 flex flex-col gap-1.5 px-4 custom-scrollbar">
+                <div class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 mt-2 ml-4 opacity-40">Navegação</div>
+                
+                <div onclick="window.switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden active text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-chart-pie-slice text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Dashboard</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.switchView('auditoriaOnline')" id="nav-auditoriaOnline">
-                    <i class="ph ph-clipboard-text text-xl"></i> Auditoria Online
+
+                <div onclick="window.switchView('auditoriaOnline')" id="nav-auditoriaOnline" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-clipboard-text text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Auditoria Online</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.switchView('planejamento')" id="nav-planejamento">
-                    <i class="ph ph-calendar-check text-xl"></i> Planejamento
+
+                <div onclick="window.switchView('planejamento')" id="nav-planejamento" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-calendar-check text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Planejamento</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.switchView('mapeamento')" id="nav-mapeamento">
-                    <i class="ph ph-map-trifold text-xl"></i> Mapeamento (Novo)
+
+                <div onclick="window.switchView('mapeamento')" id="nav-mapeamento" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-map-trifold text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Mapeamento (Novo)</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.switchView('tarefas')" id="nav-tarefas">
-                    <i class="ph ph-kanban text-xl"></i> Tarefas da Equipe
+
+                <div onclick="window.switchView('tarefas')" id="nav-tarefas" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-kanban text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Tarefas da Equipe</span>
                 </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all duration-300 text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active:scale-95" onclick="window.switchView('metapwr')" id="nav-metapwr">
-                    <i class="ph ph-target text-xl"></i> Meta PWR (MVP)
+
+                <div onclick="window.switchView('metapwr')" id="nav-metapwr" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5 opacity-50 grayscale hover:opacity-100 hover:grayscale-0">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-target text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Meta PWR (MVP)</span>
                 </div>
             </div>
 
             <div class="p-6 border-t border-[var(--border)] bg-black/5 dark:bg-black/20">
                 <div class="mb-4 text-sm text-[var(--text-muted)] flex flex-col gap-1">Logado como: <strong id="loggedUserName"
                         class="text-[var(--text-main)] truncate">...</strong></div>
-                <div class="flex flex-col gap-2.5">
-                    <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm w-full text-sm"
+                <div class="flex flex-col gap-3">
+                    <button class="flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl border border-[var(--border)] bg-transparent text-[var(--text-muted)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95 shadow-sm w-full"
                         onclick="window.toggleDarkMode()">
                         <i class="ph ph-moon text-lg"></i> Tema Escuro
                     </button>
-                    <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm w-full text-sm"
+                    <button class="flex items-center justify-center gap-2.5 px-4 py-3 rounded-2xl border border-[var(--border)] bg-transparent text-[var(--text-muted)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--brandRed)] hover:text-[var(--brandRed)] hover:bg-[var(--brandRed)]/5 active:scale-95 shadow-sm w-full"
                         onclick="window.logout()">
                         <i class="ph ph-sign-out text-lg"></i> Voltar / Sair
                     </button>
@@ -103,57 +122,100 @@
             <div id="view-dashboard">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm active:scale-90 transition-all" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--primary)] shadow-sm">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </div>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Dashboard de Auditoria</h1>
                     </div>
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="window.abrirModalAudiEquipe()">
-                        <i class="ph ph-users text-lg"></i> Gerenciar Equipe
+                    <button class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.abrirModalAudiEquipe()">
+                        <i class="ph ph-users-three text-lg"></i> Gerenciar Equipe
                     </button>
                 </div>
 
                 <!-- KPIs -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                    <!-- Cards de Auditoria Online (Existentes) -->
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Média da Rede</div>
-                        <div id="kpiMediaRede" class="text-3xl font-bold text-spPistache mt-1.5">-</div>
-                    </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Menor Nota (Mês)</div>
-                        <div id="kpiMenorNota" class="text-3xl font-bold text-spRed mt-1.5">-</div>
-                        <div id="kpiMenorNotaLoja" class="text-xs text-[var(--text-muted)] mt-0.5"></div>
-                    </div>
-                    
-                    <!-- Cards de Planejamento e Mapeamento (Novos) -->
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Cobertura do Mês</div>
-                        <div id="kpiCoberturaMes" class="text-3xl font-bold text-brandBlue mt-1.5">0%</div>
-                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Lojas planejadas visitadas</div>
-                    </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Índice de SLA</div>
-                        <div id="kpiSlaGlobal" class="text-3xl font-bold text-green-500 mt-1.5">0%</div>
-                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Visitas no prazo (até dia 20)</div>
-                    </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Eficiência de Visita</div>
-                        <div id="kpiMediaTentativas" class="text-3xl font-bold text-spLaranja mt-1.5">0.0</div>
-                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Média de tentativas por loja</div>
-                    </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Visitas Atrasadas</div>
-                        <div id="kpiLojasAtrasadas" class="text-3xl font-bold text-red-600 mt-1.5">0</div>
-                        <div class="text-xs text-[var(--text-muted)] mt-0.5">Fora do prazo agendado</div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-spPistache/10 text-spPistache group-hover:bg-spPistache group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-chart-bar"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiMediaRede">-</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Média da Rede</p>
+                        </div>
                     </div>
 
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Total Auditorias (Geral)</div>
-                        <div id="kpiTotalAuditorias" class="text-3xl font-bold text-[var(--primary)] mt-1.5">0</div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-spRed/10 text-spRed group-hover:bg-spRed group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-trend-down"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiMenorNota">-</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Menor Nota (Mês)</p>
+                            <div id="kpiMenorNotaLoja" class="text-[10px] font-bold text-red-500 truncate max-w-[100px] mt-1"></div>
+                        </div>
                     </div>
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div class="text-[0.8rem] font-semibold text-[var(--text-muted)] uppercase tracking-wide">Lançamentos (Mês)</div>
-                        <div id="kpiAuditoriaMes" class="text-3xl font-bold text-secondary mt-1.5">0</div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-brandBlue/10 text-brandBlue group-hover:bg-brandBlue group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-calendar-check"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiCoberturaMes">0%</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Cobertura do Mês</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-timer"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiSlaGlobal">0%</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Índice de SLA</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-spLaranja/10 text-spLaranja group-hover:bg-spLaranja group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-arrows-merge"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiMediaTentativas">0.0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Eficiência Visita</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-red-600/10 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-warning-octagon"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiLojasAtrasadas">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Visitas Atrasadas</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-[var(--primary)]/10 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-calculator"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiTotalAuditorias">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Total Auditorias</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-paper-plane-tilt"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="kpiAuditoriaMes">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Lançamentos (Mês)</p>
+                        </div>
                     </div>
                 </div>
 
@@ -200,16 +262,20 @@
             <div id="view-auditoriaOnline" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-blue-500 shadow-sm">
+                            <i class="ph ph-clipboard-text text-xl"></i>
+                        </div>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Auditoria Online</h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importNotasInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarNotasExcel(event)">
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="document.getElementById('importNotasInput').click()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importNotasInput').click()">
                             <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
                         </button>
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="window.exportarNotasPowerBI()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarNotasPowerBI()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                         </button>
                     </div>
@@ -235,8 +301,8 @@
                             <label class="block text-sm font-semibold text-[var(--text-muted)] mb-2">Nota (0 a 10)</label>
                             <input type="number" id="audiNotaInput" min="0" max="10" step="0.1" placeholder="Ex: 8.5" class="w-full border border-[var(--border)] rounded-xl p-2.5 font-bold text-[var(--primary)] bg-[var(--bg-color)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
                         </div>
-                        <button class="flex items-center justify-center gap-2 px-6 py-2.5 h-[46px] rounded-xl bg-[var(--primary)] text-white font-semibold transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.salvarAuditoriaOnline()">
-                            <i class="ph ph-floppy-disk text-lg"></i> Gravar Auditoria
+                        <button class="flex items-center justify-center gap-2.5 px-6 py-2.5 h-[50px] rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[var(--primary)]/20" onclick="window.salvarAuditoriaOnline()">
+                            <i class="ph-fill ph-floppy-disk-back text-lg"></i> Gravar Auditoria
                         </button>
                     </div>
                 </div>
@@ -273,16 +339,20 @@
             <div id="view-planejamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm active:scale-90 transition-all" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-green-600 shadow-sm">
+                            <i class="ph ph-calendar-check text-xl"></i>
+                        </div>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Planejamento de Auditoria</h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importPlanejamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarPlanejamentoExcel(event)">
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="document.getElementById('importPlanejamentoInput').click()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importPlanejamentoInput').click()">
                             <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
                         </button>
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="window.exportarPlanejamentoPowerBI()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarPlanejamentoPowerBI()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                         </button>
                     </div>
@@ -353,15 +423,20 @@
             <div id="view-mapeamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm active:scale-90 transition-all" onclick="window.toggleSidebar()"><i class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-purple-600 shadow-sm">
+                            <i class="ph ph-map-trifold text-xl"></i>
+                        </div>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapeamento de Auditorias</h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importMapeamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarMapeamentoExcel(event)">
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="document.getElementById('importMapeamentoInput').click()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importMapeamentoInput').click()">
                             <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
                         </button>
-                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="window.exportarMapeamentoPowerBI()">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarMapeamentoPowerBI()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                         </button>
                     </div>
@@ -397,8 +472,8 @@
                             </select>
                         </div>
                         <div class="lg:col-span-4 flex justify-end">
-                            <button class="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-2.5 h-[46px] rounded-xl bg-[var(--primary)] text-white font-semibold transition-all duration-300 hover:brightness-110 active:scale-95 shadow-sm" onclick="window.salvarTentativaMapeamento()">
-                                <i class="ph ph-plus-circle text-lg"></i> Registrar Tentativa
+                            <button class="w-full md:w-auto flex items-center justify-center gap-2.5 px-8 py-3 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[var(--primary)]/20" onclick="window.salvarTentativaMapeamento()">
+                                <i class="ph-fill ph-plus-circle text-lg"></i> Registrar Tentativa
                             </button>
                         </div>
                     </div>
@@ -502,17 +577,21 @@
             <div id="view-tarefas" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm active:scale-90 transition-all" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border(--border)] flex items-center justify-center text-indigo-500 shadow-sm">
+                            <i class="ph ph-kanban text-xl"></i>
+                        </div>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
                     <div class="flex items-center gap-2">
                         <div class="hidden md:flex items-center gap-3">
-                            <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] active:scale-95 shadow-sm" onclick="window.exportarTarefasPowerBI()">
+                            <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarTarefasPowerBI()">
                                 <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> PowerBI (.xlsx)
                             </button>
-                            <button class="flex items-center justify-center gap-2 px-2 py-2 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-muted)] hover:text-[var(--primary)] active:scale-90 transition-all shadow-sm" title="Exportar CSV Antigo" onclick="window.exportarAudiProjetosCSV()">
-                                <i class="ph ph-download-simple"></i>
+                            <button class="flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] active:scale-90 transition-all shadow-sm" title="Exportar CSV Antigo" onclick="window.exportarAudiProjetosCSV()">
+                                <i class="ph ph-download-simple text-lg"></i>
                             </button>
                         </div>
                     </div>
@@ -539,8 +618,8 @@
                     </div>
                     <input type="url" id="audiProjAnexo" placeholder="Link para visualização/anexo (Opcional)"
                         class="w-full mb-3 px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                    <button class="flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white font-semibold transition-all duration-300 hover:brightness-110 active:scale-95 shadow-sm" onclick="window.salvarAudiProjeto()">
-                        <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
+                    <button class="flex items-center justify-center gap-2.5 px-8 py-3 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[var(--primary)]/20" onclick="window.salvarAudiProjeto()">
+                        <i class="ph-fill ph-floppy-disk text-lg"></i> Salvar Registro
                     </button>
                 </div>
 
@@ -551,9 +630,13 @@
             <div id="view-metapwr" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2 rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)]" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list text-xl"></i></button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Dispersão de CMV de Mercadoria</h1>
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                            <i class="ph ph-list text-xl"></i>
+                        </button>
+                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--brandOrange)] shadow-sm">
+                            <i class="ph ph-target text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Meta PWR</h1>
                     </div>
                 </div>
 
