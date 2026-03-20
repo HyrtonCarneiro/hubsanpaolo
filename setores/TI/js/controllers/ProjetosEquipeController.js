@@ -252,6 +252,33 @@ function criarCardTarefa(p, classBadge) {
     }
 
     var totalComments = (p.comentarios || []).length;
+    var checklist = p.checklist || [];
+    var totalCheck = checklist.length;
+    var completedCheck = checklist.filter(function(i){ return i.concluido; }).length;
+    var firstPending = checklist.find(function(i){ return !i.concluido; });
+
+    var checklistHtml = '';
+    if (totalCheck > 0) {
+        checklistHtml = '<div class="mt-3 p-2 bg-black/5 dark:bg-white/5 rounded-lg border border-dashed border-[var(--border)]">';
+        checklistHtml += '<div class="flex items-center justify-between mb-1.5">';
+        checklistHtml += '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tight">Checklist</span>';
+        checklistHtml += '<span class="text-[0.6rem] font-bold text-[var(--primary)]">' + completedCheck + '/' + totalCheck + '</span>';
+        checklistHtml += '</div>';
+        
+        if (firstPending) {
+            checklistHtml += '<div class="flex items-center gap-2 text-[0.7rem] text-[var(--text-main)] font-medium bg-[var(--surface)] p-1.5 rounded border border-[var(--border)] shadow-xs">';
+            checklistHtml += '<i class="ph ph-circle text-[var(--text-muted)]"></i>';
+            checklistHtml += '<span class="truncate">' + firstPending.texto + '</span>';
+            checklistHtml += '</div>';
+        } else {
+            checklistHtml += '<div class="flex items-center gap-2 text-[0.7rem] text-emerald-500 font-bold bg-emerald-50 dark:bg-emerald-900/20 p-1.5 rounded border border-emerald-100 dark:border-emerald-800/20">';
+            checklistHtml += '<i class="ph ph-check-circle"></i>';
+            checklistHtml += '<span>Concluído</span>';
+            checklistHtml += '</div>';
+        }
+        checklistHtml += '</div>';
+    }
+
     var recentCommentsHtml = '';
     var lastTwo = (p.comentarios || []).slice(-2).reverse();
     if (lastTwo.length > 0) {
@@ -280,6 +307,7 @@ function criarCardTarefa(p, classBadge) {
             '<span class="text-xs text-[var(--text-muted)] flex items-center gap-1 truncate" title="Demandante: ' + p.demandante + '"><i class="ph-fill ph-user text-[var(--border)] drop-shadow-sm text-sm"></i> <span class="truncate font-medium text-[var(--text-main)]">' + p.demandante + '</span></span>' +
             urlBadge +
         '</div>' +
+        checklistHtml +
         recentCommentsHtml +
         '<div class="flex justify-end pt-2 border-t border-[var(--border)] border-dashed mt-auto">' + commentBadge + '</div>';
     return div;
