@@ -176,6 +176,8 @@ function renderizarProjetosList() {
     var container = document.getElementById('projetos-list');
     if (!container) return;
     
+    // Restaurar classes de grid (necessário após Visão Geral)
+    container.className = 'grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden';
     container.innerHTML = '';
 
     if (window.currentMember === 'Geral') {
