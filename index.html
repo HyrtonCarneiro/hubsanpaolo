@@ -48,12 +48,14 @@
             
             <div class="flex flex-col mb-4">
                 <label class="mb-2 font-medium text-sm text-mainText">Usuário</label>
-                <input type="text" id="userInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                <input type="text" id="userInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
+                    onkeydown="if(event.key === 'Enter') window.handleAuth()">
             </div>
             
             <div class="flex flex-col mb-6">
                 <label class="mb-2 font-medium text-sm text-mainText">Senha</label>
-                <input type="password" id="passInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                <input type="password" id="passInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
+                    onkeydown="if(event.key === 'Enter') window.handleAuth()">
             </div>
             
             <div class="mt-4">
