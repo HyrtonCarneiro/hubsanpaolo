@@ -620,3 +620,20 @@ window.exportarCSV = function () {
     document.body.removeChild(link);
     showToast("Download de chamados iniciado");
 }
+
+window.limparFiltrosLojas = function() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const tagFilter = document.getElementById('tagFilter');
+    const setorFilter = document.getElementById('setorFilter');
+    const sortOrder = document.getElementById('sortOrder');
+
+    if (searchInput) searchInput.value = '';
+    if (statusFilter) statusFilter.value = 'todos';
+    if (tagFilter) tagFilter.value = 'todas';
+    if (setorFilter) setorFilter.value = 'todos';
+    if (sortOrder) sortOrder.value = 'recentes';
+
+    window.renderizarLojas();
+    showToast('Filtros limpos', 'success');
+}

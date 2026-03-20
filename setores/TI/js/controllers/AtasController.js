@@ -94,29 +94,40 @@ window.renderizarAtas = function () {
     container.innerHTML = '';
 
     if (window.sysAtas.length === 0) {
-        container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-xl border border-dashed border-[var(--border)]"><i class="ph ph-file-text text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhuma ata registrada</h2></div>';
+        container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-2xl border border-dashed border-[var(--border)] animate-fadeIn"><i class="ph ph-file-text text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhuma ata registrada</h2></div>';
         return;
     }
 
-    window.sysAtas.forEach(function (a) {
+    window.sysAtas.forEach(function (ata) {
         var div = document.createElement('div');
-        div.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl p-5 mb-4 shadow-sm';
+        div.className = 'bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] shadow-sm hover:shadow-md hover:border-[var(--primary)]/30 transition-all duration-300 animate-fadeIn';
         
-        var editInfo = a.dataAlteracaoStr ? '<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">(Editado em ' + a.dataAlteracaoStr + ' por ' + a.autorAlteracao + ')</div>' : '';
-
-        div.innerHTML =
-            '<div class="flex justify-between items-start mb-3">' +
+        var header = 
+            '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-[var(--border)] pb-4">' +
                 '<div>' +
-                    '<h3 style="margin: 0 0 5px 0; font-size: 1.1rem; color: var(--text-main);">' + a.titulo + '</h3>' +
-                    '<div style="font-size: 0.8rem; color: var(--text-muted);"><i class="ph ph-calendar"></i> Registrado em ' + a.dataStr + ' por <strong>' + a.autor + '</strong></div>' +
-                    editInfo +
+                    '<h4 class="text-lg font-black text-[var(--text-main)] m-0 flex items-center gap-2 tracking-tight"><i class="ph-fill ph-notebook text-[var(--primary)]"></i> ' + ata.titulo + '</h4>' +
+                    '<p class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest mt-2 flex items-center gap-2 opacity-60">' +
+                        '<i class="ph-fill ph-calendar-blank"></i> ' + (ata.dataStr || 'Sem data') + 
+                        (ata.autor ? ' <span class="mx-1">•</span> <i class="ph-fill ph-user"></i> ' + ata.autor : '') +
+                    '</p>' +
                 '</div>' +
                 '<div class="flex gap-2">' +
-                    '<button class="px-2.5 py-1.5 bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-600 hover:text-white rounded-md text-sm transition-colors" onclick="window.editarAta(\'' + a.firebaseId + '\')"><i class="ph ph-pencil-simple"></i> Editar</button>' +
-                    '<button class="px-2.5 py-1.5 bg-red-50 text-red-600 border border-red-200 hover:bg-red-600 hover:text-white rounded-md text-sm transition-colors" onclick="window.deletarAta(\'' + a.firebaseId + '\')"><i class="ph ph-trash"></i> Excluir</button>' +
+                    '<button class="w-9 h-9 flex items-center justify-center rounded-xl bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all shadow-sm" onclick="window.editarAta(\'' + ata.firebaseId + '\')" title="Editar Ata"><i class="ph ph-pencil-simple text-lg font-bold"></i></button>' +
+                    '<button class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" onclick="window.deletarAta(\'' + ata.firebaseId + '\')" title="Apagar Registro"><i class="ph ph-trash text-lg font-bold"></i></button>' +
                 '</div>' +
-            '</div>' +
-            '<div class="rich-text-content" style="font-size: 0.95rem; color: var(--text-main); line-height: 1.6;">' + a.texto + '</div>';
+            '</div>';
+
+        var body = 
+            '<div class="rich-text-content text-sm leading-relaxed text-[var(--text-main)] bg-[var(--bg-color)]/30 p-5 rounded-xl border border-[var(--border)]/50 max-h-[300px] overflow-y-auto custom-scrollbar">' + 
+                ata.texto + 
+            '</div>';
+        
+        var footer = ata.autorAlteracao ? 
+            '<div class="mt-4 pt-3 border-t border-[var(--border)] border-dashed flex justify-end">' +
+                '<span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter italic">Editado por ' + ata.autorAlteracao + ' em ' + (ata.dataAlteracaoStr || '') + '</span>' +
+            '</div>' : '';
+
+        div.innerHTML = header + body + footer;
         container.appendChild(div);
     });
 }

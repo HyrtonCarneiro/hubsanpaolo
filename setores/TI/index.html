@@ -91,6 +91,14 @@
             padding-left: 1.5rem;
             margin-bottom: 0.5rem;
         }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
         /* Custom Fullscreen for BI */
         .bi-expanded {
             position: fixed !important;
@@ -114,32 +122,55 @@
 
     <div id="main-app" class="flex h-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-main)] transition-colors duration-300">
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
-        <aside class="w-64 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0" id="appSidebar">
-            <div class="p-6 font-bold text-xl text-[var(--primary)] flex items-center gap-3 border-b border-[var(--border)]">
-                <i class="ph-fill ph-hard-drives text-2xl"></i> San Paolo TI
+        <aside class="w-68 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 shadow-xl md:shadow-none" id="appSidebar">
+            <div class="p-8 font-black text-2xl text-[var(--text-main)] flex items-center gap-3 border-b border-[var(--border)] bg-[var(--bg-color)]/30">
+                <div class="w-10 h-10 bg-[var(--primary)] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[var(--primary)]/20 rotate-3">
+                    <i class="ph-fill ph-shield-check text-2xl"></i>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-[0.6rem] uppercase tracking-[0.3em] text-[var(--primary)] font-black mb-1">San Paolo</span>
+                    <span class="italic font-black tracking-tight">HUB TI</span>
+                </div>
             </div>
-            <div class="flex-1 overflow-y-auto py-4 flex flex-col gap-2 px-3">
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 active" onclick="window.switchView('analytics')" id="nav-analytics">
-                    <i class="ph ph-chart-pie-slice text-xl"></i> <span class="font-medium">Dashboard</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('lojas')" id="nav-lojas">
-                    <i class="ph ph-storefront text-xl"></i> <span class="font-medium">Lojas e Chamados</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('projetos')" id="nav-projetos">
-                    <i class="ph ph-kanban text-xl"></i> <span class="font-medium">Tarefas da Equipe</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('atas')" id="nav-atas">
-                    <i class="ph ph-file-text text-xl"></i> <span class="font-medium">Ata de Reunião</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('metapwr')" id="nav-metapwr">
-                    <i class="ph ph-target text-xl"></i> <span class="font-medium">Meta PWR</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('mapa')" id="nav-mapa">
-                    <i class="ph ph-map-trifold text-xl"></i> <span class="font-medium">Mapa Interativo</span>
-                </div>
-                <div class="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-colors text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5" onclick="window.switchView('tiaguinho')" id="nav-tiaguinho">
-                    <i class="ph ph-user-gear text-xl"></i> <span class="font-medium">BI Tiaguinho</span>
-                </div>
+            <div class="flex-1 overflow-y-auto py-6 flex flex-col gap-1.5 px-4 custom-scrollbar">
+                <div class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 mt-2 ml-4 opacity-40">Navegação</div>
+                
+                <button onclick="window.switchView('analytics')" id="nav-analytics" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden active text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-chart-line-up text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Dashboard</span>
+                </button>
+                
+                <button onclick="window.switchView('lojas')" id="nav-lojas" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-buildings text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Lojas e Chamados</span>
+                </button>
+                
+                <button onclick="window.switchView('projetos')" id="nav-projetos" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-kanban text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Tarefas Equipe</span>
+                </button>
+                
+                <button onclick="window.switchView('atas')" id="nav-atas" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-notebook text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Atas de Reunião</span>
+                </button>
+
+                <div class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 mt-8 ml-4 opacity-40">Explorar</div>
+
+                <button onclick="window.switchView('mapa')" id="nav-mapa" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-map-trifold text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Mapa Marcas</span>
+                </button>
+
+                <button onclick="window.switchView('tiaguinho')" id="nav-tiaguinho" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-chart-pie-slice text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>BI Tiaguinho</span>
+                </button>
+
+                <button onclick="window.switchView('metapwr')" id="nav-metapwr" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5 opacity-50 grayscale hover:opacity-100 hover:grayscale-0">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
+                    <i class="ph ph-target text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Meta PWR</span>
+                </button>
             </div>
 
 
@@ -174,32 +205,40 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
-                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(38,93,124,0.1)] text-[var(--sp-aoleite)] dark:bg-[rgba(38,93,124,0.2)] dark:text-blue-400"><i class="ph ph-buildings"></i></div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-[var(--primary)]/10 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-buildings"></i>
+                        </div>
                         <div>
-                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statTotalLojas">0</p>
-                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0">Lojas Monitoradas</p>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTotalLojas">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Lojas Ativas</p>
                         </div>
                     </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
-                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(218,13,23,0.1)] text-[var(--sp-red)] dark:bg-[rgba(218,13,23,0.2)] dark:text-red-400"><i class="ph ph-warning-circle"></i></div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-warning-circle"></i>
+                        </div>
                         <div>
-                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
-                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0">Ocorrências Pendentes</p>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Abertos</p>
                         </div>
                     </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
-                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(38,93,124,0.1)] text-[var(--sp-aoleite)] dark:bg-[rgba(38,93,124,0.2)] dark:text-blue-400"><i class="ph ph-kanban"></i></div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-rocket-launch"></i>
+                        </div>
                         <div>
-                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statTarefasPendentes">0</p>
-                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0" id="title-tasks-andamento">Tarefas em Andamento</p>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasPendentes">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Em Fila</p>
                         </div>
                     </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] flex items-center gap-5 shadow-sm">
-                        <div class="w-16 h-16 rounded-xl flex items-center justify-center text-3xl bg-[rgba(218,13,23,0.1)] text-[var(--sp-red)] dark:bg-[rgba(218,13,23,0.2)] dark:text-red-400"><i class="ph ph-clock"></i></div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-calendar-check"></i>
+                        </div>
                         <div>
-                            <p class="text-3xl font-bold text-[var(--text-main)] m-0 leading-none" id="statTarefasConcluidas">0</p>
-                            <p class="text-[var(--text-muted)] text-sm font-medium mt-1 mb-0" id="title-tasks-pendentes">Tarefas Pendentes</p>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasConcluidas">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Concluídas</p>
                         </div>
                     </div>
                 </div>
@@ -295,6 +334,9 @@
                             <option value="loja-az">Lojas (A-Z)</option>
                             <option value="estado-az">Regional (A-Z)</option>
                         </select>
+                        <button onclick="window.limparFiltrosLojas()" class="p-2 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--danger)] hover:border-[var(--danger)] transition-all flex items-center gap-2 text-sm font-bold shadow-sm px-3" title="Limpar Filtros">
+                            <i class="ph ph-trash"></i> <span class="hidden lg:inline">Limpar</span>
+                        </button>
                     </div>
                 </div>
 
@@ -309,9 +351,17 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
                     </div>
-                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosExcel()">
-                        <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="relative hidden lg:block">
+                            <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+                            <input type="text" id="taskSearchInput" placeholder="Buscar tarefa..." 
+                                class="pl-9 pr-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm transition-all focus:border-[var(--primary)] outline-none w-48 focus:w-64"
+                                oninput="window.renderizarProjetosList()">
+                        </div>
+                        <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.exportarProjetosExcel()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Excel</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div id="membrosEquipeContainer"
@@ -391,24 +441,23 @@
                     </h3>
                     <input type="text" id="ataTitulo" placeholder="Título / Assunto Principal"
                         class="w-full px-4 py-3 bg-[var(--bg-color)] border-1.5 border-[var(--border)] rounded-lg text-[var(--text-main)] mb-3 transition-colors focus:border-[var(--primary)] outline-none font-bold">
-                    <div class="flex flex-col gap-2 mb-4">
-                        <div id="ataToolbar" class="flex flex-wrap gap-2 p-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-t-lg border-b-0">
-                            <button type="button" onclick="window.formatDoc('bold')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Negrito"><i class="ph ph-text-bolder text-lg"></i></button>
-                            <button type="button" onclick="window.formatDoc('italic')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Itálico"><i class="ph ph-text-italic text-lg"></i></button>
-                            <button type="button" onclick="window.formatDoc('underline')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Sublinhado"><i class="ph ph-text-underline text-lg"></i></button>
-                            <div class="w-px h-6 bg-[var(--border)] mx-1 self-center"></div>
-                            <select onchange="window.formatDoc('fontSize', this.value); this.selectedIndex=0;" class="px-2 py-1 text-xs border border-[var(--border)] rounded bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)]">
+                    <div class="flex flex-col gap-0 shadow-sm border border-[var(--border)] rounded-xl overflow-hidden focus-within:border-[var(--primary)] transition-all">
+                        <div id="ataToolbar" class="flex flex-wrap items-center gap-1 p-2 bg-[var(--bg-color)]/50 border-b border-[var(--border)]">
+                            <button type="button" onclick="window.formatDoc('bold')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Negrito"><i class="ph-bold ph-text-bolder"></i></button>
+                            <button type="button" onclick="window.formatDoc('italic')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Itálico"><i class="ph-bold ph-text-italic"></i></button>
+                            <button type="button" onclick="window.formatDoc('underline')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Sublinhado"><i class="ph-bold ph-text-underline"></i></button>
+                            <div class="w-px h-6 bg-[var(--border)] mx-1"></div>
+                            <button type="button" onclick="window.formatDoc('insertUnorderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Lista Marcadores"><i class="ph-bold ph-list-bullets"></i></button>
+                            <button type="button" onclick="window.formatDoc('insertOrderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all" title="Lista Numerada"><i class="ph-bold ph-list-numbers"></i></button>
+                            <div class="w-px h-6 bg-[var(--border)] mx-1"></div>
+                            <select onchange="window.formatDoc('fontSize', this.value); this.selectedIndex=0;" class="px-3 py-1.5 text-xs border border-[var(--border)] rounded-lg bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] font-bold cursor-pointer">
                                 <option value="" selected disabled>Tamanho</option>
-                                <option value="1">Muito Pequeno</option>
-                                <option value="3">Normal</option>
-                                <option value="5">Grande</option>
-                                <option value="7">Enorme</option>
+                                <option value="3">Padrão</option>
+                                <option value="5">Médio</option>
+                                <option value="7">Grande</option>
                             </select>
-                            <div class="w-px h-6 bg-[var(--border)] mx-1 self-center"></div>
-                            <button type="button" onclick="window.formatDoc('insertUnorderedList')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Lista Marcadores"><i class="ph ph-list-bullets text-lg"></i></button>
-                            <button type="button" onclick="window.formatDoc('insertOrderedList')" class="p-1.5 rounded hover:bg-black/10 dark:hover:bg-white/10 text-[var(--text-main)] transition-colors" title="Lista Numerada"><i class="ph ph-list-numbers text-lg"></i></button>
                         </div>
-                        <div id="ataTexto" contenteditable="true" class="w-full px-4 py-3 bg-[var(--bg-color)] border border-[var(--border)] rounded-b-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[150px] overflow-y-auto shadow-inner rich-text-editor"></div>
+                        <div id="ataTexto" contenteditable="true" class="w-full px-5 py-4 bg-[var(--surface)] text-[var(--text-main)] outline-none min-h-[250px] max-h-[500px] overflow-y-auto rich-text-editor leading-relaxed text-sm"></div>
                     </div>
                     <input type="hidden" id="editAtaId">
                     <div class="flex gap-3">
@@ -448,14 +497,14 @@
                                 class="ph ph-list text-xl"></i></button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapa Interativo</h1>
                     </div>
-                    <div class="flex items-center gap-4 bg-[var(--surface)] px-4 py-2 rounded-lg border border-[var(--border)] shadow-sm">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="text-xs font-bold text-[var(--text-muted)]">Tudo OK</span>
+                    <div class="flex items-center gap-6 bg-[var(--surface)] px-5 py-2.5 rounded-2xl border border-[var(--border)] shadow-md">
+                        <div class="flex items-center gap-2 group cursor-help">
+                            <div class="w-3 h-3 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/20 group-hover:scale-125 transition-transform duration-300"></div>
+                            <span class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest opacity-80">Tudo OK</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <span class="text-xs font-bold text-[var(--text-muted)]">Chamado Aberto</span>
+                        <div class="flex items-center gap-2 group cursor-help">
+                            <div class="w-3 h-3 rounded-full bg-red-500 shadow-lg shadow-red-500/20 animate-pulse group-hover:scale-125 transition-transform duration-300"></div>
+                            <span class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest opacity-80">Chamado Aberto</span>
                         </div>
                     </div>
                 </div>

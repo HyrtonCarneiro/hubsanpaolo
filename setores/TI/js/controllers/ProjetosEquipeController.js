@@ -244,7 +244,7 @@ function renderizarProjetosList() {
     var container = document.getElementById('projetos-list');
     if (!container) return;
     
-    // Restaurar classes de grid (necessário após Visão Geral)
+    // Restaurar classes de grid
     container.className = 'grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden';
     container.innerHTML = '';
 
@@ -254,35 +254,45 @@ function renderizarProjetosList() {
     }
 
     var projs = window.sysProjetos[window.currentMember] || [];
+    
+    // Filtro de Busca
+    var search = (document.getElementById('taskSearchInput')?.value || '').toLowerCase();
+    if (search) {
+        projs = projs.filter(p => 
+            (p.desc || '').toLowerCase().includes(search) || 
+            (p.demandante || '').toLowerCase().includes(search)
+        );
+    }
+
     if (projs.length === 0) {
-        container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] col-span-1 lg:col-span-3 rounded-xl border border-dashed border-[var(--border)] w-full"><i class="ph ph-kanban text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum registro para ' + (window.currentMember || 'esta equipe') + '</h2></div>';
+        container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] col-span-1 lg:col-span-3 rounded-2xl border border-dashed border-[var(--border)] w-full animate-fadeIn"><i class="ph ph-kanban text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum registro encontrado</h2><p class="text-sm mt-2">Tente ajustar sua busca ou selecione outro membro.</p></div>';
         return;
     }
 
     var colunas = [
-        { id: 'Pendente', titulo: 'Pendentes', classBadge: 'bg-[rgba(218,13,23,0.1)] text-[var(--sp-red)] dark:bg-[rgba(218,13,23,0.2)] dark:text-red-400 border-[var(--sp-red)]/20', borderColor: 'var(--sp-red)' },
-        { id: 'Em Andamento', titulo: 'Em Andamento', classBadge: 'bg-[rgba(38,93,124,0.1)] text-[var(--sp-aoleite)] dark:bg-[rgba(38,93,124,0.2)] dark:text-blue-400 border-[var(--sp-aoleite)]/20', borderColor: 'var(--sp-aoleite)' },
-        { id: 'Concluído', titulo: 'Concluídos', classBadge: 'bg-[rgba(16,185,129,0.1)] text-[var(--success)] dark:bg-[rgba(16,185,129,0.2)] dark:text-emerald-400 border-[var(--success)]/20', borderColor: 'var(--success)' }
+        { id: 'Pendente', titulo: 'Pendentes', classBadge: 'bg-red-500/10 text-red-500 border-red-500/20', borderColor: '#ef4444' },
+        { id: 'Em Andamento', titulo: 'Em Andamento', classBadge: 'bg-blue-500/10 text-blue-500 border-blue-500/20', borderColor: '#3b82f6' },
+        { id: 'Concluído', titulo: 'Concluídos', classBadge: 'bg-green-500/10 text-green-500 border-green-500/20', borderColor: '#10b981' }
     ];
 
     colunas.forEach(function (col) {
         var projsNestaColuna = projs.filter(function (p) { return (p.status || 'Pendente') === col.id; });
 
         var colDiv = document.createElement('div');
-        colDiv.className = 'bg-[var(--surface)] border border-[var(--border)] rounded-xl flex flex-col h-full overflow-hidden shadow-sm min-h-[400px] transition-colors';
+        colDiv.className = 'bg-black/5 dark:bg-white/5 rounded-2xl border border-[var(--border)]/30 flex flex-col h-full overflow-hidden transition-all duration-300 group/col';
         colDiv.ondragover = (e) => window.handleDragOver(e);
         colDiv.ondragleave = (e) => window.handleDragLeave(e);
         colDiv.ondrop = (e) => window.handleDrop(e, col.id);
 
         colDiv.innerHTML =
-            '<div class="px-5 py-4 border-b border-[var(--border)] flex justify-between items-center bg-black/5 dark:bg-black/20" style="border-top: 3px solid ' + col.borderColor + '">' +
-                '<h3 class="text-lg font-bold text-[var(--text-main)] m-0 flex items-center gap-2">' +
-                    '<div class="w-2.5 h-2.5 rounded-full" style="background-color: ' + col.borderColor + '"></div>' +
+            '<div class="px-5 py-4 flex justify-between items-center border-b border-[var(--border)]/30 bg-[var(--bg-color)]/30" style="border-top: 4px solid ' + col.borderColor + '">' +
+                '<h3 class="text-[0.65rem] font-black text-[var(--text-main)] m-0 flex items-center gap-2 uppercase tracking-widest opacity-60">' +
+                    '<div class="w-2 h-2 rounded-full" style="background-color: ' + col.borderColor + '"></div>' +
                     col.titulo +
                 '</h3>' +
-                '<span class="bg-[var(--bg-color)] px-2.5 py-1 rounded-md text-xs font-bold text-[var(--text-main)] border border-[var(--border)] shadow-sm">' + projsNestaColuna.length + '</span>' +
+                '<span class="bg-[var(--surface)] px-2 py-0.5 rounded-full text-[10px] font-black text-[var(--text-main)] border border-[var(--border)] shadow-sm group-hover/col:bg-[var(--primary)] group-hover/col:text-white transition-colors">' + projsNestaColuna.length + '</span>' +
             '</div>' +
-            '<div class="flex-1 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-3 kanban-items bg-[var(--bg-color)]/50"></div>';
+            '<div class="flex-1 p-4 overflow-y-auto custom-scrollbar flex flex-col gap-3 kanban-items animate-fadeIn"></div>';
         
         var itemsContainer = colDiv.querySelector('.kanban-items');
 
