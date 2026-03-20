@@ -341,17 +341,7 @@ function initApp() {
         });
     }
 
-    // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.flex.items-center.gap-3').forEach(container => {
-        if (!container.closest('.mb-8') && !container.closest('.mb-6')) return;
-        if (container.querySelector('.btn-hub')) return;
-        const btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub shadow-sm';
-        btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-        btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        container.insertBefore(btn, container.querySelector('h1'));
-    });
+
 
     // Iniciar Listeners do Firebase (cada controller exporta sua função de init)
     if (typeof window.initAuditoriaOnlineListeners === 'function') window.initAuditoriaOnlineListeners();
@@ -375,13 +365,12 @@ window.switchView = function (view) {
         const el = document.getElementById('view-' + v);
         const nav = document.getElementById('nav-' + v);
         if (el) el.style.display = 'none';
-        if (nav) nav.classList.remove('active-nav');
+        if (nav) nav.classList.remove('active');
     });
-
     const currView = document.getElementById('view-' + view);
     const currNav = document.getElementById('nav-' + view);
     if (currView) currView.style.display = 'block';
-    if (currNav) currNav.classList.add('active-nav');
+    if (currNav) currNav.classList.add('active');
 
     if (window.innerWidth <= 768) {
         window.toggleSidebar();

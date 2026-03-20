@@ -64,14 +64,16 @@
                 </div>
                 <div class="flex flex-col leading-none">
                     <span class="text-[0.6rem] uppercase tracking-[0.3em] text-[var(--brandRed)] font-black mb-1">San Paolo</span>
-                    <span class="italic font-black tracking-tight">AUDITORIA</span>
+                    <span class="italic font-black tracking-tight flex items-center gap-2">
+                        <i class="ph-fill ph-shield-check text-xs opacity-50"></i> AUDITORIA
+                    </span>
                 </div>
             </div>
             
             <div class="flex-1 overflow-y-auto py-6 flex flex-col gap-1.5 px-4 custom-scrollbar">
                 <div class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em] mb-3 mt-2 ml-4 opacity-40">Navegação</div>
                 
-                <div onclick="window.switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden active text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
+                <div onclick="window.switchView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl cursor-pointer transition-all duration-300 font-bold group relative overflow-hidden text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 [&.active]:text-[var(--primary)] [&.active]:bg-[var(--primary)]/5">
                     <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[var(--primary)] rounded-r-full transform -translate-x-full group-[.active]:translate-x-0 transition-transform"></div>
                     <i class="ph ph-chart-pie-slice text-xl group-[.active]:text-[var(--primary)] transition-colors"></i> <span>Dashboard</span>
                 </div>
@@ -122,10 +124,15 @@
             <div id="view-dashboard">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Dashboard de Auditoria</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-chart-pie-slice text-[var(--primary)] text-2xl"></i> Dashboard
+                        </h1>
                     </div>
                     <button class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.abrirModalAudiEquipe()">
                         <i class="ph ph-users-three text-lg"></i> Gerenciar Equipe
@@ -259,10 +266,15 @@
             <div id="view-auditoriaOnline" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Auditoria Online</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-clipboard-text text-[var(--primary)] text-2xl"></i> Auditoria Online
+                        </h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importNotasInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarNotasExcel(event)">
@@ -333,10 +345,15 @@
             <div id="view-planejamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Planejamento de Auditoria</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-calendar-check text-[var(--primary)] text-2xl"></i> Planejamento
+                        </h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importPlanejamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarPlanejamentoExcel(event)">
@@ -414,10 +431,15 @@
             <div id="view-mapeamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Mapeamento de Auditorias</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-map-trifold text-[var(--primary)] text-2xl"></i> Mapeamento
+                        </h1>
                     </div>
                     <div class="flex items-center gap-3">
                         <input type="file" id="importMapeamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarMapeamentoExcel(event)">
@@ -562,66 +584,112 @@
             </div>
 
             <!-- TAREFAS (KANBAN) -->
+            <!-- TAREFAS (KANBAN) -->
             <div id="view-tarefas" style="display: none;">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-kanban text-[var(--primary)] text-2xl"></i> Tarefas da Equipe
+                        </h1>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <div class="hidden md:flex items-center gap-3">
-                            <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarTarefasPowerBI()">
-                                <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> PowerBI (.xlsx)
-                            </button>
-                            <button class="flex items-center justify-center gap-2.5 px-3 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] active:scale-90 transition-all shadow-sm" title="Exportar CSV Antigo" onclick="window.exportarAudiProjetosCSV()">
-                                <i class="ph ph-download-simple text-lg"></i>
-                            </button>
+                    <div class="flex items-center gap-3">
+                        <div class="relative hidden lg:block">
+                            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
+                            <input type="text" id="taskSearchInput" placeholder="Buscar tarefa..." 
+                                class="pl-11 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-sm transition-all duration-300 focus:border-[var(--primary)] outline-none w-48 focus:w-64 shadow-sm"
+                                oninput="window.renderizarAudiProjetosList()">
                         </div>
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarAudiProjetosCSV()">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Exportar Excel</span>
+                        </button>
                     </div>
                 </div>
 
-                <div id="audiMembrosEquipeContainer" class="flex gap-2.5 mb-6 flex-wrap"></div>
+                <div id="audiMembrosEquipeContainer"
+                    class="flex gap-2 mb-6 flex-wrap">
+                    <!-- Carregado via JS -->
+                </div>
+                <!-- Botão para mostrar formulário de nova tarefa -->
+                <div id="btnNovaTarefaContainer" class="mb-6">
+                    <button class="w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-[var(--surface)] text-[var(--primary)] border-2 border-dashed border-[var(--primary)] font-bold text-lg hover:bg-[var(--primary)]/5 hover:scale-[1.01] transition-all shadow-sm group" onclick="window.toggleFormTarefa()">
+                        <i class="ph ph-plus-circle text-2xl group-hover:rotate-90 transition-transform duration-300"></i> Nova Demanda / Tarefa
+                    </button>
+                </div>
 
-
-                <div class="bg-[var(--surface)] rounded-xl border border-[var(--border)] p-6 mb-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="m-0 text-lg font-semibold text-[var(--text-main)]">Registrar Nova Demanda</h3>
+                <div id="formNovaTarefa" class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm hidden animate-fadeIn">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Registrar Nova Demanda</h3>
                     </div>
                     <input type="text" id="audiProjDesc" placeholder="Descrição da tarefa ou projeto"
-                        class="w-full mb-3 px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                    <div class="flex gap-3 mb-3 flex-wrap">
-                        <input type="text" id="audiProjDemand" placeholder="Demandante"
-                            class="flex-[2] min-w-[150px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                        <input type="date" id="audiProjDate" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                        <select id="audiProjStatus" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
+                        class="w-full px-4 py-3 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-3 transition-all duration-300 focus:border-[var(--primary)] outline-none font-medium shadow-sm">
+                    <div class="flex flex-wrap gap-3 mb-3">
+                        <input type="text" id="audiProjDemand" placeholder="Demandante" class="flex-2 min-w-[150px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
+                        <div class="flex-1 min-w-[120px] flex flex-col gap-1">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Prazo Sugerido</label>
+                            <input type="date" id="audiProjDate" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
+                        </div>
+                        <div class="flex-1 min-w-[150px] flex flex-col gap-1">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Membros Responsáveis</label>
+                            <div id="selectedResponsaveisCreation" class="flex flex-wrap gap-1 mt-1 mb-2"></div>
+                            <select id="projRespSelect" class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm" onchange="window.adicionarResponsavelCriacao(this.value); this.value='';">
+                                <option value="">+ Adicionar Responsável</option>
+                                <!-- Populado via JS -->
+                            </select>
+                        </div>
+                        <select id="audiProjStatus" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm font-bold">
                             <option value="Pendente">Pendente</option>
                             <option value="Em Andamento">Em Andamento</option>
                             <option value="Concluído">Concluído</option>
                         </select>
                     </div>
+                    <!-- Link para a tarefa -->
                     <input type="url" id="audiProjAnexo" placeholder="Link para visualização/anexo (Opcional)"
-                        class="w-full mb-3 px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                    <button class="flex items-center justify-center gap-2.5 px-8 py-3 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-[var(--primary)]/20" onclick="window.salvarAudiProjeto()">
-                        <i class="ph-fill ph-floppy-disk text-lg"></i> Salvar Registro
-                    </button>
+                        class="w-full px-4 py-2 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] mb-4 transition-colors focus:border-[var(--primary)] outline-none shadow-sm">
+
+                    <!-- Checklist durante a criação -->
+                    <div class="mb-4 p-4 bg-[var(--bg-color)]/50 rounded-lg border border-[var(--border)] border-dashed">
+                        <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase mb-2 block">Checklist da Tarefa (Opcional)</label>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="newCheckItemCreation" placeholder="Adicionar sub-tarefa..." class="flex-1 px-3 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-md text-sm outline-none focus:border-[var(--primary)]" onkeypress="if(event.key==='Enter') window.addCheckItemCreation()">
+                            <button class="px-4 py-2 bg-[var(--surface)] text-[var(--primary)] border border-[var(--primary)] rounded-md hover:bg-[var(--primary)] hover:text-white transition-all text-sm font-bold shadow-sm" onclick="window.addCheckItemCreation()"><i class="ph ph-plus"></i> Adicionar</button>
+                        </div>
+                        <div id="creationChecklistList" class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar">
+                            <!-- Itens adicionados aparecem aqui -->
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarAudiProjeto()">
+                            <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
+                        </button>
+                        <button class="px-5 py-2.5 rounded-lg bg-[var(--bg-color)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.toggleFormTarefa()">Cancelar</button>
+                    </div>
                 </div>
 
-                <div class="flex flex-col lg:flex-row gap-5 overflow-x-auto pb-4 custom-scrollbar min-h-[400px]" id="audi-projetos-list"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden" id="audi-projetos-list">
+                    <!-- Kanban JS -->
+                </div>
             </div>
 
             <!-- META PWR -->
             <div id="view-metapwr" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
                             <i class="ph ph-list text-xl"></i>
                         </button>
-                        <div class="w-10 h-10 bg-[var(--surface)] rounded-xl border border-[var(--border)] flex items-center justify-center text-[var(--brandOrange)] shadow-sm">
-                            <i class="ph ph-target text-xl"></i>
-                        </div>
-                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Meta PWR</h1>
+                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+                            <i class="ph ph-squares-four text-xl"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
+                            <i class="ph-fill ph-target text-[var(--primary)] text-2xl"></i> Meta PWR
+                        </h1>
                     </div>
                 </div>
 
@@ -687,47 +755,171 @@
 
     <!-- MODAL EDITAR TAREFA AUDITORIA -->
     <div id="modalEditAudiProj" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
-        <div class="bg-[var(--surface)] w-[500px] max-w-full rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
-            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
-                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Editar Tarefa</h2>
-                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEditAudiProj()"><i class="ph ph-x"></i></button>
-            </div>
-            <div class="p-6">
-                <input type="hidden" id="editAudiProjId">
-                <input type="text" id="editAudiProjDesc" class="w-full mb-3 px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm" placeholder="Descrição da tarefa">
-                <div class="flex gap-3 mb-4 flex-wrap">
-                    <input type="text" id="editAudiProjDemand" class="flex-[2] min-w-[150px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm" placeholder="Demandante">
-                    <input type="date" id="editAudiProjDate" class="flex-1 min-w-[120px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                    <select id="editAudiProjMember" class="flex-[1.5] min-w-[150px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm"></select>
-                    <select id="editAudiProjStatus" class="flex-[1.2] min-w-[130px] px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm">
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Andamento">Em Andamento</option>
-                        <option value="Concluído">Concluído</option>
-                    </select>
+        <div class="bg-[var(--surface)] w-[600px] max-w-full max-h-[90vh] flex flex-col rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 text-[var(--text-main)]">
+                <h2 class="text-xl font-bold m-0 flex items-center gap-2"><i class="ph ph-pencil-simple text-[var(--primary)]"></i> Editar Tarefa</h2>
+                <div class="flex items-center gap-2">
+                    <button id="btnSwitchToEditProj" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.toggleEditModeProj()">
+                        <i class="ph ph-pencil-simple"></i> Editar
+                    </button>
+                    <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEditAudiProj()"><i class="ph ph-x"></i></button>
                 </div>
-                <button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white font-semibold transition-all duration-300 hover:brightness-110 active:scale-95 shadow-sm" onclick="window.confirmarEdicaoAudiProj()">Salvar Alterações</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar">
+                <!-- VIEW MODE -->
+                <div id="taskViewMode">
+                    <div class="flex flex-wrap gap-4 mb-6 pb-6 border-b border-[var(--border)]">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase">Demandante</span>
+                            <span id="viewProjDemand" class="text-sm font-semibold text-[var(--text-main)] flex items-center gap-1.5"><i class="ph ph-user"></i> ---</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase">Prazo</span>
+                            <span id="viewProjDate" class="text-sm font-semibold text-[var(--text-main)] flex items-center gap-1.5"><i class="ph ph-calendar"></i> ---</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase">Responsável</span>
+                            <span id="viewProjResp" class="text-sm font-semibold text-[var(--text-main)] flex items-center gap-1.5"><i class="ph ph-user-check"></i> ---</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase">Status</span>
+                            <span id="viewProjStatus" class="inline-flex px-2 py-0.5 rounded-md text-[0.65rem] font-bold border border-[var(--border)] bg-black/5">---</span>
+                        </div>
+                    </div>
+                    <div class="mb-8">
+                        <h3 class="text-sm font-bold text-[var(--text-muted)] uppercase mb-3 ml-1">Descrição</h3>
+                        <div id="viewProjDesc" class="bg-[var(--bg-color)] p-4 rounded-xl border border-[var(--border)] text-sm text-[var(--text-main)] leading-relaxed whitespace-pre-line mb-4"></div>
+                        
+                        <!-- Checklist View -->
+                        <div id="checklistViewContainer" class="mb-4 hidden">
+                            <h3 class="text-sm font-bold text-[var(--text-muted)] uppercase mb-3 ml-1 flex items-center gap-2">
+                                <i class="ph ph-check-square"></i> Checklist de Sub-tarefas
+                            </h3>
+                            <div id="listaChecklistView" class="space-y-2"></div>
+                        </div>
+
+                        <div id="viewProjAnexo"></div>
+                    </div>
+                    
+                    <div class="mt-8">
+                        <h3 class="text-sm font-bold text-[var(--text-muted)] uppercase mb-4 ml-1 flex items-center gap-2">
+                            <i class="ph ph-chat-centered-text"></i> Comentários e Atualizações
+                        </h3>
+                        <div id="listaComentariosProjDetalhe" class="flex flex-col gap-3 mb-4">
+                            <!-- Populado JS -->
+                        </div>
+                        <div class="flex gap-2">
+                             <input type="text" id="novoComentarioProjDetalhe" placeholder="Digite seu comentário..." class="flex-1 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none shadow-sm">
+                             <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-md transition-all hover:-translate-y-0.5" onclick="window.salvarComentarioProjetoDetalhe()">
+                                 <i class="ph ph-paper-plane-right"></i>
+                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EDIT MODE -->
+                <div id="taskEditMode" class="hidden animate-fadeIn">
+                    <input type="hidden" id="editAudiProjId">
+                    <div class="flex flex-col gap-1 mb-4">
+                        <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Descrição da Tarefa</label>
+                        <textarea id="editAudiProjDesc" rows="3" class="w-full px-4 py-3 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none resize-y min-h-[80px]"></textarea>
+                    </div>
+
+                    <!-- Checklist Editor -->
+                    <div class="mb-5 p-4 bg-black/5 dark:bg-white/5 rounded-xl border border-[var(--border)]">
+                        <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1 mb-3 block">Checklist de Passos</label>
+                        <div class="flex gap-2 mb-3">
+                            <input type="text" id="novoItemChecklist" placeholder="Adicionar passo..." class="flex-1 px-3 py-1.5 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-sm outline-none focus:border-[var(--primary)]">
+                            <button class="px-3 py-1.5 bg-[var(--primary)] text-white rounded-lg text-sm font-bold" onclick="window.adicionarItemChecklist()">Add</button>
+                        </div>
+                        <div id="listaChecklistEdit" class="space-y-2 max-h-40 overflow-y-auto pr-1 custom-scrollbar"></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Demandante</label>
+                            <input type="text" id="editAudiProjDemand" class="w-full px-4 py-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Prazo</label>
+                            <input type="date" id="editAudiProjDate" class="w-full px-4 py-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Responsáveis</label>
+                            <div id="selectedResponsaveisEdit" class="flex flex-wrap gap-1 mt-1 mb-2"></div>
+                            <select id="editAudiProjMember" class="w-full px-3 py-2 border border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm" onchange="window.adicionarResponsavelEdit(this.value); this.value='';">
+                                <option value="">+ Adicionar...</option>
+                                <!-- Populado JS -->
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.7rem] font-bold text-[var(--text-muted)] uppercase ml-1">Status</label>
+                            <select id="editAudiProjStatus" class="w-full px-3 py-2 border border-[var(--border)] bg-[var(--bg-color)] text-[var(--text-main)] rounded-lg outline-none transition-colors focus:border-[var(--primary)] text-sm">
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em Andamento">Em Andamento</option>
+                                <option value="Concluído">Concluído</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-bold shadow-md transition-all hover:brightness-110" onclick="window.confirmarEdicaoAudiProj()">
+                            Salvar Alterações
+                        </button>
+                        <button class="px-5 py-3 rounded-lg bg-[var(--surface)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.toggleEditModeProj()">
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL EQUIPE AUDITORIA -->
     <div id="modalAudiEquipe" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
         <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
-            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
-                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Gerenciar Equipe</h2>
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 text-[var(--text-main)]">
+                <h2 class="text-xl font-bold m-0 flex items-center gap-2"><i class="ph ph-users-three text-[var(--primary)]"></i> Gerenciar Equipe</h2>
                 <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalAudiEquipe()"><i class="ph ph-x"></i></button>
             </div>
             <div class="p-6">
-                <div class="flex flex-col gap-1.5 mb-5">
-                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1">Selecionar Usuário do Sistema</label>
+                <div class="flex flex-col gap-1.5 mb-6">
+                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Adicionar novo integrante</label>
                     <div class="flex gap-2">
-                        <select id="novoAudiMembroSelecionado" class="flex-1 px-4 py-2.5 bg-[var(--bg-color)] border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none text-sm shadow-sm">
+                        <select id="novoAudiMembroSelecionado" class="flex-1 border border-[var(--border)] rounded-xl p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm text-sm">
                             <option value="">Selecione um usuário...</option>
                         </select>
-                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--primary)] text-white font-semibold transition-all duration-300 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.adicionarAudiMembro()">Adicionar</button>
+                        <button class="flex items-center justify-center gap-2 px-6 py-2 rounded-xl bg-[var(--primary)] text-white font-bold transition-all duration-300 hover:brightness-110 active:scale-95 shadow-sm" onclick="window.adicionarAudiMembro()">
+                            <i class="ph ph-plus-circle"></i> Add
+                        </button>
                     </div>
                 </div>
-                <div id="listaAudiEquipeGerenciar" class="flex flex-col gap-2"></div>
+                <div class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase mb-3 ml-1 opacity-60">Equipe Atual</div>
+                <div id="listaAudiEquipeGerenciar" class="flex flex-col gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
+                    <!-- JS monta a lista -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCommentsProj" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[550px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content-comments]:translate-y-0 flex flex-col max-h-[90vh] modal-content-comments border border-[var(--border)]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 text-[var(--text-main)]">
+                <div>
+                    <h2 class="text-xl font-bold m-0 flex items-center gap-2"><i class="ph ph-chat-centered-text text-[var(--primary)]"></i> Comentários da Tarefa</h2>
+                    <p id="commentProjTitle" class="text-xs text-[var(--text-muted)] mt-1 font-bold truncate max-w-[400px]"></p>
+                </div>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalCommentsProj()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar" id="listaComentariosProj">
+                <!-- Populado JS -->
+            </div>
+            <div class="p-4 border-t border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <div class="flex gap-2">
+                    <input type="hidden" id="commentProjId">
+                    <input type="text" id="novoComentarioProj" placeholder="Digite uma atualização..." class="flex-1 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none shadow-sm">
+                    <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-md transition-all hover:-translate-y-0.5" onclick="window.salvarComentarioProjeto()">
+                        <i class="ph ph-paper-plane-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
