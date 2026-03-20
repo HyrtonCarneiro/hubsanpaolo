@@ -76,6 +76,10 @@ window.initMapa = function () {
                 style: estilizarEstado,
                 onEachFeature: (feature, layer) => {
                     layer.bindTooltip(feature.properties.name, { sticky: true });
+                    layer.on('click', (e) => {
+                        L.DomEvent.stopPropagation(e);
+                        window.abrirDetalhesEstado(feature.properties.sigla, feature.properties.name);
+                    });
                 }
             }).addTo(window.mapaTI);
             window.renderizarMarcadoresMapa();
@@ -98,9 +102,69 @@ window.initMapa = function () {
         }
         .marker-green { background: #10b981 !important; }
         .marker-red { background: #ef4444 !important; }
-        .leaflet-interactive { transition: fill-opacity 0.3s, fill 0.3s; }
+        .leaflet-interactive { transition: fill-opacity 0.3s, fill 0.3s; cursor: pointer !important; }
+        .leaflet-interactive:hover { fill-opacity: 0.25 !important; }
     `;
     document.head.appendChild(style);
+};
+
+window.abrirDetalhesEstado = function (sigla, nome) {
+    const sidebar = document.getElementById('stateSidebar');
+    const overlay = document.getElementById('stateSidebarOverlay');
+    const title = document.getElementById('stateSidebarTitle');
+    const content = document.getElementById('stateSidebarContent');
+    
+    if (!sidebar || !content) return;
+
+    title.innerText = nome;
+    content.innerHTML = '';
+    
+    const siglaPadrao = getEstadoPadrao(sigla);
+    const lojas = window.lojasIniciais.filter(l => getEstadoPadrao(l.estado) === siglaPadrao);
+
+    if (lojas.length === 0) {
+        content.innerHTML = `<div class="p-8 text-center text-[var(--text-muted)]">Nenhuma loja cadastrada neste estado.</div>`;
+    } else {
+        lojas.forEach(loja => {
+            const logs = window.sysLogs[loja.id] || [];
+            const pendentes = logs.filter(l => !l.resolvido);
+            const temPendente = pendentes.length > 0;
+            
+            const item = document.createElement('div');
+            item.className = 'p-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] hover:border-[var(--sp-pink)] transition-all cursor-pointer group shadow-sm flex items-center justify-between';
+            item.onclick = () => {
+                if (typeof window.abrirModal === 'function') {
+                    window.abrirModal(loja.id, loja.nome, loja.estado);
+                }
+            };
+
+            const statusColor = temPendente ? 'bg-[#ef4444]' : 'bg-[#10b981]';
+            const statusText = temPendente ? `${pendentes.length} chamado(s)` : 'Tudo OK';
+            const statusBadgeColor = temPendente ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100';
+
+            item.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-2.5 h-2.5 rounded-full ${statusColor} shadow-sm"></div>
+                    <div>
+                        <div class="font-bold text-[var(--text-main)] group-hover:text-[var(--sp-pink)] transition-colors">${loja.nome}</div>
+                        <div class="text-[10px] text-[var(--text-muted)] uppercase tracking-tighter">${loja.estado}</div>
+                    </div>
+                </div>
+                <div class="px-2 py-1 rounded-md border text-[10px] font-bold ${statusBadgeColor}">${statusText}</div>
+            `;
+            content.appendChild(item);
+        });
+    }
+
+    sidebar.classList.remove('translate-x-full');
+    overlay.classList.remove('hidden');
+};
+
+window.fecharDetalhesEstado = function () {
+    const sidebar = document.getElementById('stateSidebar');
+    const overlay = document.getElementById('stateSidebarOverlay');
+    if (sidebar) sidebar.classList.add('translate-x-full');
+    if (overlay) overlay.classList.add('hidden');
 };
 
 function estilizarEstado(feature) {

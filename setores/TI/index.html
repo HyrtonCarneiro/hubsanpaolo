@@ -28,6 +28,23 @@
 
     <!-- Tailwind Scripts for Local Setup -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <div id="stateSidebarOverlay" class="fixed inset-0 bg-black/20 backdrop-blur-[1px] z-[1000] hidden transition-opacity duration-300" onclick="window.fecharDetalhesEstado()"></div>
+    <div id="stateSidebar" class="fixed inset-y-0 right-0 w-80 md:w-96 bg-[var(--surface)] border-l border-[var(--border)] shadow-2xl transform translate-x-full transition-transform duration-300 z-[1001] flex flex-col">
+        <div class="p-6 border-b border-[var(--border)] flex items-center justify-between bg-[var(--bg-color)]/50">
+            <div>
+                <h2 id="stateSidebarTitle" class="text-xl font-bold text-[var(--text-main)] m-0">Estado</h2>
+                <p id="stateSidebarSubtitle" class="text-xs text-[var(--text-muted)] mt-1 font-medium uppercase tracking-wider">Lojas e Operações</p>
+            </div>
+            <button onclick="window.fecharDetalhesEstado()" class="p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-[var(--text-muted)] transition-colors">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+        </div>
+        <div id="stateSidebarContent" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <!-- Lojas serão injetadas aqui -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
     <script>
         tailwind.config = {
             darkMode: 'class',
