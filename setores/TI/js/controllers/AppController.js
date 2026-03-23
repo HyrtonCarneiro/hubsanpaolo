@@ -147,6 +147,7 @@ window.toggleSidebar = function () {
         sidebar.classList.toggle('open');
         overlay.classList.toggle('show');
     }
+    document.body.classList.toggle('sidebar-collapsed');
 }
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -99,6 +99,13 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+        /* Desktop Sidebar Collapse */
+        @media (min-width: 768px) {
+            body.sidebar-collapsed #appSidebar {
+                margin-left: -17rem;
+            }
+        }
+
         /* Custom Fullscreen for BI */
         .bi-expanded {
             position: fixed !important;
@@ -204,7 +211,7 @@
             <div id="view-analytics" onclick="if(event.target === this) window.resetTiDashboardFilters()">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()" title="Recolher/Expandir Menu">
                             <i class="ph ph-list text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Visão Geral</h1>
@@ -319,7 +326,7 @@
             <div id="view-lojas" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()" title="Recolher/Expandir Menu">
                             <i class="ph ph-list text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Monitoramento de Lojas</h1>
@@ -387,7 +394,7 @@
 
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()" title="Recolher/Expandir Menu">
                             <i class="ph ph-list text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas e Projetos</h1>
@@ -472,7 +479,7 @@
             <div id="view-protocolos" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()" title="Recolher/Expandir Menu">
                             <i class="ph ph-list text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Protocolos de Chamados Suporte</h1>
@@ -521,7 +528,7 @@
             <div id="view-links" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-                        <button class="md:hidden p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()">
+                        <button class="p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-[var(--bg-color)] transition-all duration-300 active:scale-95" onclick="window.toggleSidebar()" title="Recolher/Expandir Menu">
                             <i class="ph ph-list text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Links Úteis e Documentações</h1>

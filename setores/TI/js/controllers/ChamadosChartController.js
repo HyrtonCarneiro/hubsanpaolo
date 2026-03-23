@@ -125,7 +125,7 @@ window.atualizarGraficoChamados = function() {
                     beginAtZero: true,
                     grid: { 
                         display: true,
-                        color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                        color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)',
                         drawBorder: false
                     },
                     border: { display: false },
