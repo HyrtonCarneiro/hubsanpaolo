@@ -15,6 +15,7 @@ const DashboardLogic = {
     processarMetricasLojas: function(lojas, logs, filters = {}) {
         let metrics = {
             totalPendentes: 0,
+            totalResolvidos: 0,
             regiaoCount: {},
             lojaCallCount: {}
         };
@@ -115,6 +116,8 @@ const DashboardLogic = {
                     metrics.porMembro[membro]++;
                     if (st === 'Em Andamento') metrics.andamento++;
                     else metrics.pendentes++;
+                } else {
+                    metrics.concluidas++;
                 }
             });
         });

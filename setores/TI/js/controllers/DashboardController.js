@@ -73,17 +73,17 @@ window.atualizarGraficos = function () {
     const t_metrics = DashboardLogic.processarMetricasTarefasAtivas(window.sysProjetos, window.tiDashboardFilters);
 
     // Atualizar Contadores do Topo
-    var elTotal = document.getElementById('statTotalLojas');
     var elPendentes = document.getElementById('statPendentes');
-    if (elTotal) elTotal.innerText = window.lojasIniciais ? window.lojasIniciais.length : 0;
     if (elPendentes) elPendentes.innerText = l_metrics.totalPendentes;
 
-    // Novos KPIs de Tarefas
-    var elTasksAnd = document.getElementById('statTarefasPendentes'); 
-    if (elTasksAnd) elTasksAnd.innerText = t_metrics.andamento;
+    var elResolvidos = document.getElementById('statChamadosResolvidos');
+    if (elResolvidos) elResolvidos.innerText = l_metrics.totalResolvidos;
 
-    var elTasksPend = document.getElementById('statTarefasConcluidas');
-    if (elTasksPend) elTasksPend.innerText = t_metrics.pendentes;
+    var elTasksAtivas = document.getElementById('statTarefasAtivas'); 
+    if (elTasksAtivas) elTasksAtivas.innerText = t_metrics.andamento + t_metrics.pendentes;
+
+    var elTasksConcluidas = document.getElementById('statTarefasConcluidas');
+    if (elTasksConcluidas) elTasksConcluidas.innerText = t_metrics.concluidas;
 
     var textColor = document.body.classList.contains('dark-mode') ? '#f8fafc' : '#0f172a';
     var elChartStatus = document.getElementById('chartStatus');

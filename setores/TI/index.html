@@ -216,6 +216,47 @@
                     </div>
                 </div>
 
+                <!-- Container para Filtros Ativos (PowerBI Style) -->
+                <div id="dashboardActiveFilters" class="hidden"></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-warning-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Ativos</p>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-check-circle"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statChamadosResolvidos">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Concluídos</p>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-rocket-launch"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasAtivas">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Ativas</p>
+                        </div>
+                    </div>
+                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-inner">
+                            <i class="ph-fill ph-calendar-check"></i>
+                        </div>
+                        <div>
+                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasConcluidas">0</p>
+                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Concluídas</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Gráfico de Tendência (PowerBI Style - Dashboard) -->
                 <div id="chartChamadosCard" class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] mb-8 shadow-sm">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -224,7 +265,7 @@
                             <p class="text-xs text-[var(--text-muted)] m-0">Aberturas (Vermelho) vs Resoluções (Verde)</p>
                         </div>
                         <div class="flex flex-wrap gap-3 items-center">
-                            <select id="chartChamadosPeriod" class="px-3 py-1.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-lg text-xs font-bold outline-none focus:border-[var(--primary)]" onchange="window.atualizarGraficoChamados()">
+                            <select id="chartChamadosPeriod" class="hidden px-3 py-1.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-lg text-xs font-bold outline-none focus:border-[var(--primary)]" onchange="window.atualizarGraficoChamados()">
                                 <option value="diario">Diário</option>
                                 <option value="semanal">Semanal</option>
                                 <option value="mensal">Mensal</option>
@@ -238,47 +279,6 @@
                     </div>
                     <div id="chartChamadosContainer" class="h-[300px] w-full">
                         <canvas id="chartChamadosCanvas"></canvas>
-                    </div>
-                </div>
-
-                <!-- Container para Filtros Ativos (PowerBI Style) -->
-                <div id="dashboardActiveFilters" class="hidden"></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-[var(--primary)]/10 text-[var(--primary)] group-hover:bg-[var(--primary)] group-hover:text-white transition-all duration-500 shadow-inner">
-                            <i class="ph-fill ph-buildings"></i>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTotalLojas">0</p>
-                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Lojas Ativas</p>
-                        </div>
-                    </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-red-500/10 text-red-500 group-hover:bg-red-500 group-hover:text-white transition-all duration-500 shadow-inner">
-                            <i class="ph-fill ph-warning-circle"></i>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
-                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Abertos</p>
-                        </div>
-                    </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-blue-500/10 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500 shadow-inner">
-                            <i class="ph-fill ph-rocket-launch"></i>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasPendentes">0</p>
-                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Em Fila</p>
-                        </div>
-                    </div>
-                    <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-500 shadow-inner">
-                            <i class="ph-fill ph-calendar-check"></i>
-                        </div>
-                        <div>
-                            <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasConcluidas">0</p>
-                            <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Concluídas</p>
-                        </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">

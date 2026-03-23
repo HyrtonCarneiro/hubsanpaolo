@@ -9,16 +9,20 @@ window.initChamadosChart = function() {
     const container = document.getElementById('chartChamadosContainer');
     if (!container) return;
 
-    // Inicializar filtros com datas padrão (últimos 30 dias)
+    // Inicializar filtros com datas padrão (últimos 1 mês)
     const end = new Date();
     const start = new Date();
-    start.setDate(end.getDate() - 30);
+    start.setMonth(start.getMonth() - 1);
 
     const elStart = document.getElementById('chartChamadosStart');
     const elEnd = document.getElementById('chartChamadosEnd');
     
     if (elStart) elStart.value = start.toISOString().split('T')[0];
     if (elEnd) elEnd.value = end.toISOString().split('T')[0];
+
+    // Ocultar a seleção de período e forçar Diário por padrão
+    const elPeriod = document.getElementById('chartChamadosPeriod');
+    if (elPeriod) elPeriod.value = 'diario';
 
     window.atualizarGraficoChamados();
 };
