@@ -37,8 +37,8 @@ if (localStorage.getItem('darkMode') === 'true') {
 }
 
 window.logout = function () {
-    sessionStorage.removeItem('loggedUser');
-    sessionStorage.removeItem('userSectors');
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
     window.location.href = '../../index.html';
 }
 

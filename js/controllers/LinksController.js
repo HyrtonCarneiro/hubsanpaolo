@@ -1,6 +1,8 @@
 // js/controllers/LinksController.js
 // Shared controller for "Links Úteis" feature across all sectors.
 
+window.allLinksCache = [];
+
 window.initLinksListeners = function (sectorId) {
     if (!sectorId) {
         console.error("sectorId is required for initLinksListeners");
@@ -10,11 +12,11 @@ window.initLinksListeners = function (sectorId) {
     try {
         const qLinks = query(collection(db, "links_" + sectorId), orderBy("timestamp", "desc"));
         onSnapshot(qLinks, (snapshot) => {
-            const links = [];
+            window.allLinksCache = [];
             snapshot.forEach((docSnap) => {
-                links.push({ firebaseId: docSnap.id, ...docSnap.data() });
+                window.allLinksCache.push({ firebaseId: docSnap.id, ...docSnap.data() });
             });
-            window.renderizarLinks(links);
+            window.renderizarLinks(); // Render using internal cache
         });
     } catch (e) {
         console.error("Erro ao iniciar listener links para " + sectorId, e);
@@ -71,25 +73,33 @@ window.deletarLink = async function (sectorId, linkId) {
     }
 };
 
-window.renderizarLinks = function (links) {
+window.renderizarLinks = function (filteredLinks) {
     const container = document.getElementById('listaLinksContainer');
     if (!container) return;
 
+    const linksToRender = filteredLinks || window.allLinksCache;
+
+    // Alphabetical Sorting (A-Z)
+    const sortedLinks = [...linksToRender].sort((a, b) => 
+        a.titulo.localeCompare(b.titulo, 'pt-BR', { sensitivity: 'base' })
+    );
+
     container.innerHTML = '';
 
-    if (links.length === 0) {
+    if (sortedLinks.length === 0) {
+        const isSearching = document.getElementById('buscaLinks')?.value.trim() !== '';
         container.innerHTML = `
             <div class="col-span-full flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-2xl border border-dashed border-[var(--border)] animate-fadeIn">
                 <div class="w-20 h-20 bg-[var(--bg-color)] rounded-full flex items-center justify-center mb-4">
-                    <i class="ph ph-link-break text-5xl text-[var(--border)]"></i>
+                    <i class="ph ph-${isSearching ? 'magnifying-glass' : 'link-break'} text-5xl text-[var(--border)]"></i>
                 </div>
-                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum link útil cadastrado</h2>
-                <p class="text-sm opacity-60 mt-2">Os links importantes para o setor aparecerão aqui.</p>
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">${isSearching ? 'Nenhum link encontrado' : 'Nenhum link útil cadastrado'}</h2>
+                <p class="text-sm opacity-60 mt-2">${isSearching ? 'Tente ajustar os termos da sua busca.' : 'Os links importantes para o setor aparecerão aqui.'}</p>
             </div>`;
         return;
     }
 
-    links.forEach((link) => {
+    sortedLinks.forEach((link) => {
         let domain = 'link';
         try {
             domain = new URL(link.url).hostname.replace('www.', '');
@@ -127,7 +137,21 @@ window.renderizarLinks = function (links) {
     });
 };
 
-window.getLinkIcon = function(url) {
+window.filtrarLinks = function () {
+    const term = (document.getElementById('buscaLinks')?.value || '').toLowerCase();
+    if (!term) {
+        window.renderizarLinks();
+        return;
+    }
+
+    const filtered = window.allLinksCache.filter(l => 
+        (l.titulo || '').toLowerCase().includes(term) || 
+        (l.descricao || '').toLowerCase().includes(term)
+    );
+    window.renderizarLinks(filtered);
+};
+
+window.getLinkIcon = function (url) {
     const u = url.toLowerCase();
     if (u.includes('drive.google.com')) return 'ph-fill ph-google-drive-logo';
     if (u.includes('sheets.google.com')) return 'ph-fill ph-file-xls';

@@ -1,7 +1,7 @@
 // js/controllers/AppController.js — Core da aplicação (init, nav, sidebar, dark mode)
 // Depends on: firebase-init.js (window globals), data.js (lojasIniciais)
 
-let currentUser = sessionStorage.getItem('loggedUser') || null;
+let currentUser = localStorage.getItem('loggedUser') || null;
 window.currentUser = currentUser;
 window.importCancelled = false;
 

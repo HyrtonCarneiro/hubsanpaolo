@@ -217,7 +217,7 @@ function abrirModal(id, nome, estado) {
     });
 
     // Inicializar responsáveis na criação com o usuário logado
-    var user = sessionStorage.getItem('loggedUser') || '';
+    var user = localStorage.getItem('loggedUser') || '';
     if (user && window.tempResponsaveisLogCriacao.length === 0) {
         window.tempResponsaveisLogCriacao = [user];
     }
@@ -285,7 +285,7 @@ window.salvarComentario = async function () {
         document.getElementById('tagPrazoLog').value = '';
         if (inputAnexo) inputAnexo.value = '';
         
-        window.tempResponsaveisLogCriacao = [sessionStorage.getItem('loggedUser') || ''];
+        window.tempResponsaveisLogCriacao = [localStorage.getItem('loggedUser') || ''];
         renderizarTagsResponsaveisLog('selectedResponsaveisLogCreation', window.tempResponsaveisLogCriacao, 'window.removerResponsavelLogCriacao');
         
         window.toggleFormOcorrencia(); // Esconder após salvar

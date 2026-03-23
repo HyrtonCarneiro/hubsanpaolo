@@ -795,7 +795,7 @@ window.salvarComentarioProjetoDetalhe = async function() {
 
     if (!p) return;
 
-    var user = sessionStorage.getItem('loggedUser') || 'Usuário';
+    var user = localStorage.getItem('loggedUser') || 'Usuário';
     var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     var novoArr = (p.comentarios || []);

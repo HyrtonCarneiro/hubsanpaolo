@@ -1,7 +1,7 @@
 // js/controllers/AppController.js — Core da aplicação TI (init, nav, sidebar, dark mode)
 // Depends on: firebase-init.js (window globals), data.js (lojasIniciais, appConfig)
 
-let currentUser = sessionStorage.getItem('loggedUser') || null;
+let currentUser = localStorage.getItem('loggedUser') || null;
 window.currentUser = currentUser;
 let currentMember = 'Hyrton';
 window.currentMember = currentMember;
@@ -35,8 +35,8 @@ if (localStorage.getItem('darkMode') === 'true') {
 }
 
 window.logout = function () {
-    sessionStorage.removeItem('loggedUser');
-    sessionStorage.removeItem('userSectors');
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
     window.location.href = '../../index.html';
 }
 
@@ -48,7 +48,7 @@ function initApp() {
 
     let sectors = [];
     try {
-        sectors = JSON.parse(sessionStorage.getItem('userSectors')) || [];
+        sectors = JSON.parse(localStorage.getItem('userSectors')) || [];
     } catch (e) {
         sectors = [];
     }

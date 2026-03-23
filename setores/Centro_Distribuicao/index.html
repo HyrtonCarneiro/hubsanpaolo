@@ -173,6 +173,15 @@
                     </div>
                 </div>
 
+                <div class="mb-6 animate-fadeIn">
+                    <div class="relative group">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-xl group-focus-within:text-[var(--primary)] transition-colors"></i>
+                        <input type="text" id="buscaLinks" placeholder="Pesquisar por título ou descrição..." 
+                            class="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-[var(--border)] rounded-2xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] focus:shadow-lg focus:shadow-[var(--primary)]/5 outline-none shadow-sm"
+                            oninput="window.filtrarLinks()">
+                    </div>
+                </div>
+
                 <div id="listaLinksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     <!-- Populado via JS -->
                 </div>
