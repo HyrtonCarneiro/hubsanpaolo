@@ -11,7 +11,8 @@ window.tiDashboardFilters = {
     unidade: null,
     regiao: null,
     tarefaStatus: null,
-    membro: null
+    membro: null,
+    dataChamado: null
 };
 
 // Registrar plugin de labels globalmente
@@ -20,19 +21,20 @@ if (typeof ChartDataLabels !== 'undefined') {
 }
 
 window.setTiDashboardFilter = function(key, value) {
-    // Se clicar no mesmo que já está filtrado, limpa o filtro (toggle)
     if (window.tiDashboardFilters[key] === value) {
         window.tiDashboardFilters[key] = null;
     } else {
         window.tiDashboardFilters[key] = value;
     }
     window.atualizarGraficos();
+    if (typeof window.atualizarGraficoChamados === 'function') window.atualizarGraficoChamados();
     window.renderizarFiltrosAtivos();
 };
 
 window.resetTiDashboardFilters = function() {
-    window.tiDashboardFilters = { unidade: null, regiao: null, tarefaStatus: null, membro: null };
+    window.tiDashboardFilters = { unidade: null, regiao: null, tarefaStatus: null, membro: null, dataChamado: null };
     window.atualizarGraficos();
+    if (typeof window.atualizarGraficoChamados === 'function') window.atualizarGraficoChamados();
     window.renderizarFiltrosAtivos();
 };
 

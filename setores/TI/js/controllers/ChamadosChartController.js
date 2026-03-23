@@ -68,6 +68,22 @@ window.atualizarGraficoChamados = function() {
             ]
         },
         options: {
+            onClick: (e, elements, chart) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const label = chart.data.labels[index];
+                    const period = document.getElementById('chartChamadosPeriod').value;
+                    if (period === 'diario') {
+                        if (typeof window.setTiDashboardFilter === 'function') {
+                            window.setTiDashboardFilter('dataChamado', label);
+                        }
+                    } else {
+                        if (typeof window.showToast === 'function') {
+                            window.showToast('O filtro interativo só está disponível na visualização Diária.', 'success'); // using 'success' for general info toast based on hub config
+                        }
+                    }
+                }
+            },
             responsive: true,
             maintainAspectRatio: false,
             interaction: {

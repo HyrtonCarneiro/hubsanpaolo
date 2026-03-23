@@ -28,6 +28,9 @@ const DashboardLogic = {
 
             const lgs = logs[loja.id] || [];
             lgs.forEach(l => {
+                // Filtro de Data Global (vindo do clique na tendência)
+                if (filters.dataChamado && l.dataStr && l.dataStr.split(' ')[0] !== filters.dataChamado) return;
+
                 // Contagem por estado (Todos os chamados, inclusive resolvidos)
                 if (loja.estado) {
                     metrics.regiaoCount[loja.estado] = (metrics.regiaoCount[loja.estado] || 0) + 1;

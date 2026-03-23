@@ -9,9 +9,19 @@ const ChamadosChartLogic = {
      */
     parseDataStr: function(str) {
         if (!str) return null;
-        const [datePart, timePart] = str.split(' ');
-        const [d, m, y] = datePart.split('/');
-        const [hr, min] = timePart.split(':');
+        const cleanStr = str.replace(',', '').trim();
+        const parts = cleanStr.split(' ');
+        if (parts.length === 0) return null;
+        
+        const [d, m, y] = parts[0].split('/');
+        if (!y) return null;
+
+        let hr = 0, min = 0;
+        if (parts[1]) {
+            const timeParts = parts[1].split(':');
+            hr = parseInt(timeParts[0]) || 0;
+            min = parseInt(timeParts[1]) || 0;
+        }
         return new Date(y, m - 1, d, hr, min);
     },
 
