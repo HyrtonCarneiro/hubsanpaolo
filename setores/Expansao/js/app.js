@@ -5,7 +5,7 @@
 // DashboardController, KanbanController, ModalObraController, GanttController, TarefasController → controllers/
 // KanbanCard, TaskCard → components/molecules/
 
-let currentUser = sessionStorage.getItem('loggedUser') || null;
+let currentUser = localStorage.getItem('loggedUser') || null;
 let obrasCache = [];
 
 function showToast(msg, type = 'success') {

@@ -1,7 +1,7 @@
 // js/app.js - Varejo
 // db, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, orderBy -> from firebase-init.js (window globals)
 
-let currentUser = sessionStorage.getItem('loggedUser') || null;
+let currentUser = localStorage.getItem('loggedUser') || null;
 let equipeCache = [];
 
 function showToast(msg, type = 'success') {

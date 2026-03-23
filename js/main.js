@@ -3,7 +3,7 @@
 // Button → from js/components/atoms/Button.js (window global)
 // SectorCard → from js/components/molecules/SectorCard.js (window global)
 
-let currentUser = sessionStorage.getItem('loggedUser') || null;
+let currentUser = localStorage.getItem('loggedUser') || null;
 let allUsersCache = [];
 
 function showToast(msg, type = 'success') {
@@ -27,9 +27,9 @@ window.handleAuth = async function () {
             if (user === 'admin' && pass === '$@np@010') {
                 const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
                 await addDoc(collection(db, "users"), { user: 'admin', pass: '$@np@010', setores_permitidos: allSectors, isSuperAdmin: true });
-                sessionStorage.setItem('loggedUser', user);
-                sessionStorage.setItem('userSectors', JSON.stringify(allSectors));
-                sessionStorage.setItem('isSuperAdmin', 'true');
+                localStorage.setItem('loggedUser', user);
+                localStorage.setItem('userSectors', JSON.stringify(allSectors));
+                localStorage.setItem('isSuperAdmin', 'true');
                 currentUser = user;
                 initApp();
             } else {
@@ -52,9 +52,9 @@ window.handleAuth = async function () {
             if (user === 'admin') {
                 sectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
             }
-            sessionStorage.setItem('userSectors', JSON.stringify(sectors));
-            sessionStorage.setItem('loggedUser', user);
-            sessionStorage.setItem('isSuperAdmin', (user === 'admin' || userData.isSuperAdmin) ? 'true' : 'false');
+            localStorage.setItem('userSectors', JSON.stringify(sectors));
+            localStorage.setItem('loggedUser', user);
+            localStorage.setItem('isSuperAdmin', (user === 'admin' || userData.isSuperAdmin) ? 'true' : 'false');
             currentUser = user;
             initApp();
         } else {
@@ -67,9 +67,9 @@ window.handleAuth = async function () {
 }
 
 window.logout = function () {
-    sessionStorage.removeItem('loggedUser');
-    sessionStorage.removeItem('userSectors');
-    sessionStorage.removeItem('isSuperAdmin');
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
+    localStorage.removeItem('isSuperAdmin');
     location.reload();
 }
 
@@ -78,7 +78,7 @@ function initApp() {
 
     let sectors = [];
     try {
-        sectors = JSON.parse(sessionStorage.getItem('userSectors')) || ["TI"];
+        sectors = JSON.parse(localStorage.getItem('userSectors')) || ["TI"];
     } catch (e) {
         sectors = ["TI"];
     }
@@ -108,7 +108,7 @@ function initApp() {
         { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
     ];
 
-    const isSuperAdmin = sessionStorage.getItem('isSuperAdmin') === 'true';
+    const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
 
     const hubGrid = document.getElementById('hub-grid');
     if (hubGrid) {
@@ -331,7 +331,7 @@ window.abrirModalPerfil = async function () {
 
     // Carregar setores do usuário
     try {
-        const sectors = JSON.parse(sessionStorage.getItem('userSectors')) || [];
+        const sectors = JSON.parse(localStorage.getItem('userSectors')) || [];
         const sectorNames = {
             'Diretoria': 'Diretoria', 'TI': 'TI', 'Auditoria': 'Auditoria',
             'Controladoria': 'Controladoria', 'Expansao': 'Expansão', 'Fiscal': 'Fiscal',

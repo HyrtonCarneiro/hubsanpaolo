@@ -3,4 +3,5 @@
 // Controllers: AppController, AuditoriaOnlineController, DashboardController,
 //              PlanejamentoController, TarefasController, ChartCMVController
 
+let currentUser = localStorage.getItem('loggedUser') || null;
 if (currentUser) initApp();

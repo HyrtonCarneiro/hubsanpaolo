@@ -3,4 +3,5 @@
 // Controllers: AppController, LojasChamadosController, DashboardController,
 //              ProjetosEquipeController, AtasController
 
+let currentUser = localStorage.getItem('loggedUser') || null;
 if (currentUser) initApp();
