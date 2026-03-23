@@ -56,6 +56,7 @@ window.initLojasChamadosListeners = function () {
             });
             window.renderizarLojas();
             if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
+            if (typeof window.atualizarGraficoChamados === 'function') window.atualizarGraficoChamados();
             if (typeof window.renderizarMarcadoresMapa === 'function') window.renderizarMarcadoresMapa();
             if (lojaAtualId !== null) renderizarComentarios(window.sysLogs[lojaAtualId] || []);
 
@@ -317,7 +318,8 @@ window.resolverComentario = async function (firebaseId) {
         await updateDoc(doc(db, "logs", firebaseId), {
             resolvido: true, 
             autorResolucao: autores, 
-            dataResolucao: dataResolucao
+            dataResolucao: dataResolucao,
+            timestampResolvido: Date.now()
         });
         showToast("Ocorrência marcada como resolvida");
         if (typeof window.registrarAtividade === 'function') {

@@ -9,9 +9,10 @@ const DashboardLogic = {
      * Calcula métricas de chamados das lojas.
      * @param {Array} lojas - Lista de lojas iniciais.
      * @param {Object} logs - Objeto com logs/chamados do Firebase.
+     * @param {Object} filters - Filtros ativos { unidade, regiao }
      * @returns {Object} { totalPendentes, regiaoCount, lojaCallCount }
      */
-    processarMetricasLojas: function(lojas, logs) {
+    processarMetricasLojas: function(lojas, logs, filters = {}) {
         let metrics = {
             totalPendentes: 0,
             regiaoCount: {},
@@ -21,6 +22,10 @@ const DashboardLogic = {
         if (!lojas || !logs) return metrics;
 
         lojas.forEach(loja => {
+            // Aplicar Filtros de Loja/Região
+            if (filters.unidade && loja.nome !== filters.unidade) return;
+            if (filters.regiao && loja.estado !== filters.regiao) return;
+
             const lgs = logs[loja.id] || [];
             lgs.forEach(l => {
                 // Contagem por estado (Todos os chamados, inclusive resolvidos)
@@ -44,9 +49,10 @@ const DashboardLogic = {
     /**
      * Calcula métricas de tarefas da equipe, excluindo as concluídas.
      * @param {Object} projetos - Objeto window.sysProjetos (agrupado por membro).
+     * @param {Object} filters - Filtros ativos { tarefaStatus, membro }
      * @returns {Object} { andamento, pendentes, porMembro }
      */
-    processarMetricasTarefasAtivas: function(projetos) {
+    processarMetricasTarefasAtivas: function(projetos, filters = {}) {
         let metrics = {
             andamento: 0,
             pendentes: 0,
@@ -56,10 +62,17 @@ const DashboardLogic = {
         if (!projetos) return metrics;
 
         Object.keys(projetos).forEach(membro => {
+            // Filtro por Membro
+            if (filters.membro && membro !== filters.membro) return;
+
             metrics.porMembro[membro] = 0;
             const lista = projetos[membro] || [];
             lista.forEach(p => {
                 const st = p.status || 'Pendente';
+                
+                // Filtro por Status da Tarefa
+                if (filters.tarefaStatus && st !== filters.tarefaStatus) return;
+
                 if (st !== 'Concluído') {
                     metrics.porMembro[membro]++;
                     if (st === 'Em Andamento') metrics.andamento++;

@@ -6,14 +6,69 @@ let chartInstRegiao = null;
 window.chartInstTarefaStatus = null;
 window.chartInstTarefaEquipe = null;
 
+// Novo Estado Global de Filtros (Estilo PowerBI)
+window.tiDashboardFilters = {
+    unidade: null,
+    regiao: null,
+    tarefaStatus: null,
+    membro: null
+};
+
 // Registrar plugin de labels globalmente
 if (typeof ChartDataLabels !== 'undefined') {
     Chart.register(ChartDataLabels);
 }
 
+window.setTiDashboardFilter = function(key, value) {
+    // Se clicar no mesmo que já está filtrado, limpa o filtro (toggle)
+    if (window.tiDashboardFilters[key] === value) {
+        window.tiDashboardFilters[key] = null;
+    } else {
+        window.tiDashboardFilters[key] = value;
+    }
+    window.atualizarGraficos();
+    window.renderizarFiltrosAtivos();
+};
+
+window.resetTiDashboardFilters = function() {
+    window.tiDashboardFilters = { unidade: null, regiao: null, tarefaStatus: null, membro: null };
+    window.atualizarGraficos();
+    window.renderizarFiltrosAtivos();
+};
+
+window.renderizarFiltrosAtivos = function() {
+    const container = document.getElementById('dashboardActiveFilters');
+    if (!container) return;
+
+    const activeKeys = Object.keys(window.tiDashboardFilters).filter(k => window.tiDashboardFilters[k]);
+    
+    if (activeKeys.length === 0) {
+        container.innerHTML = '';
+        container.classList.add('hidden');
+        return;
+    }
+
+    container.classList.remove('hidden');
+    let html = `<div class="flex flex-wrap gap-2 items-center mb-4 animate-fadeIn">
+        <span class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mr-2">Filtros Ativos:</span>`;
+    
+    activeKeys.forEach(k => {
+        html += `
+            <div class="flex items-center gap-2 px-3 py-1 bg-[var(--primary)]/10 text-[var(--primary)] rounded-full border border-[var(--primary)]/20 text-xs font-bold">
+                <span class="opacity-60 uppercase text-[9px]">${k}:</span> ${window.tiDashboardFilters[k]}
+                <button onclick="window.setTiDashboardFilter('${k}', '${window.tiDashboardFilters[k]}')" class="hover:text-red-500 transition-colors">
+                    <i class="ph ph-x-circle"></i>
+                </button>
+            </div>`;
+    });
+
+    html += `<button onclick="window.resetTiDashboardFilters()" class="text-xs font-bold text-red-500 hover:underline ml-2">Limpar Tudo</button></div>`;
+    container.innerHTML = html;
+};
+
 window.atualizarGraficos = function () {
-    const l_metrics = DashboardLogic.processarMetricasLojas(window.lojasIniciais, window.sysLogs);
-    const t_metrics = DashboardLogic.processarMetricasTarefasAtivas(window.sysProjetos);
+    const l_metrics = DashboardLogic.processarMetricasLojas(window.lojasIniciais, window.sysLogs, window.tiDashboardFilters);
+    const t_metrics = DashboardLogic.processarMetricasTarefasAtivas(window.sysProjetos, window.tiDashboardFilters);
 
     // Atualizar Contadores do Topo
     var elTotal = document.getElementById('statTotalLojas');
@@ -41,6 +96,24 @@ window.atualizarGraficos = function () {
         formatter: function(value) { return value > 0 ? value : ''; }
     };
 
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: (e, elements, chart) => {
+            if (elements.length > 0) {
+                const index = elements[0].index;
+                const label = chart.data.labels[index];
+                
+                // Determinar qual filtro aplicar baseado no ID do canvas
+                const id = chart.canvas.id;
+                if (id === 'chartStatus') window.setTiDashboardFilter('unidade', label);
+                if (id === 'chartRegionais') window.setTiDashboardFilter('regiao', label);
+                if (id === 'chartTarefaStatus') window.setTiDashboardFilter('tarefaStatus', label);
+                if (id === 'chartTarefaEquipe') window.setTiDashboardFilter('membro', label);
+            }
+        }
+    };
+
     if (elChartStatus) {
         if (chartInstStatus) chartInstStatus.destroy();
         var labelsLoja = Object.keys(l_metrics.lojaCallCount);
@@ -56,6 +129,7 @@ window.atualizarGraficos = function () {
                 }]
             },
             options: { 
+                ...commonOptions,
                 plugins: { 
                     title: { display: true, text: 'Pendências por Unidade', color: textColor }, 
                     legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
@@ -76,6 +150,7 @@ window.atualizarGraficos = function () {
                 datasets: [{ label: 'Total de Ocorrências (Incl. Resolvidos)', data: orderedValues, backgroundColor: '#3b82f6' }]
             },
             options: {
+                ...commonOptions,
                 plugins: { 
                     title: { display: true, text: 'Volume de Chamados por Estado', color: textColor }, 
                     legend: { labels: { color: textColor } },
@@ -96,6 +171,7 @@ window.atualizarGraficos = function () {
                 datasets: [{ data: [t_metrics.pendentes, t_metrics.andamento], backgroundColor: ['#ef4444', '#3b82f6'] }]
             },
             options: { 
+                ...commonOptions,
                 plugins: { 
                     title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, 
                     legend: { labels: { color: textColor } },
@@ -116,6 +192,7 @@ window.atualizarGraficos = function () {
                 datasets: [{ label: 'Tarefas Ativas por Membro', data: dataValues, backgroundColor: '#8b5cf6' }]
             },
             options: {
+                ...commonOptions,
                 plugins: { 
                     title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor }, 
                     legend: { display: false },

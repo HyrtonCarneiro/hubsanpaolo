@@ -64,6 +64,10 @@ function initApp() {
     document.querySelectorAll('.flex.items-center.gap-3').forEach(function (container) {
         if (!container.closest('.mb-8')) return;
         if (container.querySelector('.btn-hub')) return;
+        
+        // Garante que o botão só seja injetado no cabeçalho principal (que contém um h1)
+        if (!container.querySelector('h1')) return;
+
         var btn = document.createElement('button');
         btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all duration-300 shadow-sm btn-hub active:scale-90';
         btn.title = 'Escolha de Setores';
@@ -79,6 +83,7 @@ function initApp() {
     if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
     if (typeof window.initAtividadesListener === 'function') window.initAtividadesListener();
     if (typeof window.initLinksListeners === 'function') window.initLinksListeners('TI');
+    if (typeof window.initChamadosChart === 'function') window.initChamadosChart();
 
     window.switchView('analytics');
 }
@@ -106,8 +111,13 @@ window.switchView = function (view) {
         window.toggleSidebar();
     }
 
-    if (view === 'analytics' && typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
-    if (view === 'lojas') window.renderizarLojas();
+    if (view === 'analytics') {
+        if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
+        if (typeof window.atualizarGraficoChamados === 'function') window.atualizarGraficoChamados();
+    }
+    if (view === 'lojas') {
+        window.renderizarLojas();
+    }
     if (view === 'projetos') window.switchMember(window.currentMember || 'Hyrton');
     if (view === 'atas' && typeof window.renderizarAtas === 'function') window.renderizarAtas();
     if (view === 'protocolos' && typeof window.renderizarProtocolos === 'function') window.renderizarProtocolos();
