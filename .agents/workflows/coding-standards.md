@@ -28,7 +28,7 @@ Após os testes de unidade, verifique internamente no navegador:
 
 ### Passo 6 — Finalização
 1. Informe o usuário sobre as alterações concluídas.
-2. **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. Não utilize o subagente para testes automáticos ou interações após o link ser aberto; o usuário fará o teste de forma livre. Seu papel encerra-se ao garantir o ambiente pronto para o humano.
+2. **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. Não utilize o subagente para testes automáticos ou interações após o link ser aberto; o usuário fará o teste de forma livre. Seu papel encerra-se ao garantir o ambiente pronto para o humano. **No Windows, use obrigatoriamente `powershell -Command "Start-Process 'caminho_absoluto'"` para lidar corretamente com espaços em pastas.**
 3. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
 
 ## Arquitetura

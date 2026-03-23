@@ -61,8 +61,7 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
 
 - **Isolamento de Lógica Pura**: Sempre que possível, extraia a lógica de negócio para arquivos em `js/logic/`. Eles devem ser agnósticos ao DOM/Firebase.
 - **Testes de Unidade Primários**: Valide o código prioritariamente via Node.js em `js/tests/`. Isso garante feedback em milissegundos.
-- **Browser Subagent**: Use apenas para validação visual interna e integração DOM/CSS. Minimize o tempo de browser aberto.
-- **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. O teste é EXCLUSIVO do usuário; não utilize subagentes para interações automáticas após abrir o link. Seu papel se encerra ao garantir que o ambiente está pronto para o teste humano.
+- **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. O teste é EXCLUSIVO do usuário; não utilize subagentes para interações automáticas após abrir o link. Seu papel se encerra ao garantir que o ambiente está pronto para o teste humano. **No Windows, use obrigatoriamente `powershell -Command "Start-Process 'caminho_absoluto'"` para evitar problemas com espaços em nomes de pastas.**
 
 ## ⚙️ Custom Workflow Policies
 
