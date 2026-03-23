@@ -76,6 +76,7 @@ function initApp() {
     if (typeof window.initLojasChamadosListeners === 'function') window.initLojasChamadosListeners();
     if (typeof window.initProjetosEquipeListeners === 'function') window.initProjetosEquipeListeners();
     if (typeof window.initAtasListeners === 'function') window.initAtasListeners();
+    if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
     if (typeof window.initAtividadesListener === 'function') window.initAtividadesListener();
 
     window.switchView('analytics');
@@ -84,7 +85,7 @@ window.initApp = initApp;
 
 window.switchView = function (view) {
     // Esconder todas as views
-    const views = ['analytics', 'lojas', 'projetos', 'atas', 'metapwr', 'tiaguinho', 'mapa'];
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'mapa'];
     views.forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.style.display = 'none';
@@ -108,6 +109,7 @@ window.switchView = function (view) {
     if (view === 'lojas') window.renderizarLojas();
     if (view === 'projetos') window.switchMember(window.currentMember || 'Hyrton');
     if (view === 'atas' && typeof window.renderizarAtas === 'function') window.renderizarAtas();
+    if (view === 'protocolos' && typeof window.renderizarProtocolos === 'function') window.renderizarProtocolos();
     if (view === 'mapa' && typeof window.initMapa === 'function') window.initMapa();
 }
 

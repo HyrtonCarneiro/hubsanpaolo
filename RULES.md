@@ -41,7 +41,6 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
 - All responses must be technical, direct, and focused on code efficiency.
 
 ## UI/UX & Design Philosophy
-
 1.  **Premium Aesthetics (Wow Factor):**
     *   Use curated, harmonious color palettes (avoid default red/blue/green).
     *   Prioritize `rounded-xl` or `rounded-2xl` for containers and buttons.
@@ -58,14 +57,14 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
     *   Use `transition-all` for smooth state changes.
     *   Declutter: use toggleable forms or modais for complex inputs instead of large fixed blocks.
 
-## Metodologia de Testes Ágeis
+## 🧪 Verificação Final e Teste Manual
 
-1.  **Isolamento de Lógica Pura**: Sempre que possível, extraia a lógica de negócio para arquivos em `js/logic/`. Eles devem ser agnósticos ao DOM/Firebase.
-2.  **Testes de Unidade Primários**: Valide o código prioritariamente via Node.js em `js/tests/`. Isso garante feedback em milissegundos.
-3.  **Browser Subagent**: Use apenas para validação visual final e integração DOM/CSS. Minimize o tempo de browser aberto.
+- **Isolamento de Lógica Pura**: Sempre que possível, extraia a lógica de negócio para arquivos em `js/logic/`. Eles devem ser agnósticos ao DOM/Firebase.
+- **Testes de Unidade Primários**: Valide o código prioritariamente via Node.js em `js/tests/`. Isso garante feedback em milissegundos.
+- **Browser Subagent**: Use apenas para validação visual interna e integração DOM/CSS. Minimize o tempo de browser aberto.
+- **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. O teste é EXCLUSIVO do usuário; não utilize subagentes para interações automáticas após abrir o link. Seu papel se encerra ao garantir que o ambiente está pronto para o teste humano.
 
-## Custom Workflow Policies
+## ⚙️ Custom Workflow Policies
 
 - **Git:** Do NOT perform `git commit` or `git push` automatically. Always wait for explicit user instruction.
 - **Verification:** Perform tests and verification internally. Do NOT attach screenshots or recordings to the `walkthrough.md` unless explicitly requested by the user.
-- **Manual Testing:** Ao finalizar a modificação, você DEVE abrir um navegador local com o sistema/aplicação para que o usuário realize o teste manual. O teste é EXCLUSIVO do usuário; não utilize subagentes para interações automáticas após abrir o link.
