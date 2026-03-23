@@ -105,6 +105,15 @@ window.atualizarGraficoChamados = function() {
                     titleFont: { size: 14 },
                     bodyFont: { size: 13 },
                     displayColors: true
+                },
+                datalabels: {
+                    display: true,
+                    color: textColor,
+                    font: { weight: 'bold', size: 11 },
+                    formatter: function(value) { return value > 0 ? value : ''; },
+                    align: 'top',
+                    anchor: 'end',
+                    offset: 4
                 }
             },
             scales: {
@@ -114,7 +123,12 @@ window.atualizarGraficoChamados = function() {
                 },
                 y: {
                     beginAtZero: true,
-                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                    grid: { 
+                        display: true,
+                        color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                        drawBorder: false
+                    },
+                    border: { display: false },
                     ticks: { color: textColor, stepSize: 1, precision: 0 }
                 }
             }

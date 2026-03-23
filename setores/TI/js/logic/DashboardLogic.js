@@ -78,6 +78,8 @@ const DashboardLogic = {
                     if (loja.nome) {
                         metrics.lojaCallCount[loja.nome] = (metrics.lojaCallCount[loja.nome] || 0) + 1;
                     }
+                } else {
+                    metrics.totalResolvidos++;
                 }
             });
         });
@@ -95,6 +97,7 @@ const DashboardLogic = {
         let metrics = {
             andamento: 0,
             pendentes: 0,
+            concluidas: 0,
             porMembro: {} // { 'Hyrton': count, ... }
         };
 
