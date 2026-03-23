@@ -52,10 +52,10 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto md:hidden" onclick="window.toggleSidebar()"></div>
         
         <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-[250px] bg-surface dark:bg-[#362011] border-r border-border dark:border-[#4a2815] transition-transform duration-300 transform -translate-x-full md:translate-x-0 z-[999] flex flex-col" id="appSidebar">
+        <aside class="fixed inset-y-0 left-0 w-[250px] bg-surface dark:bg-[#362011] border-r-2 border-border dark:border-[#4a2815] transition-transform duration-300 transform -translate-x-full md:translate-x-0 z-[999] flex flex-col border-[var(--border)]" id="appSidebar">
 
             <!-- Floating Sidebar Toggle -->
-            <button onclick="window.toggleSidebar()" class="absolute -right-12 top-24 w-12 h-12 bg-[var(--surface)] border-y border-r border-[var(--border)] text-[var(--mainText)] rounded-r-2xl flex items-center justify-center transition-all shadow-[4px_0_10px_rgba(0,0,0,0.05)] text-2xl hover:text-[var(--primary)] z-50">
+            <button onclick="window.toggleSidebar()" class="absolute -right-9 top-24 w-9 h-9 bg-[var(--surface)] border-2 border-[var(--border)] text-[var(--mainText)] rounded-r-xl flex items-center justify-center transition-all shadow-md text-lg hover:text-[var(--primary)] z-50">
                 <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
             </button>
             
