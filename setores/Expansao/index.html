@@ -323,8 +323,11 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-brandOrange text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink()">
+                        <button id="btnSalvarLink" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-brandOrange text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink()">
                             <i class="ph ph-floppy-disk text-xl"></i> Adicionar Link
+                        </button>
+                        <button id="btnCancelarEdicao" class="hidden items-center gap-2 px-6 py-3 rounded-xl bg-background border border-border text-mainText font-bold shadow-sm transition-all duration-300 hover:bg-black/5 active:scale-95" onclick="window.cancelarEdicao()">
+                            <i class="ph ph-x-circle text-xl"></i> Cancelar
                         </button>
                     </div>
                 </div>
@@ -338,7 +341,7 @@
                     </div>
                 </div>
 
-                <div id="listaLinksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div id="listaLinksContainer" class="flex flex-col gap-4">
                     <!-- Populado via JS -->
                 </div>
             </div>
