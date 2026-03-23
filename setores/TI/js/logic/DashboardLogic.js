@@ -29,7 +29,31 @@ const DashboardLogic = {
             const lgs = logs[loja.id] || [];
             lgs.forEach(l => {
                 // Filtro de Data Global (vindo do clique na tendência)
-                if (filters.dataChamado && l.dataStr && l.dataStr.split(' ')[0] !== filters.dataChamado) return;
+                if (filters.dataChamado) {
+                    let match = false;
+                    
+                    // Verifica data de abertura
+                    if (l.timestamp) {
+                        const openStr = new Date(l.timestamp).toLocaleDateString('pt-BR');
+                        if (openStr === filters.dataChamado) match = true;
+                    } else if (l.dataStr) {
+                        const cleanStr = l.dataStr.replace(',', '').trim().split(' ')[0];
+                        if (cleanStr === filters.dataChamado) match = true;
+                    }
+                    
+                    // Verifica data de resolução
+                    if (l.resolvido && !match) {
+                        if (l.timestampResolvido) {
+                            const resStr = new Date(l.timestampResolvido).toLocaleDateString('pt-BR');
+                            if (resStr === filters.dataChamado) match = true;
+                        } else if (l.dataResolucao) {
+                            const cleanResStr = l.dataResolucao.replace(',', '').trim().split(' ')[0];
+                            if (cleanResStr === filters.dataChamado) match = true;
+                        }
+                    }
+
+                    if (!match) return;
+                }
 
                 // Contagem por estado (Todos os chamados, inclusive resolvidos)
                 if (loja.estado) {
