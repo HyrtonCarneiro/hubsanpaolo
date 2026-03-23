@@ -28,41 +28,52 @@ const DashboardLogic = {
 
             const lgs = logs[loja.id] || [];
             lgs.forEach(l => {
-                // Filtro de Data Global (vindo do clique na tendência)
+                let isOpenOnDate = false;
+                let isResolvedOnDate = false;
+
                 if (filters.dataChamado) {
-                    let match = false;
+                    const [d, m, y] = filters.dataChamado.split('/');
+                    const targetDate = new Date(y, m - 1, d, 23, 59, 59).getTime();
                     
-                    // Verifica data de abertura
-                    if (l.timestamp) {
-                        const openStr = new Date(l.timestamp).toLocaleDateString('pt-BR');
-                        if (openStr === filters.dataChamado) match = true;
-                    } else if (l.dataStr) {
-                        const cleanStr = l.dataStr.replace(',', '').trim().split(' ')[0];
-                        if (cleanStr === filters.dataChamado) match = true;
+                    let openTs = l.timestamp;
+                    if (!openTs && l.dataStr) {
+                        const cleanStr = l.dataStr.replace(',', '').trim();
+                        const parts = cleanStr.split(' ');
+                        const [od, om, oy] = parts[0].split('/');
+                        openTs = new Date(oy, om - 1, od, 0, 0).getTime();
                     }
-                    
-                    // Verifica data de resolução
-                    if (l.resolvido && !match) {
-                        if (l.timestampResolvido) {
-                            const resStr = new Date(l.timestampResolvido).toLocaleDateString('pt-BR');
-                            if (resStr === filters.dataChamado) match = true;
-                        } else if (l.dataResolucao) {
-                            const cleanResStr = l.dataResolucao.replace(',', '').trim().split(' ')[0];
-                            if (cleanResStr === filters.dataChamado) match = true;
+
+                    if (!openTs || openTs > targetDate) return; 
+
+                    isOpenOnDate = true;
+
+                    if (l.resolvido) {
+                        let resTs = l.timestampResolvido;
+                        if (!resTs && l.dataResolucao) {
+                            const cleanResStr = l.dataResolucao.replace(',', '').trim();
+                            const parts = cleanResStr.split(' ');
+                            if (parts.length > 0) {
+                                const [rd, rm, ry] = parts[0].split('/');
+                                resTs = new Date(ry, rm - 1, rd, 0, 0).getTime();
+                            }
+                        }
+                        if (resTs && resTs <= targetDate) {
+                            isResolvedOnDate = true;
                         }
                     }
-
-                    if (!match) return;
+                } else {
+                    isOpenOnDate = true;
+                    if (l.resolvido) isResolvedOnDate = true;
                 }
 
-                // Contagem por estado (Todos os chamados, inclusive resolvidos)
+                if (!isOpenOnDate) return;
+
                 if (loja.estado) {
                     metrics.regiaoCount[loja.estado] = (metrics.regiaoCount[loja.estado] || 0) + 1;
                 }
 
-                if (!l.resolvido) {
+                if (!isResolvedOnDate) {
                     metrics.totalPendentes++;
-                    // Por Loja (Apenas pendências conforme KPI anterior)
                     if (loja.nome) {
                         metrics.lojaCallCount[loja.nome] = (metrics.lojaCallCount[loja.nome] || 0) + 1;
                     }

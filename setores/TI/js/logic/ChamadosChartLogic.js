@@ -57,12 +57,42 @@ const ChamadosChartLogic = {
     },
 
     /**
-     * Agrupa eventos por período.
+     * Agrupa eventos por período garantindo eixo contínuo.
      */
     groupEvents: function(events, period, start, end) {
         const result = {};
-        const startTime = start ? new Date(start).getTime() : 0;
-        const endTime = end ? new Date(end).setHours(23, 59, 59) : Infinity;
+        let startTime = 0, endTime = Infinity;
+
+        // Pré-preencher todas as datas do período para não pular dias/semanas vazias
+        if (start && end) {
+            const [sy, sm, sd] = start.split('-');
+            const startDate = new Date(sy, sm - 1, sd, 0, 0, 0);
+            startTime = startDate.getTime();
+
+            const [ey, em, ed] = end.split('-');
+            const endDate = new Date(ey, em - 1, ed, 23, 59, 59);
+            endTime = endDate.getTime();
+
+            let current = new Date(startDate.getTime());
+            while (current <= endDate) {
+                let key;
+                if (period === 'diario') {
+                    key = current.toLocaleDateString('pt-BR');
+                    current.setDate(current.getDate() + 1);
+                } else if (period === 'semanal') {
+                    const first = current.getDate() - current.getDay();
+                    const sunday = new Date(new Date(current).setDate(first));
+                    key = 'Semana ' + sunday.toLocaleDateString('pt-BR');
+                    current.setDate(current.getDate() + 7);
+                    current.setDate(current.getDate() - current.getDay());
+                } else if (period === 'mensal') {
+                    key = current.toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
+                    current.setMonth(current.getMonth() + 1);
+                    current.setDate(1);
+                }
+                if (!result[key]) result[key] = { aberto: 0, resolvido: 0 };
+            }
+        }
 
         events.forEach(ev => {
             if (ev.timestamp < startTime || ev.timestamp > endTime) return;
@@ -73,9 +103,8 @@ const ChamadosChartLogic = {
             if (period === 'diario') {
                 key = date.toLocaleDateString('pt-BR');
             } else if (period === 'semanal') {
-                // Pega o primeiro dia da semana (Domingo)
                 const first = date.getDate() - date.getDay();
-                const sunday = new Date(date.setDate(first));
+                const sunday = new Date(new Date(date).setDate(first));
                 key = 'Semana ' + sunday.toLocaleDateString('pt-BR');
             } else if (period === 'mensal') {
                 key = date.toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
