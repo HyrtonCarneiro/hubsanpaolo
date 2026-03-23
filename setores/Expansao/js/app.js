@@ -147,6 +147,7 @@ window.toggleSidebar = function () {
             overlay.classList.remove('show');
         }
     }
+    document.body.classList.toggle('sidebar-collapsed');
 }
 
 // Global Wrappers for HTML Event Listeners

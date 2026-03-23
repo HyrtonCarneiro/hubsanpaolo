@@ -105,6 +105,7 @@ window.toggleSidebar = function () {
             overlay.classList.add('hidden');
         }
     }
+    document.body.classList.toggle('sidebar-collapsed');
 }
 
 // ====== EQUIPE ======

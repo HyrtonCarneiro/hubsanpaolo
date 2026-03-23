@@ -47,7 +47,7 @@
 <body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
 
     <div id="main-app" class="flex h-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-main)] transition-colors duration-300">
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden " onclick="window.toggleSidebar()"></div>
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
         <aside class="w-64 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0" id="appSidebar">
             <div class="p-6 font-bold text-xl text-[var(--primary)] flex items-center gap-3 border-b border-[var(--border)]">
                 <i class="ph-fill ph-chart-line-up text-2xl"></i> San Paolo Varejo

@@ -93,3 +93,11 @@ body.dark-mode [id^="nav-"].active {
     color: #fff !important;
     background: rgba(255, 255, 255, 0.08) !important;
 }
+
+/* Desktop Sidebar Collapse */
+@media (min-width: 768px) {
+    body.sidebar-collapsed #appSidebar {
+        margin-left: -17rem;
+        transition: margin-left 0.3s ease;
+    }
+}
