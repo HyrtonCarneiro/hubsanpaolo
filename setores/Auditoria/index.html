@@ -58,6 +58,12 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden" onclick="window.toggleSidebar()"></div>
         
         <aside class="w-68 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col transition-all duration-300 fixed inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0 shadow-xl md:shadow-none" id="appSidebar">
+
+            <!-- Floating Sidebar Toggle -->
+            <button onclick="window.toggleSidebar()" class="absolute -right-12 top-24 w-12 h-12 bg-[var(--surface)] border-y border-r border-[var(--border)] text-[var(--mainText)] rounded-r-2xl flex items-center justify-center transition-all shadow-[4px_0_10px_rgba(0,0,0,0.05)] text-2xl hover:text-[var(--primary)] z-50">
+                <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
+            </button>
+            
             <div class="p-8 font-black text-2xl text-[var(--text-main)] flex items-center gap-3 border-b border-[var(--border)] bg-[var(--bg-color)]/30">
                 <div class="w-10 h-10 bg-[#da0d17] rounded-xl flex items-center justify-center text-white shadow-lg shadow-[#da0d17]/20 rotate-3">
                     <i class="ph-fill ph-magnifying-glass text-2xl"></i>
@@ -129,10 +135,7 @@
             <div id="view-dashboard">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -271,10 +274,7 @@
             <div id="view-auditoriaOnline" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -350,10 +350,7 @@
             <div id="view-planejamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -436,10 +433,7 @@
             <div id="view-mapeamento" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -593,10 +587,7 @@
             <div id="view-tarefas" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -686,10 +677,7 @@
             <div id="view-metapwr" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
@@ -716,10 +704,7 @@
             <div id="view-links" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-            <button title="Recolher/Expandir Menu" class=" p-2.5 rounded-xl bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] shadow-sm hover:bg-black/5 transition-all active:scale-95" onclick="window.toggleSidebar()">
-                            <i class="ph ph-list text-xl"></i>
-                        </button>
-                        <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
+            <button class="w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" title="Escolha de Setores" onclick="window.location.href='../../index.html?hub=1'">
                             <i class="ph ph-squares-four text-xl"></i>
                         </button>
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">

@@ -101,3 +101,16 @@ body.dark-mode [id^="nav-"].active {
         transition: margin-left 0.3s ease;
     }
 }
+
+/* Sidebar Toggle Icon Rotation */
+.sidebar-icon-toggle {
+    transition: transform 0.3s ease;
+}
+body.sidebar-collapsed .sidebar-icon-toggle {
+    transform: rotate(180deg);
+}
+@media (max-width: 767px) {
+    #appSidebar.-translate-x-full .sidebar-icon-toggle {
+        transform: rotate(180deg);
+    }
+}

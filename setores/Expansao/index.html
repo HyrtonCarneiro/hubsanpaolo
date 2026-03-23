@@ -53,6 +53,12 @@
         
         <!-- Sidebar -->
         <aside class="fixed inset-y-0 left-0 w-[250px] bg-surface dark:bg-[#362011] border-r border-border dark:border-[#4a2815] transition-transform duration-300 transform -translate-x-full md:translate-x-0 z-[999] flex flex-col" id="appSidebar">
+
+            <!-- Floating Sidebar Toggle -->
+            <button onclick="window.toggleSidebar()" class="absolute -right-12 top-24 w-12 h-12 bg-[var(--surface)] border-y border-r border-[var(--border)] text-[var(--mainText)] rounded-r-2xl flex items-center justify-center transition-all shadow-[4px_0_10px_rgba(0,0,0,0.05)] text-2xl hover:text-[var(--primary)] z-50">
+                <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
+            </button>
+            
             <div class="p-5 text-lg font-bold border-b border-border dark:border-[#4a2815] flex items-center gap-2.5">
                 <i class="ph-fill ph-map-pin-line text-brandOrange"></i> San Paolo Expansão
             </div>
@@ -96,8 +102,7 @@
             <div id="view-dashboard" style="display:none">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                     <div class="flex items-center gap-2.5">
-            <button title="Recolher/Expandir Menu" class=" p-1 text-2xl text-mainText dark:text-white" onclick="window.toggleSidebar()"><i class="ph ph-list"></i></button>
-                        <h1 class="text-2xl font-semibold m-0">Dashboard Analítico</h1>
+            <h1 class="text-2xl font-semibold m-0">Dashboard Analítico</h1>
                     </div>
                     <button class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.abrirModalEquipeExp()">
                         <i class="ph ph-users"></i> Gerenciar Equipe
@@ -134,8 +139,7 @@
             <div id="view-obras" class="flex flex-col h-full">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <div class="flex items-center gap-2.5">
-            <button title="Recolher/Expandir Menu" class=" p-1 text-2xl text-mainText dark:text-white" onclick="window.toggleSidebar()"><i class="ph ph-list"></i></button>
-                        <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Painel de Obras & Manutenções</h1>
+            <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Painel de Obras & Manutenções</h1>
                     </div>
                     <button class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-brandOrange text-white font-medium rounded-md hover:bg-[#b8430a] transition-colors" onclick="window.abrirModalCardExpansao()"><i class="ph ph-plus"></i> Novo Job / Obra</button>
                 </div>
@@ -234,8 +238,7 @@
             <div id="view-tarefas" style="display:none">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <div class="flex items-center gap-2.5">
-            <button title="Recolher/Expandir Menu" class=" p-1 text-2xl text-mainText dark:text-white" onclick="window.toggleSidebar()"><i class="ph ph-list"></i></button>
-                        <h1 class="text-2xl font-semibold m-0">Tarefas Avulsas da Equipe</h1>
+            <h1 class="text-2xl font-semibold m-0">Tarefas Avulsas da Equipe</h1>
                     </div>
                 </div>
 
@@ -276,8 +279,6 @@
             <div id="view-metapwr" style="display: none;">
                 <div class="header-actions">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
                         <h1 class="page-title">Meta PWR</h1>
                     </div>
                 </div>
@@ -293,8 +294,7 @@
             <div id="view-links" style="display: none; flex-direction: column;">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                     <div class="flex items-center gap-2.5">
-            <button title="Recolher/Expandir Menu" class=" p-1 text-2xl text-mainText dark:text-white" onclick="window.toggleSidebar()"><i class="ph ph-list"></i></button>
-                        <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Links Úteis</h1>
+            <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Links Úteis</h1>
                     </div>
                 </div>
 
@@ -351,8 +351,6 @@
                 style="display: none; height: 100%; flex-direction: column; width: 100%; min-width: 0;">
                 <div class="header-actions" style="margin-bottom: 24px; flex-shrink: 0;">
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <button class="btn-menu-toggle" onclick="window.toggleSidebar()"><i
-                                class="ph ph-list"></i></button>
                         <h1 class="page-title">Cronograma de Obras</h1>
                     </div>
                 </div>
