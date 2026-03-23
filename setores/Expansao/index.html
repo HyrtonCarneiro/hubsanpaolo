@@ -73,6 +73,9 @@
                 <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('metapwr')" id="nav-metapwr">
                     <i class="ph ph-target"></i> Meta PWR
                 </div>
+                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('links')" id="nav-links">
+                    <i class="ph ph-link"></i> Links Úteis
+                </div>
             </div>
             
             <div class="p-5 border-t border-border dark:border-[#4a2815] text-sm">
@@ -283,6 +286,51 @@
                     <h2>Área em Desenvolvimento</h2>
                     <p style="color: var(--text-muted); max-width: 500px; margin: 10px auto;">O pilar de metas de
                         faturamento e vendas das lojas para avaliação de Obras.</p>
+                </div>
+            </div>
+
+            <!-- Links Úteis -->
+            <div id="view-links" style="display: none; flex-direction: column;">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <button class="md:hidden p-1 text-2xl text-mainText dark:text-white" onclick="window.toggleSidebar()"><i class="ph ph-list"></i></button>
+                        <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Links Úteis</h1>
+                    </div>
+                </div>
+
+                <div class="bg-surface dark:bg-[#362011] p-6 rounded-xl border border-border dark:border-[#4a2815] mb-8 shadow-sm">
+                    <h3 class="text-lg font-bold text-mainText dark:text-white m-0 mb-4 flex items-center gap-2">
+                        <i class="ph ph-plus-circle text-brandOrange text-xl"></i> Novo Link Útil
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">Título do Link</label>
+                            <input type="text" id="linkTitulo" placeholder="Ex: Planilha de Obras, Drive Expansão..."
+                                class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none font-bold shadow-sm">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">URL / Link</label>
+                            <input type="text" id="linkUrl" placeholder="https://..."
+                                class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none shadow-sm">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-1 mb-4">
+                        <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">Descrição Curta</label>
+                        <input type="text" id="linkDescricao" placeholder="Para que serve este link?"
+                            class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none shadow-sm">
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-brandOrange text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink()">
+                            <i class="ph ph-floppy-disk text-xl"></i> Adicionar Link
+                        </button>
+                    </div>
+                </div>
+
+                <div id="listaLinksContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    <!-- Populado via JS -->
                 </div>
             </div>
 
@@ -615,6 +663,7 @@
     <script src="js/controllers/KanbanController.js"></script>
     <script src="js/controllers/ModalObraController.js"></script>
     <script src="js/controllers/TarefasController.js"></script>
+    <script src="../../js/controllers/LinksController.js"></script>
     <!-- Main Orchestrator (must be last) -->
     <script src="js/app.js"></script>
 

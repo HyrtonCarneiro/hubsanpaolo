@@ -53,6 +53,7 @@ function initApp() {
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Varejo');
 
     window.switchView('dashboard');
 }
@@ -74,10 +75,12 @@ window.switchView = function (view) {
     document.getElementById('view-dashboard').style.display = 'none';
     document.getElementById('view-tarefas').style.display = 'none';
     document.getElementById('view-metapwr').style.display = 'none';
+    document.getElementById('view-links').style.display = 'none';
 
     document.getElementById('nav-dashboard').classList.remove('active-nav');
     document.getElementById('nav-tarefas').classList.remove('active-nav');
     document.getElementById('nav-metapwr').classList.remove('active-nav');
+    document.getElementById('nav-links').classList.remove('active-nav');
 
     document.getElementById(`view-${view}`).style.display = 'block';
     document.getElementById(`nav-${view}`).classList.add('active-nav');

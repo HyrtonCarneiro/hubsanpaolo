@@ -52,6 +52,7 @@ function initApp() {
     });
 
     iniciarListenerEquipe();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Centro_Distribuicao');
     window.switchView('dashboard');
 }
 
@@ -72,10 +73,12 @@ window.switchView = function (view) {
     document.getElementById('view-dashboard').style.display = 'none';
     document.getElementById('view-tarefas').style.display = 'none';
     document.getElementById('view-metapwr').style.display = 'none';
+    document.getElementById('view-links').style.display = 'none';
 
     document.getElementById('nav-dashboard').classList.remove('active');
     document.getElementById('nav-tarefas').classList.remove('active');
     document.getElementById('nav-metapwr').classList.remove('active');
+    document.getElementById('nav-links').classList.remove('active');
 
     document.getElementById('view-' + view).style.display = 'block';
     document.getElementById('nav-' + view).classList.add('active');

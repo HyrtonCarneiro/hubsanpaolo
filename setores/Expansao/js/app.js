@@ -64,6 +64,7 @@ function initApp() {
         });
 
         window.switchView('dashboard');
+        if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Expansao');
         carregarDadosBase();
         
         ExpansaoService.listenEquipe((equipe) => TarefasController.updateEquipe(equipe));
@@ -93,7 +94,7 @@ async function carregarDadosBase() {
 // Global View Switcher
 window.switchView = function (view) {
     try {
-        const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt'];
+        const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt', 'links'];
         
         // Esconder todas as views e remover 'active' dos navs
         views.forEach(v => {
@@ -108,7 +109,7 @@ window.switchView = function (view) {
 
         if (currView) {
             // Views que precisam de 'flex' em vez de 'block'
-            const flexViews = ['obras', 'tarefas', 'gantt'];
+            const flexViews = ['obras', 'tarefas', 'gantt', 'links'];
             currView.style.display = flexViews.includes(view) ? 'flex' : 'block';
             
             if (view === 'tarefas') {

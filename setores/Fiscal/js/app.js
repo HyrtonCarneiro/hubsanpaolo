@@ -55,6 +55,7 @@ function initApp() {
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Fiscal');
 
     window.switchView('dashboard');
 }
@@ -73,7 +74,7 @@ function iniciarListenerEquipe() {
 }
 
 window.switchView = function (view) {
-    const views = ['dashboard', 'tarefas', 'metapwr', 'robo', 'robo-anexos'];
+    const views = ['dashboard', 'tarefas', 'metapwr', 'robo', 'robo-anexos', 'links'];
     
     views.forEach(v => {
         const viewEl = document.getElementById(`view-${v}`);

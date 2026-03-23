@@ -78,6 +78,7 @@ function initApp() {
     if (typeof window.initAtasListeners === 'function') window.initAtasListeners();
     if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
     if (typeof window.initAtividadesListener === 'function') window.initAtividadesListener();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('TI');
 
     window.switchView('analytics');
 }
@@ -85,7 +86,7 @@ window.initApp = initApp;
 
 window.switchView = function (view) {
     // Esconder todas as views
-    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'mapa'];
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'mapa', 'links'];
     views.forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.style.display = 'none';

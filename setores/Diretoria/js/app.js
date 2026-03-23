@@ -53,6 +53,7 @@ function initApp() {
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Diretoria');
 
     window.switchView('visao');
 }
@@ -71,7 +72,7 @@ function iniciarListenerEquipe() {
 }
 
 window.switchView = function (view) {
-    const views = ['visao', 'ranking', 'atos', 'cofre', 'inovacao'];
+    const views = ['visao', 'ranking', 'atos', 'cofre', 'inovacao', 'links'];
 
     views.forEach(v => {
         const el = document.getElementById('view-' + v);

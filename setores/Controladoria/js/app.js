@@ -53,6 +53,7 @@ function initApp() {
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
+    if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Controladoria');
 
     window.switchView('dashboard');
 }
