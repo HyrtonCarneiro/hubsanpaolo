@@ -172,39 +172,41 @@ window.renderizarLinks = function (filteredLinks) {
         const iconClass = window.getLinkIcon(link.url);
         
         const row = document.createElement('div');
-        row.className = 'bg-[var(--surface)] p-5 rounded-2xl border border-[var(--border)] shadow-sm hover:shadow-md hover:border-[var(--primary)]/30 transition-all duration-300 animate-fadeIn group';
+        row.className = 'bg-[var(--surface)] p-3.5 rounded-2xl border border-[var(--border)] shadow-sm hover:shadow-md hover:border-[var(--primary)]/30 transition-all duration-300 animate-fadeIn group';
         
         row.innerHTML = `
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-[var(--border)] pb-4">
-                <div class="flex items-center gap-4 flex-1 min-w-0">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl bg-[var(--primary)]/10 text-[var(--primary)] shadow-inner shrink-0 transition-colors group-hover:bg-[var(--primary)] group-hover:text-white">
+            <div class="flex items-start justify-between gap-4">
+                <div class="flex items-start gap-3 flex-1 min-w-0">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl bg-[var(--primary)]/10 text-[var(--primary)] shadow-inner shrink-0 transition-colors group-hover:bg-[var(--primary)] group-hover:text-white mt-0.5">
                         <i class="${iconClass}"></i>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-lg font-bold text-[var(--text-main)] m-0 tracking-tight leading-tight">${link.titulo}</h4>
-                        <div class="flex items-center gap-3 mt-1.5">
-                            <span class="px-2 py-0.5 rounded text-[0.6rem] font-black uppercase tracking-wider bg-[var(--bg-color)] text-[var(--text-muted)] border border-[var(--border)]">${domain}</span>
-                            <p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1.5 opacity-60 m-0">
+                        <div class="text-[var(--text-main)] leading-tight">
+                            <span class="text-base font-bold">${link.titulo}</span>
+                            <span class="mx-2 opacity-30 text-sm">|</span>
+                            <span class="text-sm font-normal text-[var(--text-muted)] opacity-80">${link.descricao || 'Sem descrição.'}</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1.5">
+                            <span class="text-[0.6rem] font-black text-[var(--text-muted)] uppercase tracking-widest opacity-40">${domain}</span>
+                            <span class="text-[0.6rem] font-bold text-[var(--text-muted)] opacity-30">•</span>
+                            <p class="text-[0.55rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1 opacity-50 m-0">
                                 <i class="ph ph-calendar"></i> ${link.dataStr || 'Recente'}
-                                <span class="mx-1">•</span> <i class="ph ph-user"></i> ${link.autor || 'Sistema'}
+                                <span class="mx-0.5">•</span> <i class="ph ph-user"></i> ${link.autor || 'Sistema'}
                             </p>
                         </div>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="window.editarLink('${link.firebaseId}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Editar Link">
-                        <i class="ph ph-pencil-simple text-lg"></i>
+                <div class="flex items-center gap-2 shrink-0 mt-0.5">
+                    <button onclick="window.editarLink('${link.firebaseId}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Editar Link">
+                        <i class="ph ph-pencil-simple text-base"></i>
                     </button>
-                    <button onclick="window.deletarLink(null, '${link.firebaseId}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Excluir Link">
-                        <i class="ph ph-trash text-lg"></i>
+                    <button onclick="window.deletarLink(null, '${link.firebaseId}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Excluir Link">
+                        <i class="ph ph-trash text-base"></i>
                     </button>
-                    <a href="${link.url}" target="_blank" class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white font-bold text-xs uppercase tracking-wider hover:brightness-110 shadow-sm transition-all ml-2">
-                        Acessar <i class="ph ph-arrow-square-out text-base"></i>
+                    <a href="${link.url}" target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white font-bold text-[10px] uppercase tracking-wider hover:brightness-110 shadow-sm transition-all ml-1">
+                        Acessar <i class="ph ph-arrow-square-out text-sm"></i>
                     </a>
                 </div>
-            </div>
-            <div class="text-sm leading-relaxed text-[var(--text-main)] bg-[var(--bg-color)]/30 p-5 rounded-xl border border-[var(--border)]/50 whitespace-pre-line opacity-90">
-                ${link.descricao || 'Sem descrição detalhada.'}
             </div>
         `;
         container.appendChild(row);
