@@ -40,7 +40,6 @@ function initApp() {
 
     // Replaced explicit DOM updates with CoreUI
     if (window.CoreUI) {
-        window.CoreUI.injectHubButton('.mb-8.flex.items-center.justify-between');
         window.CoreUI.initDarkMode();
         
         window.activeViewsConfig = ['dashboard', 'tarefas', 'metapwr', 'links'];

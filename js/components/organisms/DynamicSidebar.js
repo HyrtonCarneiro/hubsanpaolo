@@ -65,6 +65,11 @@ window.renderDynamicSidebar = function (containerId, config) {
                         </button>
                     </div>
 
+                    <button onclick="window.CoreUI.goToHub()" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full border border-transparent hover:border-[var(--primary)]/30">
+                        <i class="ph ph-squares-four text-lg w-5 text-center text-[var(--primary)]"></i>
+                        <span class="truncate font-bold">Escolha de Setores</span>
+                    </button>
+
                     <button onclick="window.CoreUI.toggleDarkMode()" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full">
                         <i class="ph ph-moon text-lg w-5 text-center dark-icon"></i>
                         <span class="truncate">Tema Escuro</span>

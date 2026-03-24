@@ -52,26 +52,8 @@ window.CoreUI = {
         }
     },
 
-    injectHubButton: function (parentElementQuery) {
-        // Future-proof injector that looks for the main header flex container
-        const headerContainer = document.querySelector(parentElementQuery) || document.querySelector('.mb-8 .flex.items-center');
-        if (!headerContainer || headerContainer.querySelector('.btn-hub')) return;
-        
-        const btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
-        btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-        btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        
-        // Insert before the first h1
-        const h1 = headerContainer.querySelector('h1');
-        if (h1) {
-            headerContainer.insertBefore(btn, h1);
-            // Ensure gap is present
-            headerContainer.classList.add('gap-3');
-        } else {
-            headerContainer.prepend(btn);
-        }
+    goToHub: function () {
+        window.location.href = '../../index.html?hub=1';
     }
 };
 

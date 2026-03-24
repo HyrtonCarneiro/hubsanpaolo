@@ -11,8 +11,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <!-- Firebase Compat SDK (works on file:// protocol) -->
@@ -48,636 +46,139 @@
 
 <body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
 
-    <div id="main-app" class="block">
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto md:hidden" onclick="window.toggleSidebar()"></div>
-        
-        <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-[250px] bg-surface dark:bg-[#362011] border-r-2 border-border dark:border-[#4a2815] transition-transform duration-300 transform -translate-x-full md:translate-x-0 z-[999] flex flex-col border-[var(--border)]" id="appSidebar">
+    <div id="main-app" class="flex h-screen overflow-hidden bg-[var(--bg-color)] text-[var(--text-main)] transition-colors duration-300">
+        <div id="sidebar-container"></div>
 
-            <!-- Floating Sidebar Toggle -->
-            <button onclick="window.toggleSidebar()" class="absolute -right-9 top-24 w-9 h-9 bg-[var(--surface)] border-2 border-[var(--border)] text-[var(--mainText)] rounded-r-xl flex items-center justify-center transition-all shadow-md text-lg hover:text-[var(--primary)] z-50">
-                <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
-            </button>
-            
-            <div class="p-5 text-lg font-bold border-b border-border dark:border-[#4a2815] flex items-center gap-2.5">
-                <i class="ph-fill ph-map-pin-line text-brandOrange"></i> San Paolo Expansão
-            </div>
-            
-            <div class="py-5 flex flex-col gap-1 flex-grow">
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('dashboard')" id="nav-dashboard">
-                    <i class="ph ph-chart-pie-slice"></i> Dashboard
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors active" onclick="window.switchView('obras')" id="nav-obras">
-                    <i class="ph ph-buildings"></i> Kanban
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('gantt')" id="nav-gantt">
-                    <i class="ph ph-calendar"></i> Cronograma
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('tarefas')" id="nav-tarefas">
-                    <i class="ph ph-kanban"></i> Tarefas da Equipe
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('metapwr')" id="nav-metapwr">
-                    <i class="ph ph-target"></i> Meta PWR
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('links')" id="nav-links">
-                    <i class="ph ph-link"></i> Links Úteis
-                </div>
-            </div>
-            
-            <div class="p-5 border-t border-border dark:border-[#4a2815] text-sm">
-                <div class="mb-2.5 text-mutedText dark:text-[#d4bda8]">Logado como: <strong id="loggedUserName" class="text-mainText dark:text-white">...</strong></div>
-                <div class="flex flex-col gap-2.5">
-                    <button class="w-full flex justify-center items-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.toggleDarkMode()">
-                        <i class="ph ph-moon"></i> Tema Escuro
-                    </button>
-                    <button class="w-full flex justify-center items-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.logout()">
-                        <i class="ph ph-sign-out"></i> Voltar / Sair
+        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[var(--bg-color)] p-4 md:p-8 custom-scrollbar relative">
+            <div id="view-dashboard">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Dashboard</h1>
+                    </div>
+                    <button class="flex items-center gap-2 px-4 py-2 rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold transition-colors hover:border-[var(--primary)] hover:text-[var(--primary)]" onclick="window.EquipeController.abrirModal()">
+                        <i class="ph ph-users text-lg"></i> Gerenciar Equipe
                     </button>
                 </div>
-            </div>
-        </aside>
-
-        <main class="md:ml-[250px] p-4 md:p-8 w-full md:w-[calc(100vw-250px)] min-w-0 overflow-x-hidden box-border">
-            <!-- 1. DASHBOARD -->
-            <div id="view-dashboard" style="display:none">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                    <div class="flex items-center gap-2.5">
-            <h1 class="text-2xl font-semibold m-0">Dashboard Analítico</h1>
-                    </div>
-                    <button class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.abrirModalEquipeExp()">
-                        <i class="ph ph-users"></i> Gerenciar Equipe
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                    <div class="bg-surface dark:bg-[#362011] p-6 rounded-xl border border-border dark:border-[#4a2815] flex items-center gap-5 shadow-sm">
-                        <div class="w-[60px] h-[60px] rounded-xl flex items-center justify-center text-3xl bg-brandBlue/10 text-brandBlue dark:bg-[#265d7c]/20 dark:text-[#60a5fa]"><i class="ph ph-buildings"></i></div>
-                        <div>
-                            <p class="text-[2rem] font-bold text-mainText dark:text-white m-0 leading-none" id="statTotalObras">0</p>
-                            <p class="text-mutedText dark:text-[#d4bda8] text-[0.9rem] font-medium mt-1 mb-0">Total de Obras / Jobs</p>
-                        </div>
-                    </div>
-                    <div class="bg-surface dark:bg-[#362011] p-6 rounded-xl border border-border dark:border-[#4a2815] flex items-center gap-5 shadow-sm">
-                        <div class="w-[60px] h-[60px] rounded-xl flex items-center justify-center text-3xl bg-brandRed/10 text-brandRed dark:bg-[#da0d17]/20 dark:text-[#f87171]"><i class="ph ph-warning-circle"></i></div>
-                        <div>
-                            <p class="text-[2rem] font-bold text-mainText dark:text-white m-0 leading-none" id="statObrasAtrasadas">0</p>
-                            <p class="text-mutedText dark:text-[#d4bda8] text-[0.9rem] font-medium mt-1 mb-0">Jobs em Atraso</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
-                    <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815] h-[350px] shadow-sm flex flex-col">
-                        <canvas id="chartObrasStatus"></canvas>
-                    </div>
-                    <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815] h-[350px] shadow-sm flex flex-col">
-                        <canvas id="chartObrasTags"></canvas>
-                    </div>
+                <div class="p-10 text-center mt-12 bg-[var(--surface)] rounded-xl border border-[var(--border)] shadow-sm">
+                    <i class="ph ph-code text-[4rem] text-[var(--primary)] mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--text-main)]">Área em Desenvolvimento</h2>
+                    <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">Os indicadores e gráficos do Dashboard de Expansão estarão disponíveis em breve nesta seção.</p>
                 </div>
             </div>
 
-            <!-- 2. OBRAS & PROJETOS KANBAN -->
-            <div id="view-obras" class="flex flex-col h-full">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-2.5">
-            <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Painel de Obras & Manutenções</h1>
-                    </div>
-                    <button class="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-brandOrange text-white font-medium rounded-md hover:bg-[#b8430a] transition-colors" onclick="window.abrirModalCardExpansao()"><i class="ph ph-plus"></i> Novo Job / Obra</button>
-                </div>
-
-                <div class="bg-surface dark:bg-[#362011] p-4 rounded-xl mb-6 flex gap-4 border border-border dark:border-[#4a2815] flex-col md:flex-row items-stretch md:items-center">
-                    <div class="flex-1 min-w-[250px] relative">
-                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 transform -translate-y-1/2 text-mutedText dark:text-[#d4bda8]"></i>
-                        <input type="text" id="filtroKanbanBusca" placeholder="Pesquisar por Título ou Loja..." class="w-full pl-9 pr-3 py-2 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all"
-                            oninput="window.filtrarKanban()">
-                    </div>
-                    <div class="flex-1 min-w-[150px]">
-                        <select id="filtroKanbanRegional" onchange="window.filtrarKanban()" class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                            <option value="">Todas as Regionais</option>
-                            <!-- Regionais populadas via JS -->
-                        </select>
-                    </div>
-                    <div class="flex-1 min-w-[150px]">
-                        <select id="filtroKanbanTag" onchange="window.filtrarKanban()" class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                            <option value="">Todas as Tags</option>
-                            <option value="Urgente">Urgente</option>
-                            <option value="Nova Loja">Nova Loja</option>
-                            <option value="Obras">Obras</option>
-                            <option value="Manutenção">Manutenção</option>
-                            <option value="Retrofit">Retrofit</option>
-                        </select>
+            <div id="view-tarefas" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Tarefas da Equipe</h1>
                     </div>
                 </div>
-
-                <!-- Quadro Kanban Avançado -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 h-[calc(100vh-180px)] w-full overflow-hidden pb-4" id="expansaoBoard">
-                    <!-- Coluna 1: Backlog -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-backlog">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Backlog & Standby</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-backlog">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)">
-                            <!-- Cards injetados via JS -->
-                        </div>
-                    </div>
-
-                    <!-- Coluna 2: Planejamento -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-planejamento">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Planej. / Projetos</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-planejamento">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)"></div>
-                    </div>
-
-                    <!-- Coluna 3: Fase 1 -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-fase1">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Fase 1 (Mobi)</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-fase1">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)"></div>
-                    </div>
-
-                    <!-- Coluna 4: Fase 2 -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-fase2">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Fase 2 (Instal)</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-fase2">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)"></div>
-                    </div>
-
-                    <!-- Coluna 5: Fase 3 -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-fase3">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Fase 3 (Acab)</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-fase3">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)"></div>
-                    </div>
-
-                    <!-- Coluna 6: Concluído -->
-                    <div class="bg-black/5 dark:bg-[#28190f]/60 rounded-xl flex flex-col h-full border border-border dark:border-[#4a2815] overflow-hidden" id="col-concluido">
-                        <div class="p-4 border-b-2 border-border dark:border-[#4a2815] flex justify-between items-center">
-                            <h3 class="m-0 text-[0.95rem] font-bold text-mainText dark:text-white">Concluída</h3>
-                            <span class="bg-surface dark:bg-[#362011] text-mutedText dark:text-[#d4bda8] px-2.5 py-0.5 rounded-full text-[0.8rem] font-bold" id="count-concluido">0</span>
-                        </div>
-                        <div class="flex-1 p-2 overflow-y-auto flex flex-col gap-2 min-h-0 custom-scrollbar kanban-cards" ondrop="window.dropExpansao(event)"
-                            ondragover="window.allowDropExpansao(event)"></div>
-                    </div>
+                <div class="p-10 text-center mt-12 bg-[var(--surface)] rounded-xl border border-[var(--border)] shadow-sm">
+                    <i class="ph ph-kanban text-[4rem] text-[var(--primary)] mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--text-main)]">Área em Desenvolvimento</h2>
+                    <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">O quadro Kanban para acompanhamento de tarefas da equipe será implementado nesta seção.</p>
                 </div>
             </div>
 
-            <!-- 3. TAREFAS GENERICAS -->
-            <div id="view-tarefas" style="display:none">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-2.5">
-            <h1 class="text-2xl font-semibold m-0">Tarefas Avulsas da Equipe</h1>
-                    </div>
-                </div>
-
-                <div id="membrosEquipeContainer" class="flex gap-2.5 mb-6 flex-wrap">
-                    <!-- Carregado via JS -->
-                </div>
-
-                <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815] shadow-sm mb-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="m-0 text-lg font-semibold text-mainText dark:text-white">Registrar Nova Demanda Administrativa</h3>
-                    </div>
-                    <input type="text" id="projDesc" placeholder="Descrição da tarefa ou projeto interno"
-                        class="w-full mb-4 p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                    
-                    <div class="flex gap-4 mb-4 flex-wrap">
-                        <input type="text" id="projDemand" placeholder="Demandante" class="flex-[2] min-w-[150px] p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                        <input type="date" id="projDate" class="flex-1 min-w-[120px] p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                        <select id="projStatus" class="flex-1 min-w-[120px] p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                            <option value="Pendente">Pendente</option>
-                            <option value="Em Andamento">Em Andamento</option>
-                            <option value="Concluído">Concluído</option>
-                        </select>
-                    </div>
-                    
-                    <input type="url" id="projAnexo" placeholder="Link para doc/anexo (Opcional)" class="w-full mb-4 p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-
-                    <button class="flex items-center gap-2 px-5 py-2.5 bg-brandOrange text-white font-medium rounded-md hover:bg-[#b8430a] transition-colors" onclick="window.salvarProjeto()">
-                        <i class="ph ph-floppy-disk"></i> Salvar Registro
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 custom-scrollbar" id="projetos-list">
-                    <!-- Kanban JS de Tarefas da Equipe -->
-                </div>
-            </div>
-
-            <!-- 4. META PWR -->
             <div id="view-metapwr" style="display: none;">
-                <div class="header-actions">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <h1 class="page-title">Meta PWR</h1>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Meta PWR</h1>
                     </div>
                 </div>
-                <div style="padding: 40px; text-align: center; margin-top: 50px;">
-                    <i class="ph ph-target" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
-                    <h2>Área em Desenvolvimento</h2>
-                    <p style="color: var(--text-muted); max-width: 500px; margin: 10px auto;">O pilar de metas de
-                        faturamento e vendas das lojas para avaliação de Obras.</p>
+                <div class="p-10 text-center mt-12 bg-[var(--surface)] rounded-xl border border-[var(--border)] shadow-sm">
+                    <i class="ph ph-target text-[4rem] text-[var(--primary)] mb-5"></i>
+                    <h2 class="text-2xl font-bold text-[var(--text-main)]">Área em Desenvolvimento</h2>
+                    <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">Acompanhamento das Metas PWR de Expansão será liberado em breve.</p>
                 </div>
             </div>
 
-            <!-- Links Úteis -->
-            <div id="view-links" style="display: none; flex-direction: column;">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                    <div class="flex items-center gap-2.5">
-            <h1 class="text-2xl font-semibold m-0 text-mainText dark:text-white">Links Úteis</h1>
+            <div id="view-links" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Links Úteis</h1>
                     </div>
                 </div>
 
-                <div class="bg-surface dark:bg-[#362011] p-6 rounded-xl border border-border dark:border-[#4a2815] mb-8 shadow-sm">
-                    <h3 class="text-lg font-bold text-mainText dark:text-white m-0 mb-4 flex items-center gap-2">
-                        <i class="ph ph-plus-circle text-brandOrange text-xl"></i> Novo Link Útil
+                <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
+                    <h3 class="text-lg font-bold text-[var(--text-main)] m-0 mb-4 flex items-center gap-2">
+                        <i class="ph ph-plus-circle text-[var(--primary)] text-xl"></i> Novo Link Útil
                     </h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div class="flex flex-col gap-1">
-                            <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">Título do Link</label>
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Título do Link</label>
                             <input type="text" id="linkTitulo" placeholder="Ex: Planilha de Obras, Drive Expansão..."
-                                class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none font-bold shadow-sm">
+                                class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none font-bold shadow-sm">
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">URL / Link</label>
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">URL / Link</label>
                             <input type="text" id="linkUrl" placeholder="https://..."
-                                class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none shadow-sm">
+                                class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-1 mb-4">
-                        <label class="text-[0.65rem] font-black text-mutedText dark:text-[#d4bda8] uppercase tracking-widest ml-1 opacity-60">Descrição Curta</label>
+                        <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Descrição Curta</label>
                         <input type="text" id="linkDescricao" placeholder="Para que serve este link?"
-                            class="w-full px-4 py-2.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange outline-none shadow-sm">
+                            class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] outline-none shadow-sm">
                     </div>
 
                     <div class="flex gap-3">
-                        <button id="btnSalvarLink" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-brandOrange text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink('Expansao')">
+                        <button id="btnSalvarLink" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink('Expansão')">
                             <i class="ph ph-floppy-disk text-xl"></i> Adicionar Link
-                        </button>
-                        <button id="btnCancelarEdicao" class="hidden items-center gap-2 px-6 py-3 rounded-xl bg-background border border-border text-mainText font-bold shadow-sm transition-all duration-300 hover:bg-black/5 active:scale-95" onclick="window.cancelarEdicao()">
-                            <i class="ph ph-x-circle text-xl"></i> Cancelar
                         </button>
                     </div>
                 </div>
 
                 <div class="mb-6 animate-fadeIn">
                     <div class="relative group">
-                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-mutedText dark:text-[#d4bda8] text-xl group-focus-within:text-brandOrange transition-colors"></i>
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-xl group-focus-within:text-[var(--primary)] transition-colors"></i>
                         <input type="text" id="buscaLinks" placeholder="Pesquisar por título ou descrição..." 
-                            class="w-full pl-12 pr-4 py-3.5 bg-background dark:bg-[#1a0f07] border border-border dark:border-[#4a2815] rounded-2xl text-mainText dark:text-white transition-all duration-300 focus:border-brandOrange focus:shadow-lg focus:shadow-brandOrange/5 outline-none shadow-sm"
+                            class="w-full pl-12 pr-4 py-3.5 bg-[var(--surface)] border border-[var(--border)] rounded-2xl text-[var(--text-main)] transition-all duration-300 focus:border-[var(--primary)] focus:shadow-lg focus:shadow-[var(--primary)]/5 outline-none shadow-sm"
                             oninput="window.filtrarLinks()">
                     </div>
                 </div>
 
-                <div id="listaLinksContainer" class="flex flex-col gap-4">
-                    <!-- Populado via JS -->
-                </div>
+                <div id="listaLinksContainer" class="flex flex-col gap-4"></div>
             </div>
-
-            <!-- 5. CRONOGRAMA GANTT -->
-            <div id="view-gantt"
-                style="display: none; height: 100%; flex-direction: column; width: 100%; min-width: 0;">
-                <div class="header-actions" style="margin-bottom: 24px; flex-shrink: 0;">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <h1 class="page-title">Cronograma de Obras</h1>
-                    </div>
-                </div>
-                <div
-                    style="margin-bottom: 15px; display: flex; gap: 15px; align-items: center; color: var(--text-muted); font-size: 0.85rem; flex-shrink: 0;">
-                    <span style="display: flex; align-items: center; gap: 5px;">
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--primary);"></div>
-                        No Prazo
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 5px;">
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--accent);"></div>
-                        Atrasado
-                    </span>
-                    <span style="display: flex; align-items: center; gap: 5px;">
-                        <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--success);"></div>
-                        Concluído
-                    </span>
-                </div>
-                <div id="gantt-wrapper"
-                    class="flex-1 overflow-hidden bg-surface dark:bg-[#362011] rounded-xl border border-border dark:border-[#4a2815] flex flex-col w-full min-w-0">
-                    <!-- JS preenche aqui -->
-                </div>
-            </div>
-
         </main>
     </div>
 
-    <!-- MODAL EXPANSÃO CARD DETALHES JS -->
-    <div id="modalCardExpansaoObj" class="fixed inset-0 w-full h-full bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200 ease-in-out [&.show]:opacity-100 [&.show]:pointer-events-auto">
-        <div class="bg-surface dark:bg-[#281e14]/95 dark:backdrop-blur-md rounded-2xl w-[95%] max-w-[900px] max-h-[90vh] overflow-y-auto p-0 border border-border dark:border-[#4a2815] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transform scale-95 opacity-0 transition-all duration-200 custom-scrollbar [.show_&]:scale-100 [.show_&]:opacity-100">
-
-            <!-- Header do Modal -->
-            <div class="px-6 py-4 border-b border-border dark:border-[#4a2815] bg-surface dark:bg-[#281e14]/80 sticky top-0 z-10 flex justify-between items-center">
-                <div class="flex items-start gap-4 w-full">
-                    <div class="bg-brandRed/10 text-brandRed h-12 w-12 rounded-xl flex items-center justify-center text-2xl shrink-0">
-                        <i class="ph ph-buildings"></i>
-                    </div>
-                    <div class="flex-1">
-                        <input type="text" id="modalCardTituloInput" placeholder="Título do Projeto ou Obra..."
-                            class="w-full border-none text-[1.5rem] font-bold bg-transparent text-mainText dark:text-white outline-none mb-1 focus:ring-0 p-0"
-                            title="Clique para editar o título">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs text-mutedText dark:text-[#d4bda8] flex items-center gap-1 font-medium">
-                                <i class="ph ph-hash"></i> <span id="displayCardId">Novo Workflow</span>
-                            </span>
-                            <span class="h-3 w-px bg-border dark:bg-[#4a2815]"></span>
-                            <span class="text-xs text-mutedText dark:text-[#d4bda8] flex items-center gap-1 font-medium">
-                                <i class="ph ph-user"></i> <span id="displayCardCriador">Sistema</span>
-                            </span>
-                        </div>
-                    </div>
-                    <button class="p-2 rounded-lg border border-border dark:border-[#4a2815] text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-                        onclick="window.fecharModalCardExpansao()">
-                        <i class="ph ph-x text-lg"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="p-6">
-                <input type="hidden" id="modalCardId">
-
-                <!-- Layout em Grade -->
-                <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
-
-                    <!-- Coluna Principal (Esquerda) -->
-                    <div class="flex flex-col gap-8">
-
-                        <!-- Seção de Seletores Rápidos -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[0.85rem] font-semibold text-mutedText dark:text-[#d4bda8] mb-2">Unidade / Loja</label>
-                                <select id="modalCardLoja" class="w-full p-2.5 rounded-lg border border-border dark:border-[#4a2815] bg-surface dark:bg-[#362011] text-mainText dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                    <!-- Options via JS -->
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[0.85rem] font-semibold text-mutedText dark:text-[#d4bda8] mb-2">Estágio do Fluxo</label>
-                                <select id="modalCardStatus" class="w-full p-2.5 rounded-lg border border-border dark:border-[#4a2815] bg-surface dark:bg-[#362011] text-mainText dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                    <option value="backlog">Backlog / Triagem</option>
-                                    <option value="planejamento">Pré-Obra / Orçamento</option>
-                                    <option value="fase1">Fase 1 (Mobilização)</option>
-                                    <option value="fase2">Fase 2 (Instalações)</option>
-                                    <option value="fase3">Fase 3 (Acabamento)</option>
-                                    <option value="concluido">Obra Concluída</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Seção de Tags -->
-                        <div>
-                            <h4 class="m-0 mb-3 text-[0.95rem] flex items-center gap-2 text-brandRed">
-                                <i class="ph ph-tag"></i> Prioridade e Tipo
-                            </h4>
-                            <div class="flex flex-wrap gap-3 tags-container">
-                                <label class="cursor-pointer flex items-center gap-2 bg-surface dark:bg-[#362011] px-3 py-1.5 rounded-full border border-border dark:border-[#4a2815] transition-all hover:border-brandRed hover:-translate-y-px has-[:checked]:border-brandRed has-[:checked]:bg-brandRed/10 dark:has-[:checked]:bg-brandRed/20 has-[:checked]:ring-2 has-[:checked]:ring-brandRed/20">
-                                    <input type="radio" name="modalTagExp" value="Urgente" class="hidden">
-                                    <span class="m-0 pointer-events-none px-2.5 py-1 rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-white bg-brandRed dark:bg-[#8f0810]">Urgente</span>
-                                </label>
-                                <label class="cursor-pointer flex items-center gap-2 bg-surface dark:bg-[#362011] px-3 py-1.5 rounded-full border border-border dark:border-[#4a2815] transition-all hover:border-[#00bcd4] hover:-translate-y-px has-[:checked]:border-[#00bcd4] has-[:checked]:bg-[#00bcd4]/10 dark:has-[:checked]:bg-[#00bcd4]/20 has-[:checked]:ring-2 has-[:checked]:ring-[#00bcd4]/20">
-                                    <input type="radio" name="modalTagExp" value="Nova Loja" class="hidden">
-                                    <span class="m-0 pointer-events-none px-2.5 py-1 rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-white bg-[#00bcd4]">Nova Loja</span>
-                                </label>
-                                <label class="cursor-pointer flex items-center gap-2 bg-surface dark:bg-[#362011] px-3 py-1.5 rounded-full border border-border dark:border-[#4a2815] transition-all hover:border-brandBlue hover:-translate-y-px has-[:checked]:border-brandBlue has-[:checked]:bg-brandBlue/10 dark:has-[:checked]:bg-brandBlue/20 has-[:checked]:ring-2 has-[:checked]:ring-brandBlue/20">
-                                    <input type="radio" name="modalTagExp" value="Obras" class="hidden">
-                                    <span class="m-0 pointer-events-none px-2.5 py-1 rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-white bg-brandBlue">Obras</span>
-                                </label>
-                                <label class="cursor-pointer flex items-center gap-2 bg-surface dark:bg-[#362011] px-3 py-1.5 rounded-full border border-border dark:border-[#4a2815] transition-all hover:border-brandGreen hover:-translate-y-px has-[:checked]:border-brandGreen has-[:checked]:bg-brandGreen/10 dark:has-[:checked]:bg-brandGreen/20 has-[:checked]:ring-2 has-[:checked]:ring-brandGreen/20">
-                                    <input type="radio" name="modalTagExp" value="Manutenção" class="hidden">
-                                    <span class="m-0 pointer-events-none px-2.5 py-1 rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-white bg-brandGreen dark:bg-[#2f4521] dark:text-[#a7f3d0]">Manutenção</span>
-                                </label>
-                                <label class="cursor-pointer flex items-center gap-2 bg-surface dark:bg-[#362011] px-3 py-1.5 rounded-full border border-border dark:border-[#4a2815] transition-all hover:border-brandOrange hover:-translate-y-px has-[:checked]:border-brandOrange has-[:checked]:bg-brandOrange/10 dark:has-[:checked]:bg-brandOrange/20 has-[:checked]:ring-2 has-[:checked]:ring-brandOrange/20">
-                                    <input type="radio" name="modalTagExp" value="Retrofit" class="hidden" checked>
-                                    <span class="m-0 pointer-events-none px-2.5 py-1 rounded-full text-[0.7rem] font-bold uppercase tracking-wider text-white bg-brandOrange">Retrofit</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- 🛠️ GESTÃO DE STAKEHOLDERS -->
-                        <div class="bg-brandRed/5 dark:bg-[#1a0f07] p-4 rounded-xl border border-dashed border-border dark:border-[#4a2815] mb-6">
-                            <h4 class="m-0 mb-4 text-[0.95rem] flex items-center gap-2 text-mainText dark:text-white">
-                                <i class="ph ph-users-three text-brandRed"></i> Gestão de Stakeholders
-                            </h4>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                                <div>
-                                    <label class="block text-[0.8rem] font-semibold text-mutedText dark:text-[#d4bda8] mb-1.5">Engenheiro Responsável</label>
-                                    <input type="text" id="modalCardEngenheiro" placeholder="Nome / Empresa"
-                                        class="w-full px-3 py-2 rounded-md border border-border dark:border-[#4a2815] bg-surface dark:bg-[#362011] text-mainText dark:text-white text-[0.85rem] focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                                <div>
-                                    <label class="block text-[0.8rem] font-semibold text-mutedText dark:text-[#d4bda8] mb-1.5">Mestre de Obras</label>
-                                    <input type="text" id="modalCardMestre" placeholder="Nome do Mestre..."
-                                        class="w-full px-3 py-2 rounded-md border border-border dark:border-[#4a2815] bg-surface dark:bg-[#362011] text-mainText dark:text-white text-[0.85rem] focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                            </div>
-
-                            <label class="block text-[0.8rem] font-semibold text-mutedText dark:text-[#d4bda8] mb-1.5">Fornecedores e Terceiros Registrados</label>
-
-                            <!-- Box Dinâmico de Fornecedores -->
-                            <div id="modalFornecedoresContainer" class="flex flex-col gap-2 mb-3 max-h-[150px] overflow-y-auto custom-scrollbar">
-                                <!-- Itens via JS -->
-                            </div>
-
-                            <!-- Adicionar Novo Fornecedor -->
-                            <div class="flex gap-2">
-                                <input type="text" id="novoFornNomeInput" placeholder="Ex: Serralheria do João"
-                                    class="flex-[2] p-2 border border-border dark:border-[#4a2815] rounded-md text-[0.85rem] bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                <input type="text" id="novoFornContatoInput" placeholder="Serviço / Contato"
-                                    class="flex-[1.5] p-2 border border-border dark:border-[#4a2815] rounded-md text-[0.85rem] bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                <button class="px-3 py-2 rounded-md border border-border dark:border-[#4a2815] text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center"
-                                    onclick="window.addFornecedorCard()">
-                                    <i class="ph ph-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Checklists -->
-                        <div>
-                            <div class="flex justify-between items-center mb-3">
-                                <h4 class="m-0 text-[0.95rem] flex items-center gap-2 text-brandRed">
-                                    <i class="ph ph-check-square"></i> Checklists de Entrega
-                                </h4>
-                                <span id="modalChecklistPercent" class="text-[0.85rem] font-bold text-brandGreen dark:text-[#a7f3d0]">0%</span>
-                            </div>
-                            <div class="mb-4 h-2 bg-border dark:bg-[#4a2815] rounded-full overflow-hidden">
-                                <div class="h-full bg-brandGreen transition-all duration-300 ease-in-out" id="modalChecklistProgress" style="width: 0%;">
-                                </div>
-                            </div>
-
-                            <div id="modalChecklistItensContainer" class="flex flex-col gap-2 mb-4 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                                <!-- Itens via JS -->
-                            </div>
-
-                            <div class="flex gap-2.5">
-                                <input type="text" id="novoChecklistItemInput"
-                                    placeholder="Adicionar nova verificação..."
-                                    class="flex-1 p-2.5 border border-border dark:border-[#4a2815] rounded-lg bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                <button class="px-4 py-2 border border-border dark:border-[#4a2815] rounded-lg text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center"
-                                    onclick="window.addChecklistItemCard()">
-                                    <i class="ph ph-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Diário de Obra -->
-                        <div>
-                            <h4 class="m-0 mb-3 text-[0.95rem] flex items-center gap-2 text-brandRed">
-                                <i class="ph ph-chat-centered-text"></i> Diário da Obra / Ocorrências
-                            </h4>
-                            <div class="flex gap-3 mb-5">
-                                <div class="h-9 w-9 rounded-full bg-background border-2 border-border dark:border-[#4a2815] flex items-center justify-center font-bold text-[0.8rem] shrink-0 text-mainText dark:text-[#f5f0e6]">
-                                    HC
-                                </div>
-                                <div class="flex-1 relative">
-                                    <textarea id="novoComentarioCard" rows="2"
-                                        placeholder="O que aconteceu hoje na obra?"
-                                        class="w-full border border-border dark:border-[#4a2815] bg-surface dark:bg-[#362011] text-mainText dark:text-white rounded-xl p-3 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all"></textarea>
-                                    <button onclick="window.addComentarioCardExpansao()"
-                                        class="absolute right-2.5 bottom-2.5 bg-brandRed text-white border-none w-8 h-8 rounded-lg cursor-pointer flex items-center justify-center hover:bg-[#b80b13] transition-colors">
-                                        <i class="ph ph-paper-plane-right"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="modalComentariosContainer" class="flex flex-col gap-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                <!-- Comentários via JS -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Coluna Lateral (Direita) -->
-                    <div class="flex flex-col gap-6">
-
-                        <!-- Datas -->
-                        <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815]">
-                            <h4 class="m-0 mb-4 text-[0.9rem] text-brandRed flex items-center gap-2">
-                                <i class="ph ph-calendar-blank"></i> Cronograma
-                            </h4>
-                            <div class="flex flex-col gap-3">
-                                <div>
-                                    <label class="text-[0.75rem] text-mutedText dark:text-[#d4bda8] font-semibold block mb-1">Data de Início</label>
-                                    <input type="date" id="modalDataInicio"
-                                        class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-white dark:bg-[#281e14] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                                <div>
-                                    <label class="text-[0.75rem] text-mutedText dark:text-[#d4bda8] font-semibold block mb-1">Previsão de Entrega</label>
-                                    <input type="date" id="modalDataFim"
-                                        class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-white dark:bg-[#281e14] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Financeiro -->
-                        <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815]">
-                            <h4 class="m-0 mb-4 text-[0.9rem] text-brandRed flex items-center gap-2">
-                                <i class="ph ph-coins"></i> Orçamento
-                            </h4>
-                            <div class="flex flex-col gap-3">
-                                <div>
-                                    <label class="text-[0.75rem] text-mutedText dark:text-[#d4bda8] font-semibold block mb-1">Custo Previsto (R$)</label>
-                                    <input type="number" id="modalCustoPrev" placeholder="0,00"
-                                        class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-white dark:bg-[#281e14] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                                <div>
-                                    <label class="text-[0.75rem] text-mutedText dark:text-[#d4bda8] font-semibold block mb-1">Custo Executado (R$)</label>
-                                    <input type="number" id="modalCustoReal" placeholder="0,00"
-                                        class="w-full p-2 border border-border dark:border-[#4a2815] rounded-md bg-white dark:bg-[#281e14] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Anexos -->
-                        <div class="bg-surface dark:bg-[#362011] p-5 rounded-xl border border-border dark:border-[#4a2815]">
-                            <h4 class="m-0 mb-4 text-[0.9rem] text-brandRed flex items-center gap-2">
-                                <i class="ph ph-paperclip"></i> Documentos e Fotos
-                            </h4>
-                            <div class="flex gap-2 mb-3">
-                                <input type="text" id="modalNovoAnexoURL" placeholder="Link do arquivo..."
-                                    class="flex-1 px-2.5 py-1.5 border border-border dark:border-[#4a2815] rounded-md bg-white dark:bg-[#281e14] text-mainText dark:text-white text-[0.85rem] focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all">
-                                <button class="p-1.5 border border-border dark:border-[#4a2815] rounded-md text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors flex items-center" onclick="window.addAnexoCard()">
-                                    <i class="ph ph-plus"></i>
-                                </button>
-                            </div>
-                            <ul id="modalAnexosContainer" class="list-none p-0 m-0 flex flex-col gap-2">
-                                <!-- Anexos via JS -->
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Footer do Modal -->
-                <div class="mt-10 pt-6 border-t border-border dark:border-[#4a2815] flex justify-between items-center">
-                    <button class="flex items-center gap-2 px-4 py-2 border border-brandRed text-brandRed hover:bg-brandRed hover:text-white rounded-lg transition-colors font-medium border-none bg-transparent" id="btnExcluirCardExpansao" style="display: none;" onclick="window.excluirObra()">
-                        <i class="ph ph-trash"></i> Excluir Job
-                    </button>
-                    <div class="ml-auto flex gap-3">
-                        <button class="px-4 py-2 border border-border dark:border-[#4a2815] rounded-lg text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors font-medium"
-                            onclick="window.fecharModalCardExpansao()">Cancelar</button>
-                        <button class="flex items-center gap-2 px-6 py-2.5 bg-brandOrange text-white hover:bg-[#b8430a] rounded-lg transition-colors font-medium"
-                            onclick="window.salvarCardExpansao()">
-                            <i class="ph ph-floppy-disk"></i> Salvar Alterações
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL EQUIPE EXPANSÃO -->
-    <div id="modalEquipeObj" class="fixed inset-0 w-full h-full bg-black/50 backdrop-blur-sm z-[1000] flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-200 ease-in-out [&.show]:opacity-100 [&.show]:pointer-events-auto">
-        <div class="bg-surface dark:bg-[#281e14]/95 dark:backdrop-blur-md rounded-2xl w-[90%] max-w-[400px] p-6 border border-border dark:border-[#4a2815] shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1)] transform scale-95 opacity-0 transition-all duration-200 [.show_&]:scale-100 [.show_&]:opacity-100">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="m-0 text-xl font-bold text-mainText dark:text-white">Gerenciar Equipe Expansão</h2>
-                <button class="p-2 border border-border dark:border-[#4a2815] rounded-lg text-mainText dark:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalEquipeExp()"><i
-                        class="ph ph-x"></i></button>
-            </div>
-            <div class="flex flex-col gap-1.5 mb-5">
-                <label class="text-[0.65rem] font-bold text-mutedText dark:text-[#d4bda8] uppercase ml-1">Selecionar Usuário do Sistema</label>
-                <div class="flex gap-2.5">
-                    <select id="novoMembroExpSelecionado" class="flex-1 border border-border dark:border-[#4a2815] rounded-lg p-2.5 bg-surface dark:bg-[#362011] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-brandOrange transition-all text-sm">
-                        <option value="">Selecione um usuário...</option>
-                    </select>
-                    <button class="bg-brandOrange text-white hover:bg-[#b8430a] px-4 py-2.5 rounded-lg transition-colors flex items-center" onclick="window.addMembroEquipeExp()"><i class="ph ph-plus"></i></button>
-                </div>
-            </div>
-            <ul id="listaMembrosExp" class="list-none p-0 m-0 flex flex-col gap-2"></ul>
-        </div>
-    </div>
-
-    <!-- Script Module Padrão igual TI -->
-    <!-- Firebase Init + Dependencies (loaded in order) -->
+    <!-- Firebase Init -->
     <script src="../../js/firebase-init.js"></script>
-    <script src="../../js/data.js"></script>
-    <!-- Molecules -->
-    <script src="js/components/molecules/KanbanCard.js"></script>
-    <script src="js/components/molecules/TaskCard.js"></script>
-    <!-- Services -->
-    <script src="js/services/ExpansaoService.js"></script>
+    
+    <!-- Services & UI Shared components -->
+    <script src="../../js/services/CoreUI.js"></script>
+    <script src="../../js/components/organisms/DynamicSidebar.js"></script>
+    <script src="../../js/services/NotificationService.js"></script>
+
     <!-- Controllers -->
-    <script src="js/controllers/DashboardController.js"></script>
-    <script src="js/controllers/GanttController.js"></script>
-    <script src="js/controllers/KanbanController.js"></script>
-    <script src="js/controllers/ModalObraController.js"></script>
-    <script src="js/controllers/TarefasController.js"></script>
+    <script src="../../js/controllers/EquipeController.js"></script>
     <script src="../../js/controllers/LinksController.js"></script>
-    <!-- Main Orchestrator (must be last) -->
+    
+    <!-- App Entry point -->
     <script src="js/app.js"></script>
 
-    <script src="../../js/services/NotificationService.js"></script>
+    <!-- MODAL EQUIPE -->
+    <div id="modalEquipe" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content flex flex-col">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Gerenciar Equipe</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.EquipeController.fecharModal()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col gap-1.5 mb-5">
+                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1">Selecionar Usuário do Sistema</label>
+                    <div class="flex gap-2">
+                        <select id="novoMembroSelecionado" class="flex-1 px-4 py-2 bg-[var(--bg-color)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none text-sm">
+                            <option value="">Selecione um usuário...</option>
+                        </select>
+                        <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.EquipeController.adicionarMembro()">Adicionar</button>
+                    </div>
+                </div>
+                <div id="listaEquipeGerenciar" class="flex flex-col gap-2"></div>
+            </div>
+        </div>
+    </div>
 </body>
-
 </html>
