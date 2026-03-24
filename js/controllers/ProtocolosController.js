@@ -213,63 +213,59 @@ window.renderizarProtocolos = function () {
 
         const div = document.createElement('div');
         
-        // Determinar borda de destaque
-        let accentClass = "border-l-4 border-l-transparent";
-        if (isResolvido) accentClass = "border-l-4 border-l-gray-400 opacity-80";
-        else if (isAtrasado) accentClass = "border-l-4 border-l-red-500 shadow-[0_0_20px_rgba(239,68,68,0.1)]";
-        else accentClass = "border-l-4 border-l-emerald-500";
+        // Determinar borda de destaque: Pendente = Vermelho, Resolvido = Verde
+        const accentClass = isResolvido ? "border-l-4 border-l-emerald-500 opacity-80" : "border-l-4 border-l-red-500";
 
-        div.className = `bg-[var(--surface)] rounded-2xl border border-[var(--border)] ${accentClass} overflow-hidden hover:shadow-lg transition-all duration-300 animate-fadeIn flex flex-col`;
+        div.className = `bg-[var(--surface)] rounded-xl border border-[var(--border)] ${accentClass} overflow-hidden hover:shadow-md transition-all duration-300 animate-fadeIn flex flex-col mb-3`;
 
         const slaDisplay = p.sla_prazo 
-            ? `<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.7rem] font-bold ${isResolvido ? 'bg-gray-100 text-gray-600 border border-gray-200' : (isAtrasado ? 'bg-red-100 text-red-700 border border-red-200 animate-pulse' : 'bg-emerald-100 text-emerald-700 border border-emerald-200')}">
+            ? `<div class="flex items-center gap-1.5 px-2 py-1 rounded-md text-[0.65rem] font-bold ${isResolvido ? 'bg-gray-100 text-gray-500 border border-gray-200' : (isAtrasado ? 'bg-red-50 text-red-600 border border-red-100 animate-pulse' : 'bg-emerald-50 text-emerald-600 border border-emerald-100')}">
                 <i class="ph-bold ph-calendar"></i> SLA: ${p.sla_prazo.split('-').reverse().join('/')}
                </div>`
             : '';
 
         const statusBtn = isResolvido 
-            ? `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Resolvido')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-300 transition-all">
+            ? `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Resolvido')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-[0.7rem] font-bold hover:bg-gray-200 transition-all">
                 <i class="ph-bold ph-arrow-u-up-left"></i> Reabrir
                </button>`
-            : `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Pendente')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:brightness-110 shadow-sm shadow-emerald-500/20 transition-all">
+            : `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Pendente')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-[0.7rem] font-bold hover:brightness-110 shadow-sm shadow-emerald-500/10 transition-all">
                 <i class="ph-bold ph-check"></i> Marcar Resolvido
                </button>`;
 
         div.innerHTML = `
-            <div class="px-6 py-5">
-                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
-                    <div class="flex items-start gap-4">
-                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner mt-1" style="background-color: ${systemColor}15; color: ${systemColor}">
+            <div class="px-4 py-3">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-3">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-inner mt-0.5" style="background-color: ${systemColor}15; color: ${systemColor}">
                             <i class="${iconClass}"></i>
                         </div>
                         <div>
-                            <div class="flex flex-wrap items-center gap-2 mb-2">
-                                <h4 class="text-xl font-black text-[var(--text-main)] m-0 leading-none">Protocolo: ${p.numero || '---'}</h4>
-                                <span class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest" style="background-color: ${systemColor}20; color: ${systemColor}">${p.sistema}</span>
+                            <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                                <h4 class="text-base font-black text-[var(--text-main)] m-0 leading-none">Protocolo: ${p.numero || '---'}</h4>
+                                <span class="px-2 py-0.5 rounded-full text-[0.6rem] font-black uppercase tracking-widest" style="background-color: ${systemColor}20; color: ${systemColor}">${p.sistema}</span>
                             </div>
-                            <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-2">
                                 ${slaDisplay}
-                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-[var(--border)] text-[0.7rem] font-bold text-[var(--text-main)]">
-                                    <i class="ph-fill ph-user-focus text-[var(--primary)]"></i>
-                                    <span class="text-[var(--text-muted)] uppercase text-[0.6rem] mr-1">Resp:</span> ${p.responsavel || 'Não definido'}
+                                <div class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-black/5 dark:bg-white/5 border border-[var(--border)] text-[0.65rem] font-bold text-[var(--text-main)]">
+                                    <i class="ph-fill ph-user-focus text-[var(--primary)] text-[0.8rem]"></i>
+                                    <span class="text-[var(--text-muted)] uppercase text-[0.55rem]">Resp:</span> ${p.responsavel || '---'}
                                 </div>
-                                <div class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-tight flex items-center gap-1.5 opacity-60">
+                                <div class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tight flex items-center gap-1 opacity-60">
                                     <i class="ph ph-calendar-blank"></i> ${p.dataStr || '---'}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 self-start">
+                    <div class="flex items-center gap-1.5 self-start">
                         ${statusBtn}
-                        <div class="h-8 w-[1px] bg-[var(--border)] mx-1"></div>
-                        <button onclick="window.abrirModalEditarProtocolo('${p.firebaseId}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all border border-blue-100" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
-                        <button onclick="window.deletarProtocolo('${p.firebaseId}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all border border-red-100" title="Excluir"><i class="ph-bold ph-trash"></i></button>
+                        <div class="h-6 w-[1px] bg-[var(--border)] mx-0.5"></div>
+                        <button onclick="window.abrirModalEditarProtocolo('${p.firebaseId}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all border border-blue-100" title="Editar"><i class="ph-bold ph-pencil-simple text-sm"></i></button>
+                        <button onclick="window.deletarProtocolo('${p.firebaseId}')" class="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all border border-red-100" title="Excluir"><i class="ph-bold ph-trash text-sm"></i></button>
                     </div>
                 </div>
 
-                <div class="bg-[var(--bg-color)]/40 p-5 rounded-2xl border border-[var(--border)] relative group">
-                    <p class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 opacity-60">Descrição do Chamado</p>
-                    <div class="text-[0.95rem] leading-relaxed text-[var(--text-main)] whitespace-pre-line ${isResolvido ? 'line-through opacity-60' : ''}">
+                <div class="bg-[var(--bg-color)]/30 p-3 rounded-xl border border-[var(--border)]/50 relative group">
+                    <div class="text-[0.85rem] leading-relaxed text-[var(--text-main)] whitespace-pre-line ${isResolvido ? 'line-through opacity-50' : ''}">
                         ${p.descricao}
                     </div>
                 </div>
