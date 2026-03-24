@@ -19,27 +19,50 @@ window.initProtocolosListeners = function () {
 }
 
 window.salvarProtocolo = async function () {
-    var sistema = document.getElementById('protocoloSistema').value;
-    var numero = document.getElementById('protocoloNumero').value.trim();
-    var descricao = document.getElementById('protocoloDescricao').value.trim();
+    const elSistema = document.getElementById('protocoloSistema');
+    const elNumero = document.getElementById('protocoloNumero');
+    const elDescricao = document.getElementById('protocoloDescricao');
+    const elSla = document.getElementById('protocoloSla');
 
-    if (!numero || !descricao) return showToast("Preencha o número e a descrição do protocolo", "error");
+    if (!elSistema || !elNumero || !elDescricao) {
+        showToast("Erro interno: Campos do formulário não encontrados.", "error");
+        console.error("Campos não encontrados:", { elSistema, elNumero, elDescricao });
+        return;
+    }
 
-    var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    const sistema = elSistema.value;
+    const numero = elNumero.value.trim();
+    const descricao = elDescricao.value.trim();
+    const sla = elSla ? elSla.value : null;
+
+    if (!numero) {
+        showToast("Por favor, informe o número ou código do protocolo.", "warning");
+        elNumero.focus();
+        return;
+    }
+    if (!descricao) {
+        showToast("Por favor, descreva o motivo do chamado.", "warning");
+        elDescricao.focus();
+        return;
+    }
+
+    const dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     try {
         await addDoc(collection(db, "protocolos_suporte"), {
             sistema: sistema,
             numero: numero,
             descricao: descricao,
-            autor: currentUser,
+            sla: sla || null,
+            autor: currentUser || "Usuário Hub",
             dataStr: dStr,
             timestamp: Date.now()
         });
         
         // Limpar campos
-        document.getElementById('protocoloNumero').value = '';
-        document.getElementById('protocoloDescricao').value = '';
+        elNumero.value = '';
+        elDescricao.value = '';
+        if (elSla) elSla.value = '';
         
         showToast("Protocolo registrado com sucesso!");
         
@@ -47,8 +70,8 @@ window.salvarProtocolo = async function () {
             window.registrarAtividade('chamado', `Novo protocolo ${sistema}: ${numero}`);
         }
     } catch (e) {
-        console.error(e);
-        showToast("Erro ao registrar protocolo", "error");
+        console.error("Erro ao salvar no Firestore:", e);
+        showToast("Erro ao salvar no banco de dados. Verifique sua conexão.", "error");
     }
 }
 
@@ -95,9 +118,10 @@ window.renderizarProtocolos = function () {
                         '<h4 class="text-lg font-bold text-[var(--text-main)] m-0 tracking-tight">Protocolo: ' + (p.numero || p.titulo || '---') + '</h4>' +
                         '<div class="flex items-center gap-3 mt-1">' +
                             '<span class="px-2 py-0.5 rounded text-[0.6rem] font-black uppercase tracking-wider" style="background-color: ' + systemColor + '; color: white">' + p.sistema + '</span>' +
-                            '<p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1.5 opacity-60 m-0">' +
-                                '<i class="ph ph-calendar"></i> ' + p.dataStr + 
-                                ' <span class="mx-1">•</span> <i class="ph ph-user"></i> ' + p.autor +
+                            '<p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-4 opacity-60 m-0">' +
+                                '<span class="flex items-center gap-1.5"><i class="ph ph-calendar"></i> ' + p.dataStr + '</span>' +
+                                (p.sla ? '<span class="flex items-center gap-1.5 text-[var(--primary)] font-black"><i class="ph ph-clock-countdown"></i> SLA: ' + p.sla.split('-').reverse().join('/') + '</span>' : '') +
+                                '<span class="flex items-center gap-1.5"><i class="ph ph-user"></i> ' + p.autor + '</span>' +
                             '</p>' +
                         '</div>' +
                     '</div>' +
