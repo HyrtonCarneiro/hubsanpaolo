@@ -328,7 +328,7 @@ function initApp() {
                 { id: 'planejamento', label: 'Planejamento', icon: 'ph-bold ph-calendar-check' },
                 { id: 'mapeamento', label: 'Mapeamento (Novo)', icon: 'ph-bold ph-map-trifold' },
                 { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
-                { id: 'protocolos', label: 'Protocolos', icon: 'ph-bold ph-ticket' },
+                { id: 'protocolos', label: 'Protocolo de Chamados', icon: 'ph-bold ph-ticket' },
                 { id: 'metapwr', label: 'Meta PWR (MVP)', icon: 'ph-bold ph-target' },
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
             ]

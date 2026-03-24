@@ -57,6 +57,7 @@ window.popularSelectTecnicos = function () {
 };
 
 window.salvarProtocolo = async function () {
+    const btn = event?.target?.closest('button') || document.querySelector('button[onclick="window.salvarProtocolo()"]');
     const sistema = document.getElementById('protocoloSistema').value;
     const numero = document.getElementById('protocoloNumero').value.trim();
     const responsavel = document.getElementById('protocoloResponsavel').value;
@@ -65,6 +66,11 @@ window.salvarProtocolo = async function () {
 
     if (!numero || !descricao || !responsavel) {
         return showToast("Preencha o número, responsável e a descrição", "error");
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-lg"></i> REGISTRANDO...';
     }
 
     const dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -94,6 +100,11 @@ window.salvarProtocolo = async function () {
         }
     } catch (e) {
         showToast("Erro ao registrar protocolo: " + (e.message || e), "error");
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="ph ph-floppy-disk text-xl"></i> Registrar Protocolo';
+        }
     }
 };
 
@@ -176,65 +187,106 @@ window.renderizarProtocolos = function () {
     container.innerHTML = '';
 
     if (window.sysProtocolos.length === 0) {
-        container.innerHTML = '<div class="flex flex-col items-center justify-center p-12 text-center text-[var(--text-muted)] bg-[var(--surface)] rounded-2xl border border-dashed border-[var(--border)] animate-fadeIn"><i class="ph ph-ticket text-5xl mb-4 text-[var(--border)]"></i><h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum protocolo registrado</h2></div>';
+        container.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-16 text-center bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] animate-fadeIn">
+                <div class="w-20 h-20 rounded-full bg-black/5 flex items-center justify-center mb-6">
+                    <i class="ph ph-ticket text-5xl text-[var(--border)]"></i>
+                </div>
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nenhum protocolo registrado</h2>
+                <p class="text-[var(--text-muted)] mt-2">Os chamados de suporte aparecerão aqui.</p>
+            </div>`;
         return;
     }
 
     const hoje = new Date().toISOString().split('T')[0];
 
     window.sysProtocolos.forEach(function (p) {
-        const div = document.createElement('div');
         const isResolvido = p.status === 'Resolvido';
         const isAtrasado = p.sla_prazo && p.sla_prazo < hoje && !isResolvido;
-
-        div.className = `bg-[var(--surface)] p-6 rounded-2xl border ${isAtrasado ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]' : 'border-[var(--border)]'} shadow-sm hover:shadow-md transition-all duration-300 animate-fadeIn ${isResolvido ? 'opacity-75 grayscale-[0.5]' : ''}`;
         
+        let systemColor = "#6366f1"; // Default Indigo
         let iconClass = "ph-fill ph-ticket";
-        let systemColor = "var(--primary)";
-        if (p.sistema === 'Athenas') { iconClass = "ph-fill ph-cpu"; systemColor = "#265d7c"; }
-        if (p.sistema === 'Degust') { iconClass = "ph-fill ph-fork-knife"; systemColor = "#da5513"; }
-        if (p.sistema === "Delivery's") { iconClass = "ph-fill ph-moped"; systemColor = "#da0d17"; }
+        
+        if (p.sistema === 'Athenas') { iconClass = "ph-fill ph-cpu"; systemColor = "#0284c7"; }
+        if (p.sistema === 'Degust') { iconClass = "ph-fill ph-fork-knife"; systemColor = "#f59e0b"; }
+        if (p.sistema === "Delivery's") { iconClass = "ph-fill ph-moped"; systemColor = "#ef4444"; }
 
-        const slaBadge = p.sla_prazo 
-            ? `<span class="px-2 py-0.5 rounded text-[0.6rem] font-black uppercase tracking-wider ${isAtrasado ? 'bg-red-500 text-white animate-pulse' : 'bg-black/5 dark:bg-white/5 text-[var(--text-muted)]'}"><i class="ph ph-clock"></i> SLA: ${p.sla_prazo.split('-').reverse().join('/')}</span>`
+        const div = document.createElement('div');
+        
+        // Determinar borda de destaque
+        let accentClass = "border-l-4 border-l-transparent";
+        if (isResolvido) accentClass = "border-l-4 border-l-gray-400 opacity-80";
+        else if (isAtrasado) accentClass = "border-l-4 border-l-red-500 shadow-[0_0_20px_rgba(239,68,68,0.1)]";
+        else accentClass = "border-l-4 border-l-emerald-500";
+
+        div.className = `bg-[var(--surface)] rounded-2xl border border-[var(--border)] ${accentClass} overflow-hidden hover:shadow-lg transition-all duration-300 animate-fadeIn flex flex-col`;
+
+        const slaDisplay = p.sla_prazo 
+            ? `<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.7rem] font-bold ${isAtrasado ? 'bg-red-100 text-red-700 border border-red-200 animate-pulse' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
+                <i class="ph-bold ph-calendar"></i> SLA: ${p.sla_prazo.split('-').reverse().join('/')}
+               </div>`
             : '';
 
         const statusBtn = isResolvido 
-            ? `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Resolvido')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500 text-white text-xs font-bold shadow-sm hover:brightness-110 transition-all"><i class="ph ph-check-circle"></i> Resolvido (Desfazer)</button>`
-            : `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Pendente')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] text-xs font-bold hover:bg-emerald-500 hover:text-white hover:border-emerald-500 transition-all"><i class="ph ph-circle"></i> Marcar Resolvido</button>`;
+            ? `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Resolvido')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-200 text-gray-700 text-xs font-bold hover:bg-gray-300 transition-all">
+                <i class="ph-bold ph-arrow-u-up-left"></i> Reabrir
+               </button>`
+            : `<button onclick="window.toggleStatusProtocolo('${p.firebaseId}', 'Pendente')" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-white text-xs font-bold hover:brightness-110 shadow-sm shadow-emerald-500/20 transition-all">
+                <i class="ph-bold ph-check"></i> Marcar Resolvido
+               </button>`;
 
         div.innerHTML = `
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-[var(--border)] pb-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style="background-color: ${systemColor}20; color: ${systemColor}">
-                        <i class="${iconClass}"></i>
+            <div class="px-6 py-5">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner" style="background-color: ${systemColor}15; color: ${systemColor}">
+                            <i class="${iconClass}"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h4 class="text-xl font-black text-[var(--text-main)] m-0 leading-none">#${p.numero || '---'}</h4>
+                                <span class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest" style="background-color: ${systemColor}20; color: ${systemColor}">${p.sistema}</span>
+                                ${isResolvido ? '<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-[0.6rem] font-black uppercase tracking-widest border border-gray-200">RESOLVIDO</span>' : (isAtrasado ? '<span class="px-2.5 py-1 rounded-full bg-red-100 text-red-600 text-[0.6rem] font-black uppercase tracking-widest border border-red-200">ATRASADO</span>' : '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[0.6rem] font-black uppercase tracking-widest border border-emerald-200">NO PRAZO</span>')}
+                            </div>
+                            <div class="mt-2 flex items-center gap-3">
+                                ${slaDisplay}
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-lg font-bold text-[var(--text-main)] m-0 tracking-tight">#${p.numero || '---'}</h4>
-                            ${isResolvido ? '<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 text-[0.6rem] font-black uppercase tracking-widest border border-emerald-500/20">Finalizado</span>' : ''}
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3 mt-1">
-                            <span class="px-2 py-0.5 rounded text-[0.6rem] font-black uppercase tracking-wider" style="background-color: ${systemColor}; color: white">${p.sistema}</span>
-                            ${slaBadge}
-                            <p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-1.5 opacity-60 m-0">
-                                <i class="ph ph-user-focus"></i> Responsável: <span class="text-[var(--text-main)]">${p.responsavel || 'Não atribuído'}</span>
-                            </p>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        ${statusBtn}
+                        <div class="h-8 w-[1px] bg-[var(--border)] mx-1"></div>
+                        <button onclick="window.abrirModalEditarProtocolo('${p.firebaseId}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all border border-blue-100" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
+                        <button onclick="window.deletarProtocolo('${p.firebaseId}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all border border-red-100" title="Excluir"><i class="ph-bold ph-trash"></i></button>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    ${statusBtn}
-                    <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-black/5 dark:bg-white/5 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/10 transition-all shadow-sm" onclick="window.abrirModalEditarProtocolo('${p.firebaseId}')" title="Editar"><i class="ph ph-note-pencil text-lg"></i></button>
-                    <button class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" onclick="window.deletarProtocolo('${p.firebaseId}')" title="Excluir"><i class="ph ph-trash text-lg"></i></button>
+
+                <div class="bg-[var(--bg-color)]/40 p-5 rounded-2xl border border-[var(--border)] relative group">
+                    <p class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest mb-3 opacity-60">Descrição do Chamado</p>
+                    <div class="text-[0.95rem] leading-relaxed text-[var(--text-main)] whitespace-pre-line ${isResolvido ? 'line-through opacity-60' : ''}">
+                        ${p.descricao}
+                    </div>
                 </div>
             </div>
-            <div class="text-sm leading-relaxed text-[var(--text-main)] bg-[var(--bg-color)]/30 p-5 rounded-xl border border-[var(--border)]/50 whitespace-pre-line ${isResolvido ? 'line-through opacity-50' : ''}">
-                ${p.descricao}
-            </div>
-            <div class="mt-3 flex items-center justify-between text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-widest opacity-60">
-                <span>Criado por: ${p.autor}</span>
-                <span>Registro: ${p.dataStr}</span>
+
+            <div class="mt-auto px-6 py-4 bg-black/5 dark:bg-white/5 border-t border-[var(--border)] grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                        ${p.responsavel ? p.responsavel.charAt(0) : '?'}
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Responsável</span>
+                        <span class="text-xs font-black text-[var(--text-main)]">${p.responsavel || 'Não definido'}</span>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Registrado por</span>
+                    <span class="text-xs font-bold text-[var(--text-main)]">${p.autor || '---'}</span>
+                </div>
+                <div class="flex flex-col md:items-end">
+                    <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Data do Registro</span>
+                    <span class="text-xs font-bold text-[var(--text-main)] opacity-80">${p.dataStr || '---'}</span>
+                </div>
             </div>
         `;
         container.appendChild(div);
