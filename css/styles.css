@@ -120,6 +120,7 @@ body.dark-mode [id^="nav-"].active {
         width: 0;
         min-width: 0;
         border-right-width: 0;
+        overflow: hidden;
     }
 }
 
@@ -130,8 +131,16 @@ body.dark-mode [id^="nav-"].active {
 body.sidebar-collapsed .sidebar-icon-toggle {
     transform: rotate(180deg);
 }
-@media (max-width: 767px) {
-    #appSidebar.-translate-x-full .sidebar-icon-toggle {
-        transform: rotate(180deg);
-    }
+/* Global Animations */
+@keyframes fadeIn { 
+    from { opacity: 0; transform: translateY(10px); } 
+    to { opacity: 1; transform: translateY(0); } 
 }
+.animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
+
+/* Custom Scrollbar for sidebar and modals */
+.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+

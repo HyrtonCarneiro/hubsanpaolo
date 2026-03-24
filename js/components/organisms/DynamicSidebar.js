@@ -28,7 +28,7 @@ window.renderDynamicSidebar = function (containerId, config) {
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden transition-opacity" onclick="window.CoreUI.toggleSidebar()"></div>
 
         <div class="relative flex-shrink-0 transition-all duration-300 z-40" id="sidebar-wrapper">
-            <aside id="appSidebar" class="fixed md:relative top-0 left-0 h-screen w-64 bg-[var(--bg-color)] border-r border-[var(--border)] flex flex-col transition-all duration-300 shadow-sm -translate-x-full md:translate-x-0 overflow-hidden">
+            <aside id="appSidebar" class="fixed md:relative top-0 left-0 h-screen w-64 bg-[var(--bg-color)] border-r border-[var(--border)] flex flex-col transition-all duration-300 shadow-sm -translate-x-full md:translate-x-0">
                 <!-- Header -->
                 <div class="p-6 border-b border-[var(--border)] h-[88px] flex flex-col justify-center">
                 <div class="flex items-center gap-3 sidebar-title-container">
@@ -87,6 +87,48 @@ window.renderDynamicSidebar = function (containerId, config) {
             <button onclick="window.CoreUI.toggleSidebar()" class="absolute -right-9 top-24 w-9 h-9 bg-[var(--bg-color)] border border-[var(--border)] border-l-0 text-[var(--text-main)] rounded-r-xl hidden md:flex items-center justify-center transition-all shadow-md text-lg hover:text-[var(--primary)] z-50">
                 <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
             </button>
+        </div>
+
+        <!-- MODAL PERFIL (Global) -->
+        <div id="modalPerfil" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn p-4">
+            <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-2xl shadow-2xl overflow-hidden border border-[var(--border)]">
+                <div class="p-6 border-b border-[var(--border)] bg-gray-50/50 dark:bg-gray-800/20 flex justify-between items-center">
+                    <h3 class="text-xl font-bold text-[var(--text-main)] m-0 flex items-center gap-2">
+                        <i class="ph ph-user-circle text-[var(--primary)]"></i> Meu Perfil
+                    </h3>
+                    <button onclick="window.fecharModalPerfil()" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 transition-colors">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div class="mb-6 flex flex-col items-center">
+                        <div class="w-20 h-20 rounded-full bg-[var(--primary)]/10 flex items-center justify-center text-3xl text-[var(--primary)] mb-3 shadow-inner">
+                            <i class="ph-fill ph-user-circle"></i>
+                        </div>
+                        <h4 id="perfilUserName" class="text-lg font-bold text-[var(--text-main)] m-0">Usuário</h4>
+                        <p id="perfilUserSetores" class="text-xs text-[var(--text-muted)] mt-1 font-medium italic"></p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider border-b border-[var(--border)] pb-2 mb-4">Alterar Senha de Acesso</div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase ml-1 opacity-60">Senha Atual</label>
+                            <input type="password" id="perfilSenhaAtual" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase ml-1 opacity-60">Nova Senha</label>
+                            <input type="password" id="perfilNovaSenha" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase ml-1 opacity-60">Confirmar Nova Senha</label>
+                            <input type="password" id="perfilConfirmarSenha" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                        </div>
+                        <button onclick="window.salvarNovaSenha()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all mt-4">
+                            Atualizar Minha Conta
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 
