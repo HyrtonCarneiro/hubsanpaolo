@@ -237,23 +237,30 @@ window.renderizarProtocolos = function () {
 
         div.innerHTML = `
             <div class="px-6 py-5">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner" style="background-color: ${systemColor}15; color: ${systemColor}">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-inner mt-1" style="background-color: ${systemColor}15; color: ${systemColor}">
                             <i class="${iconClass}"></i>
                         </div>
                         <div>
-                            <div class="flex items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
                                 <h4 class="text-xl font-black text-[var(--text-main)] m-0 leading-none">#${p.numero || '---'}</h4>
                                 <span class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest" style="background-color: ${systemColor}20; color: ${systemColor}">${p.sistema}</span>
                                 ${isResolvido ? '<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-[0.6rem] font-black uppercase tracking-widest border border-gray-200">RESOLVIDO</span>' : (isAtrasado ? '<span class="px-2.5 py-1 rounded-full bg-red-100 text-red-600 text-[0.6rem] font-black uppercase tracking-widest border border-red-200">ATRASADO</span>' : '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[0.6rem] font-black uppercase tracking-widest border border-emerald-200">NO PRAZO</span>')}
                             </div>
-                            <div class="mt-2 flex items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-3">
                                 ${slaDisplay}
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/5 dark:bg-white/5 border border-[var(--border)] text-[0.7rem] font-bold text-[var(--text-main)]">
+                                    <i class="ph-fill ph-user-focus text-[var(--primary)]"></i>
+                                    <span class="text-[var(--text-muted)] uppercase text-[0.6rem] mr-1">Resp:</span> ${p.responsavel || 'Não definido'}
+                                </div>
+                                <div class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-tight flex items-center gap-1.5 opacity-60">
+                                    <i class="ph ph-calendar-blank"></i> ${p.dataStr || '---'}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 self-start">
                         ${statusBtn}
                         <div class="h-8 w-[1px] bg-[var(--border)] mx-1"></div>
                         <button onclick="window.abrirModalEditarProtocolo('${p.firebaseId}')" class="w-10 h-10 flex items-center justify-center rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all border border-blue-100" title="Editar"><i class="ph-bold ph-pencil-simple"></i></button>
@@ -266,26 +273,6 @@ window.renderizarProtocolos = function () {
                     <div class="text-[0.95rem] leading-relaxed text-[var(--text-main)] whitespace-pre-line ${isResolvido ? 'line-through opacity-60' : ''}">
                         ${p.descricao}
                     </div>
-                </div>
-            </div>
-
-            <div class="mt-auto px-6 py-4 bg-black/5 dark:bg-white/5 border-t border-[var(--border)] grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center text-xs font-bold shadow-sm">
-                        ${p.responsavel ? p.responsavel.charAt(0) : '?'}
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Responsável</span>
-                        <span class="text-xs font-black text-[var(--text-main)]">${p.responsavel || 'Não definido'}</span>
-                    </div>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Registrado por</span>
-                    <span class="text-xs font-bold text-[var(--text-main)]">${p.autor || '---'}</span>
-                </div>
-                <div class="flex flex-col md:items-end">
-                    <span class="text-[0.6rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">Data do Registro</span>
-                    <span class="text-xs font-bold text-[var(--text-main)] opacity-80">${p.dataStr || '---'}</span>
                 </div>
             </div>
         `;
