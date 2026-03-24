@@ -240,17 +240,17 @@ window.NotificationService = {
             // Frequência suave de "Blip"
             oscillator.type = 'sine';
             oscillator.frequency.setValueAtTime(500, audioCtx.currentTime); 
-            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
+            oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
             
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 0.05); // Volume em 100%
-            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5); // diminui mais devagar
+            gainNode.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.02); // aumenta volume rápido até 15%
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3); // diminui
             
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             
             oscillator.start(audioCtx.currentTime);
-            oscillator.stop(audioCtx.currentTime + 0.5);
+            oscillator.stop(audioCtx.currentTime + 0.3);
         } catch(e) { console.warn('Notificações: AudioContext restrito ou não suportado', e); }
     }
 };

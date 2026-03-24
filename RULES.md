@@ -14,10 +14,6 @@ O agente **pode** propor desvios quando uma regra prejudica legibilidade, coesã
    - Interface Segregation: Keep interfaces small and specific.
    - Dependency Inversion: Depend on abstractions, not implementations.
 
-4. **Future-Proof Development:**
-   - Prioritize code that is scalable and requires minimal manual updates when new features (such as sectors or tabs) are added.
-   - Avoid hardcoded lists when dynamic discovery or configuration-based logic is possible.
-
 2. **Atomic Design Methodology:**
    - Structure components into: Atoms, Molecules, Organisms, Templates, and Pages.
    - Atoms MUST be stateless and generic.

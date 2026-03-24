@@ -350,7 +350,6 @@ function initApp() {
     if (typeof window.initTarefasListeners === 'function') window.initTarefasListeners();
     if (typeof window.initMapeamentoListeners === 'function') window.initMapeamentoListeners();
     if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Auditoria');
-    if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
 
     // Data padrão hoje
     if (document.getElementById('audiDataInput')) {
@@ -364,7 +363,7 @@ function initApp() {
 window.initApp = initApp;
 
 window.switchView = function (view) {
-    const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'mapeamento', 'tarefas', 'metapwr', 'links', 'protocolos'];
+    const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'mapeamento', 'tarefas', 'metapwr', 'links'];
 
     views.forEach(v => {
         const el = document.getElementById('view-' + v);

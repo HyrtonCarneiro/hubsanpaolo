@@ -1,7 +1,12 @@
-// js/app.js - Expansão
-// Entry point for Expansão sector
+// setores/Expansao/js/app.js
+// All dependencies are window globals loaded via <script> tags in index.html:
+// lojasIniciais → data.js
+// ExpansaoService → services/ExpansaoService.js
+// DashboardController, KanbanController, ModalObraController, GanttController, TarefasController → controllers/
+// KanbanCard, TaskCard → components/molecules/
 
 let currentUser = localStorage.getItem('loggedUser') || null;
+let obrasCache = [];
 
 function showToast(msg, type = 'success') {
     try {
@@ -14,52 +19,167 @@ function showToast(msg, type = 'success') {
     } catch (e) { console.error(e); }
 }
 
-if (currentUser) {
-    initApp();
-} else {
+// Attach globals for HTML handlers
+window.showToast = showToast;
+window.expansaoModal = ModalObraController;
+window.tarefasCtrl = TarefasController;
+
+window.toggleDarkMode = function () {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('dark');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+}
+
+if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode', 'dark');
+} else if (localStorage.getItem('darkMode') === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.body.classList.add('dark-mode', 'dark');
+    localStorage.setItem('darkMode', 'true');
+}
+
+window.logout = function () {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
     window.location.href = '../../index.html';
 }
 
 function initApp() {
-    // Replaced explicit DOM updates with CoreUI
-    if (window.CoreUI) {
-        window.CoreUI.initDarkMode();
-        
-        window.activeViewsConfig = ['dashboard', 'tarefas', 'metapwr', 'links'];
-        
-        // Render Dynamic Sidebar
-        if (window.renderDynamicSidebar) {
-            window.renderDynamicSidebar('sidebar-container', {
-                sectorTitle: 'Expansão',
-                userName: currentUser,
-                navItems: [
-                    { id: 'dashboard', label: 'Dashboard', icon: 'ph ph-chart-pie-slice', active: true },
-                    { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph ph-kanban' },
-                    { id: 'metapwr', label: 'Meta PWR', icon: 'ph ph-target' },
-                    { id: 'links', label: 'Links Úteis', icon: 'ph ph-link' }
-                ]
-            });
+    try {
+        if (!currentUser) {
+            window.location.href = '../../index.html';
+            return;
         }
-    }
 
-    // Initialize Equipe Controller (Shared)
-    if (window.EquipeController) {
-        window.EquipeController.init('expansao_equipe');
-    }
+        const loggedUserNameEl = document.getElementById('loggedUserName');
+        if (loggedUserNameEl) loggedUserNameEl.innerText = currentUser;
 
-    // Initialize Links Listener
-    if (typeof window.initLinksListeners === 'function') {
-        window.initLinksListeners('Expansão');
-    }
+        document.querySelectorAll('h1').forEach(h1 => {
+            const container = h1.parentElement;
+            if (!container || container.querySelector('.btn-hub')) return;
+            const btn = document.createElement('button');
+            btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-border dark:border-[#4a2815] bg-transparent text-mainText dark:text-white hover:text-brandRed hover:border-brandRed transition-colors btn-hub';
+            btn.title = 'Escolha de Setores';
+            btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
+            btn.onclick = () => window.location.href = '../../index.html?hub=1';
+            container.insertBefore(btn, h1);
+        });
 
-    window.switchView('dashboard');
+        window.switchView('dashboard');
+        if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Expansao');
+        carregarDadosBase();
+        
+        ExpansaoService.listenEquipe((equipe) => TarefasController.updateEquipe(equipe));
+        ExpansaoService.listenProjetos((projetos) => TarefasController.updateProjetos(projetos));
+
+        KanbanController.popularFiltroRegionaisExpansao(lojasIniciais);
+        KanbanController.popularSelectLojasExpansao(lojasIniciais);
+
+    } catch (e) {
+        console.error("ERRO CRÍTICO NO INITAPP:", e);
+        showToast("Erro ao iniciar a tela. " + e.message, "error");
+    }
 }
 
-// Redirect view switching to CoreUI
-window.switchView = function(viewId) {
-    if (window.CoreUI && window.activeViewsConfig) {
-        window.CoreUI.switchView(viewId, window.activeViewsConfig);
+async function carregarDadosBase() {
+    try {
+        obrasCache = await ExpansaoService.getObras();
+        KanbanController.filtrarKanban(obrasCache, lojasIniciais);
+        GanttController.renderGantt(obrasCache);
+        DashboardController.atualizarDashboard(obrasCache);
+    } catch (error) {
+        console.error("Erro ao carregar Obras: ", error);
+        showToast("Erro ao carregar obras da base.", "error");
     }
-};
+}
 
-window.logout = () => window.location.href = '../../index.html';
+// Global View Switcher
+window.switchView = function (view) {
+    try {
+        const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt', 'links'];
+        
+        // Esconder todas as views e remover 'active' dos navs
+        views.forEach(v => {
+            const el = document.getElementById('view-' + v);
+            if (el) el.style.display = 'none';
+            const nav = document.getElementById('nav-' + v);
+            if (nav) nav.classList.remove('active');
+        });
+
+        const currView = document.getElementById('view-' + view);
+        const currNav = document.getElementById('nav-' + view);
+
+        if (currView) {
+            // Views que precisam de 'flex' em vez de 'block'
+            const flexViews = ['obras', 'tarefas', 'gantt', 'links'];
+            currView.style.display = flexViews.includes(view) ? 'flex' : 'block';
+            
+            if (view === 'tarefas') {
+                currView.style.flexDirection = 'column';
+            }
+        }
+        
+        if (currNav) currNav.classList.add('active');
+
+        // Renderizar Gantt se necessário
+        if (view === 'gantt' && typeof GanttController !== 'undefined') {
+            GanttController.renderGantt(obrasCache);
+        }
+
+        // Fechar sidebar no mobile após trocar de view se estiver aberta
+        const sidebar = document.getElementById('appSidebar');
+        if (window.innerWidth <= 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
+            window.toggleSidebar();
+        }
+    } catch (e) {
+        console.error("ERRO NO SWITCHVIEW:", e);
+        showToast("Erro ao mudar de aba", "error");
+    }
+}
+
+window.toggleSidebar = function () {
+    const sidebar = document.getElementById('appSidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar && overlay) {
+        if (sidebar.classList.contains('-translate-x-full')) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('show');
+        } else {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.remove('show');
+        }
+    }
+    document.body.classList.toggle('sidebar-collapsed');
+}
+
+// Global Wrappers for HTML Event Listeners
+window.filtrarKanban = () => KanbanController.filtrarKanban(obrasCache, lojasIniciais);
+window.abrirModalCardExpansao = (id) => ModalObraController.abrirModal(id, obrasCache, currentUser);
+window.fecharModalCardExpansao = () => ModalObraController.fecharModal();
+window.salvarCardExpansao = () => ModalObraController.salvarCard(currentUser, () => carregarDadosBase());
+window.excluirObra = () => ModalObraController.excluirObra(() => carregarDadosBase());
+
+window.allowDropExpansao = KanbanController.allowDropExpansao;
+window.dragExpansao = KanbanController.dragExpansao;
+window.dropExpansao = (ev) => KanbanController.dropExpansao(ev, obrasCache, currentUser, () => {
+    KanbanController.filtrarKanban(obrasCache, lojasIniciais);
+    DashboardController.atualizarDashboard(obrasCache);
+});
+
+// Expose directly to window via objects for specific scopes, but some direct globals for modal items
+window.addChecklistItemCard = () => ModalObraController.addChecklist();
+window.addComentarioCardExpansao = () => ModalObraController.addComentario(currentUser);
+window.addAnexoCard = () => ModalObraController.addAnexo();
+window.addFornecedorCard = () => ModalObraController.addFornecedor();
+
+// --- Tarefas globals
+window.salvarProjeto = () => TarefasController.salvarProjeto();
+window.deletarProjetoExp = (id) => TarefasController.deletarProjeto(id);
+window.atualizarStatusProjExp = (id, s) => TarefasController.atualizarStatusProj(id, s);
+window.abrirModalEquipeExp = () => TarefasController.abrirModalEquipe();
+window.fecharModalEquipeExp = () => TarefasController.fecharModalEquipe();
+window.addMembroEquipeExp = () => TarefasController.addMembro();
+window.removerMembroExp = (id) => TarefasController.removerMembro(id);
+
+if (currentUser) {
+    initApp();
+}
