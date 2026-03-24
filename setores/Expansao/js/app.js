@@ -50,19 +50,21 @@ function initApp() {
             return;
         }
 
-        const loggedUserNameEl = document.getElementById('loggedUserName');
-        if (loggedUserNameEl) loggedUserNameEl.innerText = currentUser;
-
-        document.querySelectorAll('h1').forEach(h1 => {
-            const container = h1.parentElement;
-            if (!container || container.querySelector('.btn-hub')) return;
-            const btn = document.createElement('button');
-            btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-border dark:border-[#4a2815] bg-transparent text-mainText dark:text-white hover:text-brandRed hover:border-brandRed transition-colors btn-hub';
-            btn.title = 'Escolha de Setores';
-            btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-            btn.onclick = () => window.location.href = '../../index.html?hub=1';
-            container.insertBefore(btn, h1);
-        });
+        // Render Dynamic Sidebar
+        if (typeof window.renderDynamicSidebar === 'function') {
+            window.renderDynamicSidebar('sidebar-container', {
+                sectorTitle: 'Expansão',
+                userName: currentUser,
+                navItems: [
+                    { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
+                    { id: 'obras', label: 'Kanban', icon: 'ph-bold ph-buildings' },
+                    { id: 'gantt', label: 'Cronograma', icon: 'ph-bold ph-calendar' },
+                    { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
+                    { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' },
+                    { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
+                ]
+            });
+        }
 
         window.switchView('dashboard');
         if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Expansao');
@@ -92,63 +94,23 @@ async function carregarDadosBase() {
     }
 }
 
-// Global View Switcher
 window.switchView = function (view) {
-    try {
-        const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt', 'links'];
-        
-        // Esconder todas as views e remover 'active' dos navs
-        views.forEach(v => {
-            const el = document.getElementById('view-' + v);
-            if (el) el.style.display = 'none';
-            const nav = document.getElementById('nav-' + v);
-            if (nav) nav.classList.remove('active');
-        });
-
-        const currView = document.getElementById('view-' + view);
-        const currNav = document.getElementById('nav-' + view);
-
-        if (currView) {
-            // Views que precisam de 'flex' em vez de 'block'
-            const flexViews = ['obras', 'tarefas', 'gantt', 'links'];
-            currView.style.display = flexViews.includes(view) ? 'flex' : 'block';
-            
-            if (view === 'tarefas') {
-                currView.style.flexDirection = 'column';
-            }
-        }
-        
-        if (currNav) currNav.classList.add('active');
-
-        // Renderizar Gantt se necessário
-        if (view === 'gantt' && typeof GanttController !== 'undefined') {
-            GanttController.renderGantt(obrasCache);
-        }
-
-        // Fechar sidebar no mobile após trocar de view se estiver aberta
-        const sidebar = document.getElementById('appSidebar');
-        if (window.innerWidth <= 768 && sidebar && !sidebar.classList.contains('-translate-x-full')) {
-            window.toggleSidebar();
-        }
-    } catch (e) {
-        console.error("ERRO NO SWITCHVIEW:", e);
-        showToast("Erro ao mudar de aba", "error");
-    }
+    const views = ['dashboard', 'obras', 'tarefas', 'metapwr', 'gantt', 'links'];
+    window.CoreUI.switchView(view, views);
 }
 
 window.toggleSidebar = function () {
-    const sidebar = document.getElementById('appSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        if (sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.add('show');
-        } else {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.remove('show');
-        }
-    }
-    document.body.classList.toggle('sidebar-collapsed');
+    window.CoreUI.toggleSidebar();
+}
+
+window.toggleDarkMode = function () {
+    window.CoreUI.toggleDarkMode();
+}
+
+window.logout = function () {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
+    window.location.href = '../../index.html';
 }
 
 // Global Wrappers for HTML Event Listeners

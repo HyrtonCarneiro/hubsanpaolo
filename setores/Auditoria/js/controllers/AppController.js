@@ -317,9 +317,24 @@ function initApp() {
         return;
     }
 
-    document.getElementById('loggedUserName').innerText = currentUser;
+    // Render Dynamic Sidebar
+    if (typeof window.renderDynamicSidebar === 'function') {
+        window.renderDynamicSidebar('sidebar-container', {
+            sectorTitle: 'Auditoria',
+            userName: currentUser,
+            navItems: [
+                { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'auditoriaOnline', label: 'Auditoria Online', icon: 'ph-bold ph-clipboard-text' },
+                { id: 'planejamento', label: 'Planejamento', icon: 'ph-bold ph-calendar-check' },
+                { id: 'mapeamento', label: 'Mapeamento (Novo)', icon: 'ph-bold ph-map-trifold' },
+                { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
+                { id: 'metapwr', label: 'Meta PWR (MVP)', icon: 'ph-bold ph-target' },
+                { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
+            ]
+        });
+    }
 
-    // Popular Lojas no Select de Auditoria Online — Agrupado por Regional
+    // Popular Lojas no Select de Auditoria Online
     const selectLoja = document.getElementById('audiSelectLoja');
     if (selectLoja) {
         selectLoja.innerHTML = '<option value="">Selecione a Loja...</option>';
@@ -342,9 +357,7 @@ function initApp() {
         });
     }
 
-
-
-    // Iniciar Listeners do Firebase (cada controller exporta sua função de init)
+    // Iniciar Listeners do Firebase
     if (typeof window.initAuditoriaOnlineListeners === 'function') window.initAuditoriaOnlineListeners();
     if (typeof window.initPlanejamentoListeners === 'function') window.initPlanejamentoListeners();
     if (typeof window.initTarefasListeners === 'function') window.initTarefasListeners();
@@ -364,21 +377,9 @@ window.initApp = initApp;
 
 window.switchView = function (view) {
     const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'mapeamento', 'tarefas', 'metapwr', 'links'];
-
-    views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        const nav = document.getElementById('nav-' + v);
-        if (el) el.style.display = 'none';
-        if (nav) nav.classList.remove('active');
-    });
-    const currView = document.getElementById('view-' + view);
-    const currNav = document.getElementById('nav-' + view);
-    if (currView) currView.style.display = 'block';
-    if (currNav) currNav.classList.add('active');
-
-    if (window.innerWidth <= 768) {
-        window.toggleSidebar();
-    }
+    
+    // Use CoreUI
+    window.CoreUI.switchView(view, views);
 
     if (view === 'metapwr' && typeof window.renderizarGrafico === 'function') {
         window.renderizarGrafico();
@@ -386,16 +387,17 @@ window.switchView = function (view) {
 }
 
 window.toggleSidebar = function () {
-    const sidebar = document.getElementById('appSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        if (sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-    }
-    document.body.classList.toggle('sidebar-collapsed');
+    window.CoreUI.toggleSidebar();
 }
+
+window.toggleDarkMode = function () {
+    window.CoreUI.toggleDarkMode();
+    if (typeof window.renderizarGrafico === 'function') window.renderizarGrafico();
+}
+
+window.logout = function () {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
+    window.location.href = '../../index.html';
+}
+

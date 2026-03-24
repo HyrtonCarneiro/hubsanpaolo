@@ -38,19 +38,21 @@ function initApp() {
         return;
     }
 
-    document.getElementById('loggedUserName').innerText = currentUser;
-
-    // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.header-actions').forEach(container => {
-        if (container.querySelector('.btn-hub')) return;
-        const btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
-        btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-        btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        
-        container.insertBefore(btn, container.querySelector('.page-title'));
-    });
+    // Render Dynamic Sidebar
+    if (typeof window.renderDynamicSidebar === 'function') {
+        window.renderDynamicSidebar('sidebar-container', {
+            sectorTitle: 'Diretoria',
+            userName: currentUser,
+            navItems: [
+                { id: 'visao', label: 'Visão Executiva', icon: 'ph-bold ph-chart-polar' },
+                { id: 'ranking', label: 'Ranking de Lojas', icon: 'ph-bold ph-medal' },
+                { id: 'atos', label: 'Sala de Atos', icon: 'ph-bold ph-megaphone' },
+                { id: 'cofre', label: 'Cofre de Arquivos', icon: 'ph-bold ph-vault' },
+                { id: 'inovacao', label: 'Radar de Inovação', icon: 'ph-bold ph-lightbulb-filament' },
+                { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
+            ]
+        });
+    }
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
@@ -59,55 +61,25 @@ function initApp() {
     window.switchView('visao');
 }
 
-function iniciarListenerEquipe() {
-    try {
-        const qEquipe = query(collection(db, "diretoria_equipe"), orderBy("nome"));
-        onSnapshot(qEquipe, (snapshot) => {
-            equipeCache = [];
-            snapshot.forEach(docSnap => equipeCache.push({ firebaseId: docSnap.id, ...docSnap.data() }));
-            renderizarListaEquipeGerenciar();
-        }, (err) => console.error("Erro Equipe:", err));
-    } catch (e) {
-        console.error("Erro ao iniciar listener equipe", e);
-    }
-}
-
 window.switchView = function (view) {
     const views = ['visao', 'ranking', 'atos', 'cofre', 'inovacao', 'links'];
-
-    views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        const nav = document.getElementById('nav-' + v);
-
-        if (el) el.style.display = 'none';
-        if (nav) nav.classList.remove('active-nav');
-    });
-
-    const currView = document.getElementById(`view-${view}`);
-    const currNav = document.getElementById(`nav-${view}`);
-
-    if (currView) currView.style.display = 'block';
-    if (currNav) currNav.classList.add('active-nav');
-
-    if (window.innerWidth <= 768) {
-        window.toggleSidebar();
-    }
+    window.CoreUI.switchView(view, views);
 }
 
 window.toggleSidebar = function () {
-    const sidebar = document.getElementById('appSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        if (sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-    }
-    document.body.classList.toggle('sidebar-collapsed');
+    window.CoreUI.toggleSidebar();
 }
+
+window.toggleDarkMode = function () {
+    window.CoreUI.toggleDarkMode();
+}
+
+window.logout = function () {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
+    window.location.href = '../../index.html';
+}
+
 
 // ====== EQUIPE ======
 window.abrirModalEquipe = function () {

@@ -38,19 +38,19 @@ function initApp() {
         return;
     }
 
-    document.getElementById('loggedUserName').innerText = currentUser;
-
-    // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.flex.items-center.gap-3').forEach(container => {
-        if (!container.closest('.mb-8')) return; // Apenas no header
-        if (container.querySelector('.btn-hub')) return;
-        const btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-lg border border-[var(--border)] bg-transparent text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors btn-hub';
-        btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-        btn.onclick = () => window.location.href = '../../index.html?hub=1';
-        container.insertBefore(btn, container.querySelector('h1'));
-    });
+    // Render Dynamic Sidebar
+    if (typeof window.renderDynamicSidebar === 'function') {
+        window.renderDynamicSidebar('sidebar-container', {
+            sectorTitle: 'Operação',
+            userName: currentUser,
+            navItems: [
+                { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
+                { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' },
+                { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
+            ]
+        });
+    }
 
     // Iniciar listener de equipe
     iniciarListenerEquipe();
@@ -59,52 +59,25 @@ function initApp() {
     window.switchView('dashboard');
 }
 
-function iniciarListenerEquipe() {
-    try {
-        const qEquipe = query(collection(db, "operacao_equipe"), orderBy("nome"));
-        onSnapshot(qEquipe, (snapshot) => {
-            equipeCache = [];
-            snapshot.forEach(docSnap => equipeCache.push({ firebaseId: docSnap.id, ...docSnap.data() }));
-            renderizarListaEquipeGerenciar();
-        }, (err) => console.error("Erro Equipe:", err));
-    } catch(e) {
-        console.error("Erro ao iniciar listener equipe", e);
-    }
-}
-
 window.switchView = function (view) {
-    document.getElementById('view-dashboard').style.display = 'none';
-    document.getElementById('view-tarefas').style.display = 'none';
-    document.getElementById('view-metapwr').style.display = 'none';
-    document.getElementById('view-links').style.display = 'none';
-
-    document.getElementById('nav-dashboard').classList.remove('active-nav');
-    document.getElementById('nav-tarefas').classList.remove('active-nav');
-    document.getElementById('nav-metapwr').classList.remove('active-nav');
-    document.getElementById('nav-links').classList.remove('active-nav');
-
-    document.getElementById(`view-${view}`).style.display = 'block';
-    document.getElementById(`nav-${view}`).classList.add('active-nav');
-
-    if (window.innerWidth <= 768) {
-        window.toggleSidebar();
-    }
+    const views = ['dashboard', 'tarefas', 'metapwr', 'links'];
+    window.CoreUI.switchView(view, views);
 }
 
 window.toggleSidebar = function () {
-    const sidebar = document.getElementById('appSidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        if (sidebar.classList.contains('-translate-x-full')) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-        } else {
-            sidebar.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-        }
-    }
-    document.body.classList.toggle('sidebar-collapsed');
+    window.CoreUI.toggleSidebar();
 }
+
+window.toggleDarkMode = function () {
+    window.CoreUI.toggleDarkMode();
+}
+
+window.logout = function () {
+    localStorage.removeItem('loggedUser');
+    localStorage.removeItem('userSectors');
+    window.location.href = '../../index.html';
+}
+
 
 // ====== EQUIPE ======
 window.abrirModalEquipe = function() {

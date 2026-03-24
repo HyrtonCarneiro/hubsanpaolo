@@ -49,53 +49,7 @@
 <body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
 
     <div id="main-app" class="block">
-    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[998] opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto md:hidden" onclick="window.toggleSidebar()"></div>
-        
-        <!-- Sidebar -->
-        <aside class="fixed inset-y-0 left-0 w-[250px] bg-surface dark:bg-[#362011] border-r-2 border-border dark:border-[#4a2815] transition-transform duration-300 transform -translate-x-full md:translate-x-0 z-[999] flex flex-col border-[var(--border)]" id="appSidebar">
-
-            <!-- Floating Sidebar Toggle -->
-            <button onclick="window.toggleSidebar()" class="absolute -right-9 top-24 w-9 h-9 bg-[var(--surface)] border-2 border-[var(--border)] text-[var(--mainText)] rounded-r-xl flex items-center justify-center transition-all shadow-md text-lg hover:text-[var(--primary)] z-50">
-                <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
-            </button>
-            
-            <div class="p-5 text-lg font-bold border-b border-border dark:border-[#4a2815] flex items-center gap-2.5">
-                <i class="ph-fill ph-map-pin-line text-brandOrange"></i> San Paolo Expansão
-            </div>
-            
-            <div class="py-5 flex flex-col gap-1 flex-grow">
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('dashboard')" id="nav-dashboard">
-                    <i class="ph ph-chart-pie-slice"></i> Dashboard
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors active" onclick="window.switchView('obras')" id="nav-obras">
-                    <i class="ph ph-buildings"></i> Kanban
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('gantt')" id="nav-gantt">
-                    <i class="ph ph-calendar"></i> Cronograma
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('tarefas')" id="nav-tarefas">
-                    <i class="ph ph-kanban"></i> Tarefas da Equipe
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('metapwr')" id="nav-metapwr">
-                    <i class="ph ph-target"></i> Meta PWR
-                </div>
-                <div class="px-5 py-3 text-mutedText dark:text-[#d4bda8] flex items-center gap-3 font-medium cursor-pointer border-l-4 border-transparent hover:bg-brandRed/5 hover:text-brandRed dark:hover:bg-white/5 dark:hover:text-white transition-colors" onclick="window.switchView('links')" id="nav-links">
-                    <i class="ph ph-link"></i> Links Úteis
-                </div>
-            </div>
-            
-            <div class="p-5 border-t border-border dark:border-[#4a2815] text-sm">
-                <div class="mb-2.5 text-mutedText dark:text-[#d4bda8]">Logado como: <strong id="loggedUserName" class="text-mainText dark:text-white">...</strong></div>
-                <div class="flex flex-col gap-2.5">
-                    <button class="w-full flex justify-center items-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.toggleDarkMode()">
-                        <i class="ph ph-moon"></i> Tema Escuro
-                    </button>
-                    <button class="w-full flex justify-center items-center gap-2 px-4 py-2 border border-border dark:border-[#4a2815] rounded-md hover:bg-black/5 dark:hover:bg-white/10 transition-colors" onclick="window.logout()">
-                        <i class="ph ph-sign-out"></i> Voltar / Sair
-                    </button>
-                </div>
-            </div>
-        </aside>
+        <div id="sidebar-container"></div>
 
         <main class="md:ml-[250px] p-4 md:p-8 w-full md:w-[calc(100vw-250px)] min-w-0 overflow-x-hidden box-border">
             <!-- 1. DASHBOARD -->
@@ -662,6 +616,12 @@
     <!-- Firebase Init + Dependencies (loaded in order) -->
     <script src="../../js/firebase-init.js"></script>
     <script src="../../js/data.js"></script>
+    
+    <!-- Services & UI Shared components -->
+    <script src="../../js/services/CoreUI.js"></script>
+    <script src="../../js/components/organisms/DynamicSidebar.js"></script>
+    <script src="../../js/services/NotificationService.js"></script>
+
     <!-- Molecules -->
     <script src="js/components/molecules/KanbanCard.js"></script>
     <script src="js/components/molecules/TaskCard.js"></script>
@@ -674,7 +634,8 @@
     <script src="js/controllers/ModalObraController.js"></script>
     <script src="js/controllers/TarefasController.js"></script>
     <script src="../../js/controllers/LinksController.js"></script>
-    <!-- Main Orchestrator (must be last) -->
+    
+    <!-- Main Orchestrator -->
     <script src="js/app.js"></script>
 
     <script src="../../js/services/NotificationService.js"></script>

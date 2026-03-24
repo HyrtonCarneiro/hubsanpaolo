@@ -59,23 +59,25 @@ function initApp() {
         return;
     }
 
-    document.getElementById('loggedUserName').innerText = currentUser;
-
-    // Injetar botão do Hub dinamicamente
-    document.querySelectorAll('.flex.items-center.gap-3').forEach(function (container) {
-        if (!container.closest('.mb-8')) return;
-        if (container.querySelector('.btn-hub')) return;
-        
-        // Garante que o botão só seja injetado no cabeçalho principal (que contém um h1)
-        if (!container.querySelector('h1')) return;
-
-        var btn = document.createElement('button');
-        btn.className = 'w-10 h-10 flex items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all duration-300 shadow-sm btn-hub active:scale-90';
-        btn.title = 'Escolha de Setores';
-        btn.innerHTML = '<i class="ph ph-squares-four text-xl"></i>';
-        btn.onclick = function () { window.location.href = '../../index.html?hub=1'; };
-        container.insertBefore(btn, container.querySelector('h1'));
-    });
+    // Render Dynamic Sidebar
+    if (typeof window.renderDynamicSidebar === 'function') {
+        window.renderDynamicSidebar('sidebar-container', {
+            sectorTitle: 'Tecnologia (TI)',
+            userName: currentUser,
+            navItems: [
+                { id: 'analytics', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'lojas', label: 'Lojas e Chamados', icon: 'ph-bold ph-buildings' },
+                { id: 'projetos', label: 'Tarefas Equipe', icon: 'ph-bold ph-kanban' },
+                { id: 'atas', label: 'Atas de Reunião', icon: 'ph-bold ph-notebook' },
+                { id: 'protocolos', label: 'Protocolo de Chamados', icon: 'ph-bold ph-ticket' },
+                { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' },
+                { id: 'inventario', label: 'Inventário Tiaguinho', icon: 'ph-bold ph-barcode' },
+                { id: 'mapa', label: 'Mapa Marcas', icon: 'ph-bold ph-map-trifold' },
+                { id: 'tiaguinho', label: 'BI Tiaguinho', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' }
+            ]
+        });
+    }
 
     // Iniciar listeners do Firebase
     if (typeof window.initLojasChamadosListeners === 'function') window.initLojasChamadosListeners();
@@ -93,26 +95,10 @@ function initApp() {
 window.initApp = initApp;
 
 window.switchView = function (view) {
-    // Esconder todas as views
     const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'inventario', 'mapa', 'links'];
-    views.forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if (el) el.style.display = 'none';
-        
-        const nav = document.getElementById('nav-' + v);
-        if (nav) nav.classList.remove('active');
-    });
-
-    // Mostrar a view solicitada
-    const targetView = document.getElementById('view-' + view);
-    const targetNav = document.getElementById('nav-' + view);
     
-    if (targetView) targetView.style.display = 'block';
-    if (targetNav) targetNav.classList.add('active');
-
-    if (window.innerWidth <= 768) {
-        window.toggleSidebar();
-    }
+    // Use CoreUI switchView
+    window.CoreUI.switchView(view, views);
 
     if (view === 'analytics') {
         if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
@@ -133,7 +119,6 @@ window.toggleFullscreenBI = function() {
 
     if (container.classList.contains('bi-expanded')) {
         container.classList.remove('bi-expanded');
-        // Remover classe hidden do botão de recolher (caso queira forçar visibilidade via CSS, mas aqui controlamos o estado)
         const exitBtn = container.querySelector('.exit-bi-btn');
         if (exitBtn) exitBtn.classList.add('hidden');
     } else {
@@ -144,13 +129,7 @@ window.toggleFullscreenBI = function() {
 }
 
 window.toggleSidebar = function () {
-    var sidebar = document.getElementById('appSidebar');
-    var overlay = document.getElementById('sidebarOverlay');
-    if (sidebar && overlay) {
-        sidebar.classList.toggle('open');
-        overlay.classList.toggle('show');
-    }
-    document.body.classList.toggle('sidebar-collapsed');
+    window.CoreUI.toggleSidebar();
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -159,3 +138,4 @@ document.addEventListener("DOMContentLoaded", function () {
     if (elDev) elDev.innerText = appConfig.desenvolvedor;
     if (elVer) elVer.innerText = appConfig.versao;
 });
+
