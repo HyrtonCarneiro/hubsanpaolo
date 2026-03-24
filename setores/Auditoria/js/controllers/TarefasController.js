@@ -235,7 +235,7 @@ window.salvarAudiProjeto = async function () {
             const atu = window.currentUser || localStorage.getItem('loggedUser') || 'Sistema';
             window.tempAudiResponsaveisCriacao.forEach(r => {
                 if (r !== atu && r !== 'Geral') {
-                    window.emitNotification(r, `Nova tarefa de Auditoria para você: ${desc.substring(0, 30)}...`);
+                    window.emitNotification(r, `Nova tarefa de Auditoria para você: ${desc.substring(0, 30)}...`, "setores/Auditoria/index.html?view=tarefas");
                 }
             });
         }
@@ -644,7 +644,7 @@ window.confirmarEdicaoAudiProj = async function () {
             const atu = window.currentUser || localStorage.getItem('loggedUser') || 'Sistema';
             window.tempAudiResponsaveisEdit.forEach(r => {
                 if (r !== atu && r !== 'Geral') {
-                    window.emitNotification(r, `A tarefa de Auditoria "${desc.substring(0, 25)}..." foi atualizada.`);
+                    window.emitNotification(r, `A tarefa de Auditoria "${desc.substring(0, 25)}..." foi atualizada.`, "setores/Auditoria/index.html?view=tarefas");
                 }
             });
         }

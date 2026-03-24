@@ -356,7 +356,9 @@ function initApp() {
         document.getElementById('audiDataInput').valueAsDate = new Date();
     }
 
-    window.switchView('dashboard');
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewToOpen = urlParams.get('view') || 'dashboard';
+    window.switchView(viewToOpen);
 }
 window.initApp = initApp;
 

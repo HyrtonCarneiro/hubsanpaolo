@@ -213,7 +213,12 @@ window.NotificationService = {
                 const el = document.querySelector(link);
                 if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             } else {
-                window.location.href = link;
+                // Link is expected to be relative to the hubsanpaolo root directory
+                // We calculate how many levels deep we are to properly resolve the path
+                const pathStr = window.location.pathname.replace(/\\/g, '/');
+                const isRoot = pathStr.endsWith('hubsanpaolo/index.html') || pathStr.endsWith('hubsanpaolo/');
+                const prefix = isRoot ? '' : '../../';
+                window.location.href = prefix + link;
             }
         }
     },

@@ -86,13 +86,15 @@ function initApp() {
     if (typeof window.initLinksListeners === 'function') window.initLinksListeners('TI');
     if (typeof window.initChamadosChart === 'function') window.initChamadosChart();
 
-    window.switchView('analytics');
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewToOpen = urlParams.get('view') || 'analytics';
+    window.switchView(viewToOpen);
 }
 window.initApp = initApp;
 
 window.switchView = function (view) {
     // Esconder todas as views
-    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'mapa', 'links'];
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'inventario', 'mapa', 'links'];
     views.forEach(v => {
         const el = document.getElementById('view-' + v);
         if (el) el.style.display = 'none';

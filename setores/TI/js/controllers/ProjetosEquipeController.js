@@ -189,7 +189,7 @@ window.salvarProjeto = async function () {
         if (typeof window.emitNotification === 'function') {
             window.tempResponsaveisCriacao.forEach(r => {
                 if (r !== currentUser && r !== 'Geral') {
-                    window.emitNotification(r, `${currentUser} atribuiu uma nova tarefa a você: ${desc.substring(0, 30)}...`);
+                    window.emitNotification(r, `${currentUser} atribuiu uma nova tarefa a você: ${desc.substring(0, 30)}...`, "setores/TI/index.html?view=projetos");
                 }
             });
         }
@@ -845,7 +845,7 @@ window.confirmarEdicaoProj = async function () {
         if (typeof window.emitNotification === 'function') {
             window.tempResponsaveisEdit.forEach(r => {
                 if (r !== currentUser && r !== 'Geral') {
-                    window.emitNotification(r, `A tarefa "${desc.substring(0, 20)}..." foi atualizada por ${currentUser}.`);
+                    window.emitNotification(r, `A tarefa "${desc.substring(0, 20)}..." foi atualizada por ${currentUser}.`, "setores/TI/index.html?view=projetos");
                 }
             });
         }
