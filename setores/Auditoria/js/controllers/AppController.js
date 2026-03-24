@@ -295,14 +295,15 @@ window.fecharModalImportProgresso = function() {
 
 window.toggleDarkMode = function () {
     document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('dark');
     localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
     if (typeof window.renderizarGrafico === 'function') window.renderizarGrafico();
 }
 
 if (localStorage.getItem('darkMode') === 'true') {
-    document.body.classList.add('dark-mode');
+    document.body.classList.add('dark-mode', 'dark');
 } else if (localStorage.getItem('darkMode') === null && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.body.classList.add('dark-mode');
+    document.body.classList.add('dark-mode', 'dark');
     localStorage.setItem('darkMode', 'true');
 }
 

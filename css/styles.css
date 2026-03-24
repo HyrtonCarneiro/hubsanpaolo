@@ -49,6 +49,27 @@ body.dark-mode {
     --border: #4a2815;
 }
 
+/* Base input focus styles */
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+}
+
+/* Dark Mode Input Contrast Fix */
+body.dark-mode input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]), 
+body.dark-mode select, 
+body.dark-mode textarea {
+    background-color: var(--bg-color) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.7;
+}
+
 /* Global Transitions */
 body {
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -71,12 +92,6 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
-}
-
-/* Base input focus styles */
-input:focus, select:focus, textarea:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
 }
 
 /* Active nav item styling (used by switchView JS) */
