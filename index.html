@@ -143,6 +143,151 @@
                 <button class="w-full bg-[var(--sp-aoleite)] text-white hover:brightness-110 font-semibold px-4 py-2.5 rounded-md transition-all inline-flex items-center justify-center gap-2" onclick="window.salvarNovaSenha()">
                     <i class="ph ph-floppy-disk"></i> Salvar Nova Senha
                 </button>
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema TI - San Paolo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- Firebase Compat SDK (works on file:// protocol) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <!-- Tailwind CSS (CDN Configured for zero-build architecture) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandOrange: '#da5513',
+                        mainText: '#333333',
+                        mutedText: '#666666',
+                        surface: '#ffffff'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <div id="login-container" class="min-h-screen bg-gray-100 flex items-center justify-center p-4" style="background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+        <div class="bg-surface p-10 rounded-xl shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] w-full max-w-md border border-border">
+            <h2 id="authTitle" class="text-2xl font-bold text-center mb-6 text-mainText m-0">Acesso ao Sistema</h2>
+            
+            <div class="flex flex-col mb-4">
+                <label class="mb-2 font-medium text-sm text-mainText">Usuário</label>
+                <input type="text" id="userInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
+                    onkeydown="if(event.key === 'Enter') window.handleAuth()">
+            </div>
+            
+            <div class="flex flex-col mb-6">
+                <label class="mb-2 font-medium text-sm text-mainText">Senha</label>
+                <input type="password" id="passInput" class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
+                    onkeydown="if(event.key === 'Enter') window.handleAuth()">
+            </div>
+            
+            <div class="mt-4">
+                <button class="w-full bg-brandOrange text-white hover:bg-[#b8430a] font-medium py-2 px-4 rounded-md transition-colors"
+                    onclick="window.handleAuth()">Entrar no Sistema</button>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-gray-200 text-center text-sm text-mutedText">
+                <div class="mb-1">Desenvolvido por: <strong class="text-mainText">Hyrton Carneiro</strong></div>
+                <div>Versão <span>2.0.0 (Atomic JS)</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="hub-container" class="hidden min-h-screen bg-gray-50 p-10 max-w-7xl mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-bold text-mainText mb-2">Portal Empresarial San Paolo</h1>
+            <p class="text-lg text-mutedText">Selecione o setor que deseja acessar no momento.</p>
+        </div>
+
+        <div id="hub-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+            <!-- Os cards são inseridos aqui pelo Javascript refatorado -->
+        </div>
+
+        <div class="text-center mt-12 flex justify-center gap-4 flex-wrap">
+            <button id="adminPanelBtn" class="hidden bg-brandOrange text-white hover:bg-[#b8430a] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.abrirModalAdmin()">
+                <i class="ph ph-wrench"></i> Gerenciar Usuários
+            </button>
+            <button id="userProfileBtn" style="background-color: #ffffff; color: #56331B; border: 1px solid #D1C8B4;" class="font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2 hover:border-brandOrange hover:text-brandOrange" onclick="window.abrirModalPerfil()">
+                <i class="ph ph-user-gear"></i> Minha Conta
+            </button>
+            <button class="bg-transparent text-mainText border border-gray-300 hover:bg-[rgba(86,51,27,0.05)] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors inline-flex items-center gap-2" onclick="window.logout()">
+                <i class="ph ph-sign-out"></i> Encerrar Sessão
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Gerenciamento de Usuários (Apenas Admin) -->
+    <div id="modalAdminUsers" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center p-6 border-b border-border">
+                <h2 class="text-2xl font-bold text-mainText m-0">Gerenciar Permissões de Usuários</h2>
+                <button class="bg-transparent text-mainText border border-border hover:bg-[rgba(86,51,27,0.05)] dark:hover:bg-[rgba(232,225,208,0.1)] font-medium px-4 py-2 rounded-md transition-colors" onclick="window.fecharModalAdmin()">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+            <div class="p-6 pb-2 border-b border-border bg-gray-50 dark:bg-black/20">
+                <div class="flex flex-col sm:flex-row gap-3 items-end mb-4">
+                    <input type="text" id="novoUsuarioAdmin" placeholder="Novo Usuário" class="flex-1 w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                    <input type="password" id="novaSenhaAdmin" placeholder="Senha" class="flex-1 w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all">
+                    <button class="bg-brandOrange text-white hover:bg-[#b8430a] font-medium px-4 py-2 rounded-md transition-colors" onclick="window.criarUsuarioAdmin()">
+                        <i class="ph ph-plus"></i> Adicionar
+                    </button>
+                </div>
+                <input type="text" id="buscaUsuarioAdmin" placeholder="Buscar usuário..." class="w-full p-2.5 border border-border rounded-md bg-surface text-mainText focus:outline-none focus:ring-2 focus:ring-brandOrange focus:border-transparent transition-all"
+                    oninput="window.renderAdminUsersList()">
+            </div>
+            <div id="adminUsersList" class="overflow-y-auto p-6 flex-1 bg-white">
+                <!-- Renderizado JS via Atom/Molecule Generators -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Minha Conta (Todos os Usuários) -->
+    <div id="modalPerfil" class="hidden fixed inset-0 z-50 items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="bg-white dark:bg-[#362011] rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex justify-between items-center p-6 border-b border-border dark:border-[#4a2815]">
+                <h2 class="text-xl font-bold text-mainText dark:text-white m-0 flex items-center gap-2"><i class="ph ph-user-gear text-[var(--sp-aoleite)]"></i> Minha Conta</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-mutedText hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalPerfil()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-black/20 rounded-lg border border-border dark:border-[#4a2815]">
+                    <div class="w-12 h-12 rounded-full bg-[var(--sp-aoleite)] flex items-center justify-center text-white text-xl font-bold"><i class="ph-fill ph-user"></i></div>
+                    <div>
+                        <div class="font-bold text-mainText dark:text-white text-lg" id="perfilUserName">...</div>
+                        <div class="text-sm text-mutedText dark:text-[#d4bda8]" id="perfilUserSetores">...</div>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-semibold text-mainText dark:text-white mb-2"><i class="ph ph-key mr-1"></i> Alterar Senha</label>
+                    <input type="password" id="perfilSenhaAtual" placeholder="Senha atual" class="w-full p-2.5 mb-3 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                    <input type="password" id="perfilNovaSenha" placeholder="Nova senha" class="w-full p-2.5 mb-3 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                    <input type="password" id="perfilConfirmarSenha" placeholder="Confirmar nova senha" class="w-full p-2.5 border border-border dark:border-[#4a2815] rounded-md bg-surface dark:bg-[#1a0f07] text-mainText dark:text-white focus:outline-none focus:ring-2 focus:ring-[var(--sp-aoleite)] transition-all">
+                </div>
+                <button class="w-full bg-[var(--sp-aoleite)] text-white hover:brightness-110 font-semibold px-4 py-2.5 rounded-md transition-all inline-flex items-center justify-center gap-2" onclick="window.salvarNovaSenha()">
+                    <i class="ph ph-floppy-disk"></i> Salvar Nova Senha
+                </button>
             </div>
         </div>
     </div>
@@ -151,8 +296,12 @@
 
     <script src="js/firebase-init.js"></script>
     <script src="js/data.js"></script>
+    <script src="js/services/CoreUI.js"></script>
     <script src="js/components/atoms/Button.js"></script>
     <script src="js/components/molecules/SectorCard.js"></script>
+    <script src="js/components/organisms/DynamicSidebar.js"></script>
+    <script src="js/controllers/AdminController.js"></script>
+    <script src="js/controllers/ProfileController.js"></script>
     <script src="js/main.js"></script>
 
     <script src="js/services/NotificationService.js"></script>
