@@ -2,96 +2,95 @@
 description: Padrões de código e regras de desenvolvimento do projeto San Paolo Hub
 ---
 
-// turbo-all
+📜 Padrões de Desenvolvimento e Workflow
+⚠️ LEIA ANTES DE QUALQUER ALTERAÇÃO
+Este documento define a arquitetura e as expectativas de qualidade para este projeto. O descumprimento destas regras pode gerar dívida técnica ou instabilidade.
 
-# Regras de Desenvolvimento — San Paolo Hub
+🛠️ Passo 0 — Preparação Obrigatória
+Contexto: Leia o arquivo RULES.md (se disponível) para entender as regras de negócio atuais.
 
-## ⚠️ LEIA SEMPRE ANTES DE QUALQUER ALTERAÇÃO NO PROJETO
+Documentação: Revise este workflow (coding-standards.md) integralmente.
 
-### Passo 0 — Obrigatório antes de qualquer alteração
-1. Leia o arquivo `RULES.md` na raiz do projeto
-2. Leia este workflow completo (`coding-standards.md`)
-3. Verifique a estrutura `js/controllers/` do setor se a alteração envolver um setor específico
-4. Se alguma regra não fizer sentido para a situação, **consulte o usuário antes de desviar**
+Mapeamento: Se a alteração envolver um módulo específico, analise a pasta js/controllers/ correspondente antes de codar.
 
-### Passo 5 — Verificação Ágil (Prioritário)
-Antes de qualquer verificação manual no navegador:
-1.  **Isolar Lógica**: Certifique-se que a lógica de negócio está em `js/logic/`.
-2.  **Executar Testes de Unidade**: Rode `node js/tests/[arquivo].test.js`.
-3.  **Garantir Verde**: Não avance se os testes de unidade falharem.
+Alinhamento: Se alguma regra técnica conflitar com uma necessidade urgente, consulte o usuário antes de desviar do padrão.
 
-Após os testes de unidade, verifique internamente no navegador:
-- [ ] Console JS sem erros
-- [ ] Renderização UI correta
-- [ ] Integração com Firebase OK
-- [ ] Dark mode continua funcionando
+🧪 Passo 1 — Verificação e Testes (Prioritário)
+Antes de testar visualmente no navegador:
 
-### Passo 6 — Finalização
-1. Informe o usuário sobre as alterações concluídas.
-2. **Teste Manual OBRIGATÓRIO (Exclusivo Usuário)**: Ao finalizar TODA e QUALQUER modificação (código ou site), você DEVE abrir um navegador local já na página correta e logado para que o usuário realize o teste manual. Não utilize o subagente para testes automáticos ou interações após o link ser aberto; o usuário fará o teste de forma livre. Seu papel encerra-se ao garantir o ambiente pronto para o humano. **No Windows, use obrigatoriamente `powershell -Command "Start-Process 'caminho_absoluto'"` para lidar corretamente com espaços em pastas.**
-3. **NÃO** dê commit ou push. Aguarde a instrução explícita do usuário.
+Isolamento: A lógica de negócio deve residir em js/logic/ (funções puras e testáveis).
 
-## Arquitetura
-- **Zero-build**: Projeto roda diretamente via `file://` no navegador, sem Node.js, sem bundler
-- **Firebase Compat SDK**: Usar `firebase-*-compat.js` via CDN (NÃO usar ES Modules `import/export`)
-- **Scripts globais**: Todas as funções e objetos expostos via `window.` — sem `export`/`import`
-- **Ordem de carregamento dos scripts**: firebase-init.js → data.js → controllers → app.js
+Testes Unitários: Execute os testes existentes (ex: node js/tests/[arquivo].test.js).
 
-## Estilização
-- **Tailwind CSS via CDN**: Usar classes utilitárias diretamente no HTML.
-- **Variáveis CSS**: Definidas em `css/styles.css` (ex: `var(--primary)`, `var(--sp-red)`, etc.).
-- **Estética Premium**: Priorizar `rounded-xl`, `shadow-sm` e `hover:scale-105` para interatividade.
-- **Classe `.active`**: Usada para nav items ativos na sidebar (regras CSS em `styles.css`).
-- **Visibilidade de views**: Usar `style.display = 'none'/'block'/'flex'` (NÃO `class="hidden"`).
-- **Dark mode**: Toggle via `document.body.classList.toggle('dark-mode')`.
+Validação: Não avance para a interface se os testes de lógica falharem.
 
-## Princípios de UX/UI (Obrigatórios)
-1. **Intutitividade Total**: Se um novo usuário não souber o que o botão faz em 2 segundos, o design falhou.
-2. **Sem Informação Escondida**: Cards e botões devem mostrar informações críticas nativamente (excluir "show on hover" para dados base).
-3. **Feedback Instantâneo**: Todo clique ou hover deve ter uma transição suave (`transition-all`).
-4. **Limpeza Visual (Declutter)**: Se uma tela tiver muitos campos, use botões de expansão (toggle) ou modais.
-5. **Busca e Filtros**: Telas com mais de 10 itens DEVEM ter campo de busca e botão "Limpar Filtros".
+Após garantir a lógica, verifique na UI:
 
-## Estrutura de Pastas
-```
-hubsanpaolo/
-├── css/styles.css              # Variáveis CSS globais e regras base
+[ ] Console do navegador livre de erros/warnings.
+
+[ ] Renderização correta em diferentes tamanhos de tela.
+
+[ ] Persistência de dados (API/Firebase) funcionando.
+
+[ ] Dark mode e estados de hover consistentes.
+
+🏁 Passo 2 — Finalização e Entrega
+Comunicação: Relate claramente o que foi alterado.
+
+Teste Manual do Usuário: Após finalizar, prepare o ambiente para o usuário. Se estiver em ambiente local, forneça o comando para abrir o navegador (No Windows, use: powershell -Command "Start-Process 'caminho_absoluto'").
+
+Controle de Versão: NÃO realize commits ou pushes sem autorização explícita do usuário.
+
+🏗️ Arquitetura Técnica
+Zero-build: O projeto deve rodar diretamente via file:// ou servidor estático simples, sem necessidade de bundlers (Webpack/Vite) ou Node.js em runtime.
+
+Dependências via CDN: Utilizar bibliotecas (Firebase, Tailwind, etc.) via links CDN, preferencialmente versões compatíveis com scripts globais.
+
+Escopo Global Controlado: Funções e estados principais devem ser expostos via objeto window para comunicação entre scripts, mantendo a ordem de carregamento correta.
+
+Ordem de Dependência: Core/Config → Data/Store → Controllers → App/Main.
+
+🎨 Estilização e UI
+Utility-first: Usar Tailwind CSS (via CDN) diretamente nas classes do HTML.
+
+Design System: Utilizar variáveis CSS para cores e tokens (ex: var(--primary)).
+
+Estética Moderna: Priorizar bordas arredondadas (rounded-xl), sombras leves (shadow-sm) e feedbacks táteis (hover:scale-105).
+
+Manipulação de Visibilidade: Para alternar telas, prefira manipular style.display via JS em vez de apenas alternar classes de utilidade, para garantir prioridade de renderização.
+
+🧠 Princípios de UX (Obrigatórios)
+Regra dos 2 Segundos: A função de qualquer elemento deve ser óbvia instantaneamente.
+
+Dados Explícitos: Evite esconder informações cruciais sob interações (como "show on hover"). Mostre o que é importante de imediato.
+
+Feedback Visual: Toda ação (clique/envio) deve ter uma resposta visual (loader, transição ou toast).
+
+Interface Limpa: Use modais ou seções expansíveis para evitar sobrecarga de informações em uma única tela.
+
+Acessibilidade de Dados: Listagens com muitos itens devem obrigatoriamente incluir filtros ou campo de busca.
+
+📂 Estrutura de Pastas Sugerida
+projeto/
+├── css/                # Estilos globais e variáveis
 ├── js/
-│   ├── firebase-init.js        # Inicialização Firebase (window globals)
-│   ├── data.js                 # Dados estáticos (lojasIniciais, appConfig)
-│   ├── main.js                 # Hub principal (login, setores, admin)
-│   └── components/
-│       ├── atoms/Button.js     # Componente atômico Button
-│       └── molecules/SectorCard.js
-├── setores/
-│   └── [NomeSetor]/
-│       ├── index.html          # Página do setor (inclui CDNs + Tailwind config)
+│   ├── config/         # Inicialização de serviços (Firebase, APIs)
+│   ├── data/           # Mockups e configurações estáticas
+│   ├── logic/          # Lógica pura (processamento de dados)
+│   ├── controllers/    # Manipulação da DOM e eventos
+│   └── tests/          # Scripts de teste automatizado
+├── modules/            # Funcionalidades ou páginas isoladas
+│   └── [NomeModulo]/
+│       ├── index.html
 │       └── js/
-│           ├── app.js          # Entry point do setor
-│           ├── logic/          # Lógica pura (testável em Node.js)
-│           ├── tests/          # Scripts de teste de unidade
-│           └── controllers/    # Controllers SOLID do setor
-└── index.html                  # Hub de login e seleção de setores
-```
+└── index.html          # Ponto de entrada principal
+💻 Princípios de Código
+SOLID: Cada script deve ter uma responsabilidade única. Separe a lógica de cálculo da lógica de exibição.
 
-## Princípios de Código
-1. **SOLID**: Cada arquivo faz uma coisa. Serviços separados de controllers
-2. **Atomic Design**: Atoms (Button), Molecules (SectorCard), Organisms (modais complexos)
-3. **Nomes de lojas únicos**: Cada loja em `data.js` deve ter nome único (ex: "AEROPORTO LOJA SALVADOR")
-4. **Template literals**: Usar concatenação `'view-' + v` ao invés de backtick em scripts manipulados por PowerShell
-5. **Null checks**: Sempre verificar `if (element)` antes de `.innerHTML`, `.style`, `.classList`
+Componentização Simples: Use o conceito de Atoms/Molecules mesmo em HTML puro, criando padrões reutilizáveis de botões e cards.
 
-## Lista de Setores (ordem alfabética, Diretoria primeiro)
-Diretoria, Auditoria, Centro_Distribuicao, Controladoria, Expansao, Financeiro, Fiscal, Gente_Gestao, Marketing, Operacao, TI, Varejo
+Segurança (Null Checks): Sempre valide a existência de um elemento no DOM antes de tentar manipulá-lo.
 
-## Estrutura padrão de um novo setor
-1. Criar pasta `setores/[NomeSetor]/`
-2. Criar `index.html` com: CDNs (Firebase Compat, Tailwind, Phosphor Icons, Toastify), Tailwind config, sidebar, views
-3. Criar `js/app.js` com: initApp(), switchView(), toggleSidebar(), toggleDarkMode(), logout(), equipe
-4. Classe da sidebar nav ativa: `active` (CSS definido em styles.css)
-5. Botão Hub: injetado dinamicamente via JS no `initApp()` antes dos `<h1>`
-6. Adicionar o setor em `main.js`: allHubSectors, allSectors (admin auth), renderAdminUsersList allSectors
+Código à Prova de Futuro: Desenvolva pensando que novos módulos serão adicionados. Use registros globais ou configurações centralizadas em vez de "hard-coding".
 
-## Firebase Collections por Setor
-- Equipe: `[setor]_equipe` (ex: `cd_equipe`, `controladoria_equipe`)
-- Dados específicos: nomeados conforme o setor (ex: `chamados`, `obras`, `notas_auditoria`)
+Template Literals: Ao construir HTML via JS, use concatenação simples se o código for manipulado por ferramentas de automação que possam conflitar com backticks (`).
