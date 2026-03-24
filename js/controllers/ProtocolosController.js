@@ -222,7 +222,7 @@ window.renderizarProtocolos = function () {
         div.className = `bg-[var(--surface)] rounded-2xl border border-[var(--border)] ${accentClass} overflow-hidden hover:shadow-lg transition-all duration-300 animate-fadeIn flex flex-col`;
 
         const slaDisplay = p.sla_prazo 
-            ? `<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.7rem] font-bold ${isAtrasado ? 'bg-red-100 text-red-700 border border-red-200 animate-pulse' : 'bg-emerald-100 text-emerald-700 border border-emerald-200'}">
+            ? `<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[0.7rem] font-bold ${isResolvido ? 'bg-gray-100 text-gray-600 border border-gray-200' : (isAtrasado ? 'bg-red-100 text-red-700 border border-red-200 animate-pulse' : 'bg-emerald-100 text-emerald-700 border border-emerald-200')}">
                 <i class="ph-bold ph-calendar"></i> SLA: ${p.sla_prazo.split('-').reverse().join('/')}
                </div>`
             : '';
@@ -244,9 +244,8 @@ window.renderizarProtocolos = function () {
                         </div>
                         <div>
                             <div class="flex flex-wrap items-center gap-2 mb-2">
-                                <h4 class="text-xl font-black text-[var(--text-main)] m-0 leading-none">#${p.numero || '---'}</h4>
+                                <h4 class="text-xl font-black text-[var(--text-main)] m-0 leading-none">Protocolo: ${p.numero || '---'}</h4>
                                 <span class="px-2.5 py-1 rounded-full text-[0.6rem] font-black uppercase tracking-widest" style="background-color: ${systemColor}20; color: ${systemColor}">${p.sistema}</span>
-                                ${isResolvido ? '<span class="px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 text-[0.6rem] font-black uppercase tracking-widest border border-gray-200">RESOLVIDO</span>' : (isAtrasado ? '<span class="px-2.5 py-1 rounded-full bg-red-100 text-red-600 text-[0.6rem] font-black uppercase tracking-widest border border-red-200">ATRASADO</span>' : '<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[0.6rem] font-black uppercase tracking-widest border border-emerald-200">NO PRAZO</span>')}
                             </div>
                             <div class="flex flex-wrap items-center gap-3">
                                 ${slaDisplay}
