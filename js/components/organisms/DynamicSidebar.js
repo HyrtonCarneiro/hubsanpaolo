@@ -27,9 +27,10 @@ window.renderDynamicSidebar = function (containerId, config) {
 
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden transition-opacity" onclick="window.CoreUI.toggleSidebar()"></div>
 
-        <aside id="appSidebar" class="fixed top-0 left-0 h-screen w-64 bg-[var(--bg-color)] border-r border-[var(--border)] flex flex-col transition-all duration-300 z-40 shadow-sm -translate-x-full md:translate-x-0">
-            <!-- Header -->
-            <div class="p-6 border-b border-[var(--border)] h-[88px] flex flex-col justify-center">
+        <div class="relative flex-shrink-0 transition-all duration-300 z-40" id="sidebar-wrapper">
+            <aside id="appSidebar" class="fixed md:relative top-0 left-0 h-screen w-64 bg-[var(--bg-color)] border-r border-[var(--border)] flex flex-col transition-all duration-300 shadow-sm -translate-x-full md:translate-x-0 overflow-hidden">
+                <!-- Header -->
+                <div class="p-6 border-b border-[var(--border)] h-[88px] flex flex-col justify-center">
                 <div class="flex items-center gap-3 sidebar-title-container">
                     <div class="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm">
                         <i class="ph-bold ph-shield-check"></i>
@@ -80,7 +81,13 @@ window.renderDynamicSidebar = function (containerId, config) {
                     </button>
                 </div>
             </div>
-        </aside>
+            </aside>
+            
+            <!-- Desktop Toggle Button (outside aside to stay visible) -->
+            <button onclick="window.CoreUI.toggleSidebar()" class="absolute -right-9 top-24 w-9 h-9 bg-[var(--bg-color)] border border-[var(--border)] border-l-0 text-[var(--text-main)] rounded-r-xl hidden md:flex items-center justify-center transition-all shadow-md text-lg hover:text-[var(--primary)] z-50">
+                <i class="ph ph-caret-left sidebar-icon-toggle" id="sidebarToggleIcon"></i>
+            </button>
+        </div>
     `;
 
     container.innerHTML = sidebarHTML;

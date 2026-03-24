@@ -20,16 +20,23 @@ window.CoreUI = {
     toggleSidebar: function () {
         const sidebar = document.getElementById('appSidebar');
         const overlay = document.getElementById('sidebarOverlay');
-        if (sidebar && overlay) {
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
+        const body = document.body;
+        
+        if (window.innerWidth <= 768) {
+            // Mobile: slide in/out as overlay
+            if (sidebar && overlay) {
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('hidden');
+                }
             }
+        } else {
+            // Desktop: toggle width/margin
+            body.classList.toggle('sidebar-collapsed');
         }
-        document.body.classList.toggle('sidebar-collapsed');
     },
 
     switchView: function (targetViewId, allViewIds) {

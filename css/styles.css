@@ -111,9 +111,15 @@ body.dark-mode [id^="nav-"].active {
 
 /* Desktop Sidebar Collapse */
 @media (min-width: 768px) {
+    body.sidebar-collapsed #sidebar-wrapper {
+        width: 0;
+        margin-left: -1px;
+    }
+    
     body.sidebar-collapsed #appSidebar {
-        margin-left: -17rem;
-        transition: margin-left 0.3s ease;
+        width: 0;
+        min-width: 0;
+        border-right-width: 0;
     }
 }
 
