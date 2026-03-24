@@ -284,7 +284,7 @@ window.salvarComentario = async function () {
 
         if (typeof window.emitNotification === 'function') {
             window.tempResponsaveisLogCriacao.forEach(r => {
-                if (r !== currentUser && r !== 'Geral') {
+                if (r !== 'Geral') {
                     window.emitNotification(r, `Você foi marcado em um chamado: ${document.getElementById('modalTitle').innerText}`, "setores/TI/index.html?view=lojas");
                 }
             });
@@ -517,7 +517,7 @@ window.confirmarEdicaoLog = async function () {
 
         if (typeof window.emitNotification === 'function') {
             window.tempResponsaveisLogEdit.forEach(r => {
-                if (r !== currentUser && r !== 'Geral') {
+                if (r !== 'Geral') {
                     window.emitNotification(r, `Um chamado foi atualizado: ${texto.substring(0, 30)}...`, "setores/TI/index.html?view=lojas");
                 }
             });
