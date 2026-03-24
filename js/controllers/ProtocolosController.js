@@ -93,7 +93,7 @@ window.salvarProtocolo = async function () {
             window.registrarAtividade('chamado', `Novo protocolo ${sistema} (${numero}) atribuído a ${responsavel}`);
         }
     } catch (e) {
-        showToast("Erro ao registrar protocolo", "error");
+        showToast("Erro ao registrar protocolo: " + (e.message || e), "error");
     }
 };
 
@@ -102,7 +102,7 @@ window.deletarProtocolo = async function (id) {
         await window.ProtocolosLogic.excluir(id);
         showToast("Protocolo removido.");
     } catch (e) {
-        showToast("Erro ao excluir protocolo", "error");
+        showToast("Erro ao excluir protocolo: " + (e.message || e), "error");
     }
 };
 
@@ -111,7 +111,7 @@ window.toggleStatusProtocolo = async function (id, currentStatus) {
         await window.ProtocolosLogic.toggleStatus(id, currentStatus);
         showToast(currentStatus === 'Resolvido' ? "Protocolo reaberto" : "Protocolo marcado como resolvido");
     } catch (e) {
-        showToast("Erro ao alterar status", "error");
+        showToast("Erro ao alterar status: " + (e.message || e), "error");
     }
 };
 
@@ -165,7 +165,7 @@ window.confirmarEdicaoProtocolo = async function () {
         window.fecharModalEditarProtocolo();
         showToast("Protocolo atualizado com sucesso!");
     } catch (e) {
-        showToast("Erro ao atualizar protocolo", "error");
+        showToast("Erro ao atualizar protocolo: " + (e.message || e), "error");
     }
 };
 

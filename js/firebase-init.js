@@ -100,4 +100,9 @@ window.serverTimestamp = function() {
     return firebase.firestore.FieldValue.serverTimestamp();
 };
 
+/** deleteField() → firebase.firestore.FieldValue.delete() */
+window.deleteField = function() {
+    return firebase.firestore.FieldValue.delete();
+};
+
 console.log("[Firebase] Inicializado com sucesso via Compat SDK.");
