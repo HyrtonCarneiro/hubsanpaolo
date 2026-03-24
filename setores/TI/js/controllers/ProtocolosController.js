@@ -108,6 +108,22 @@ window.renderizarProtocolos = function () {
         if (p.sistema === 'Degust') { iconClass = "ph-fill ph-fork-knife"; systemColor = "#da5513"; }
         if (p.sistema === 'Delivery\'s') { iconClass = "ph-fill ph-moped"; systemColor = "#da0d17"; }
 
+        var slaBadge = '';
+        if (p.sla) {
+            var hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            var fechaSla = new Date(p.sla + 'T00:00:00');
+            
+            var isOverdue = hoy > fechaSla;
+            var slaColor = isOverdue ? '#ef4444' : '#22c55e'; // red-500 : green-500
+            var slaBg = isOverdue ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)';
+            
+            slaBadge = '<span class="flex items-center gap-1.5 px-2 py-0.5 rounded-lg font-black" style="background-color: ' + slaBg + '; color: ' + slaColor + '">' +
+                          '<i class="ph ' + (isOverdue ? 'ph-warning-circle' : 'ph-clock-countdown') + '"></i> ' +
+                          'SLA: ' + p.sla.split('-').reverse().join('/') + 
+                       '</span>';
+        }
+
         var header = 
             '<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 border-b border-[var(--border)] pb-4">' +
                 '<div class="flex items-center gap-4">' +
@@ -118,10 +134,10 @@ window.renderizarProtocolos = function () {
                         '<h4 class="text-lg font-bold text-[var(--text-main)] m-0 tracking-tight">Protocolo: ' + (p.numero || p.titulo || '---') + '</h4>' +
                         '<div class="flex items-center gap-3 mt-1">' +
                             '<span class="px-2 py-0.5 rounded text-[0.6rem] font-black uppercase tracking-wider" style="background-color: ' + systemColor + '; color: white">' + p.sistema + '</span>' +
-                            '<p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-4 opacity-60 m-0">' +
-                                '<span class="flex items-center gap-1.5"><i class="ph ph-calendar"></i> ' + p.dataStr + '</span>' +
-                                (p.sla ? '<span class="flex items-center gap-1.5 text-[var(--primary)] font-black"><i class="ph ph-clock-countdown"></i> SLA: ' + p.sla.split('-').reverse().join('/') + '</span>' : '') +
-                                '<span class="flex items-center gap-1.5"><i class="ph ph-user"></i> ' + p.autor + '</span>' +
+                            '<p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center wrap gap-3 opacity-100 m-0">' +
+                                '<span class="flex items-center gap-1.5 opacity-60"><i class="ph ph-calendar"></i> ' + p.dataStr + '</span>' +
+                                slaBadge +
+                                '<span class="flex items-center gap-1.5 opacity-60"><i class="ph ph-user"></i> ' + (p.autor || '---') + '</span>' +
                             '</p>' +
                         '</div>' +
                     '</div>' +
