@@ -281,6 +281,15 @@ window.salvarComentario = async function () {
             responsaveis: window.tempResponsaveisLogCriacao,
             atualizacoes: []
         });
+
+        if (typeof window.emitNotification === 'function') {
+            window.tempResponsaveisLogCriacao.forEach(r => {
+                if (r !== currentUser && r !== 'Geral') {
+                    window.emitNotification(r, `Você foi marcado em um chamado: ${document.getElementById('modalTitle').innerText}`);
+                }
+            });
+        }
+
         document.getElementById('novoComentario').value = '';
         document.getElementById('setorComentario').value = '';
         document.getElementById('tagPrazoLog').value = '';
@@ -505,6 +514,15 @@ window.confirmarEdicaoLog = async function () {
             responsavel: window.tempResponsaveisLogEdit[0],
             responsaveis: window.tempResponsaveisLogEdit
         });
+
+        if (typeof window.emitNotification === 'function') {
+            window.tempResponsaveisLogEdit.forEach(r => {
+                if (r !== currentUser && r !== 'Geral') {
+                    window.emitNotification(r, `Um chamado foi atualizado: ${texto.substring(0, 30)}...`);
+                }
+            });
+        }
+
         window.fecharModalEditLog();
         showToast("Chamado atualizado com sucesso!");
     } catch (e) {
@@ -577,6 +595,16 @@ window.salvarComentarioLog = async function () {
 
     try {
         await updateDoc(doc(db, "logs", id), { atualizacoes: novasAtualizacoes });
+
+        if (typeof window.emitNotification === 'function' && log.responsaveis) {
+            var lojaDisplay = document.getElementById('commentLogLoja') ? document.getElementById('commentLogLoja').innerText.replace('Loja: ','') : 'Loja';
+            log.responsaveis.forEach(r => {
+                if (r !== currentUser && r !== 'Geral') {
+                    window.emitNotification(r, `Nova atualização de chamado (${lojaDisplay}): ${texto.substring(0, 30)}...`);
+                }
+            });
+        }
+
         document.getElementById('novoComentarioLog').value = '';
         renderizarAtualizacoesChamado(novasAtualizacoes);
         showToast("Atualização registrada");

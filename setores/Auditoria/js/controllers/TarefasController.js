@@ -230,6 +230,15 @@ window.salvarAudiProjeto = async function () {
         
         window.toggleFormTarefa();
         showToast("Tarefa registrada com sucesso!");
+        
+        if (typeof window.emitNotification === 'function') {
+            const atu = window.currentUser || localStorage.getItem('loggedUser') || 'Sistema';
+            window.tempAudiResponsaveisCriacao.forEach(r => {
+                if (r !== atu && r !== 'Geral') {
+                    window.emitNotification(r, `Nova tarefa de Auditoria para você: ${desc.substring(0, 30)}...`);
+                }
+            });
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao registrar tarefa", "error");
@@ -630,6 +639,15 @@ window.confirmarEdicaoAudiProj = async function () {
         });
         window.fecharModalEditAudiProj();
         showToast("Tarefa atualizada!");
+
+        if (typeof window.emitNotification === 'function') {
+            const atu = window.currentUser || localStorage.getItem('loggedUser') || 'Sistema';
+            window.tempAudiResponsaveisEdit.forEach(r => {
+                if (r !== atu && r !== 'Geral') {
+                    window.emitNotification(r, `A tarefa de Auditoria "${desc.substring(0, 25)}..." foi atualizada.`);
+                }
+            });
+        }
     } catch (e) {
         console.error(e);
     }

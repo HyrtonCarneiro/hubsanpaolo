@@ -186,6 +186,13 @@ window.salvarProjeto = async function () {
         if (typeof window.registrarAtividade === 'function') {
             window.registrarAtividade('projeto', `${currentUser} atribuiu nova tarefa para ${window.tempResponsaveisCriacao.join(', ')}: ${desc.substring(0, 30)}...`);
         }
+        if (typeof window.emitNotification === 'function') {
+            window.tempResponsaveisCriacao.forEach(r => {
+                if (r !== currentUser && r !== 'Geral') {
+                    window.emitNotification(r, `${currentUser} atribuiu uma nova tarefa a você: ${desc.substring(0, 30)}...`);
+                }
+            });
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao registrar tarefa", "error");
@@ -835,6 +842,13 @@ window.confirmarEdicaoProj = async function () {
         });
         window.fecharModalEditProj();
         showToast("Tarefa atualizada com sucesso!");
+        if (typeof window.emitNotification === 'function') {
+            window.tempResponsaveisEdit.forEach(r => {
+                if (r !== currentUser && r !== 'Geral') {
+                    window.emitNotification(r, `A tarefa "${desc.substring(0, 20)}..." foi atualizada por ${currentUser}.`);
+                }
+            });
+        }
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar tarefa", "error");
