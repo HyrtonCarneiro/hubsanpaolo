@@ -2,6 +2,8 @@
 // Depends on: firebase-init.js, AppController.js (showToast, currentUser)
 
 window.sysProtocolos = [];
+window.equipeTI = [];
+window.equipeAudi = [];
 
 window.initProtocolosListeners = function () {
     try {
@@ -13,8 +15,59 @@ window.initProtocolosListeners = function () {
             });
             window.renderizarProtocolos();
         });
+        
+        // Iniciar listeners de equipe para o select
+        window.initEquipeProtocolosListeners();
+        
     } catch (e) {
         console.error("Erro ao iniciar listener protocolos", e);
+    }
+}
+
+window.initEquipeProtocolosListeners = function() {
+    // Equipe TI
+    const qTI = query(collection(db, "equipe"), orderBy("nome"));
+    onSnapshot(qTI, (snap) => {
+        window.equipeTI = [];
+        snap.forEach(d => window.equipeTI.push({ id: d.id, ...d.data() }));
+        window.popularSelectResponsavel();
+    });
+
+    // Equipe Auditoria
+    const qAudi = query(collection(db, "auditoria_equipe"), orderBy("nome"));
+    onSnapshot(qAudi, (snap) => {
+        window.equipeAudi = [];
+        snap.forEach(d => window.equipeAudi.push({ id: d.id, ...d.data() }));
+        window.popularSelectResponsavel();
+    });
+}
+
+window.popularSelectResponsavel = function() {
+    const select = document.getElementById('protocoloResponsavel');
+    if (!select) return;
+
+    // Guardar valor atual para não resetar durante renderização se o usuário estiver editando
+    const valorAtual = select.value;
+
+    // Combinar e remover duplicatas (baseado no nome)
+    const combined = [...window.equipeTI, ...window.equipeAudi];
+    const uniqueMap = new Map();
+    combined.forEach(m => {
+        if (m.nome) uniqueMap.set(m.nome, m);
+    });
+
+    const sortedNames = Array.from(uniqueMap.keys()).sort();
+
+    let options = '<option value="" disabled selected>Selecione um responsável</option>';
+    sortedNames.forEach(nome => {
+        options += `<option value="${nome}">${nome}</option>`;
+    });
+
+    select.innerHTML = options;
+    
+    // Restaurar valor se ele ainda existir na lista
+    if (valorAtual && sortedNames.includes(valorAtual)) {
+        select.value = valorAtual;
     }
 }
 
@@ -59,7 +112,18 @@ window.prepararEdicaoProtocolo = function(id) {
     if (elNumero) elNumero.value = p.numero || '';
     if (elDescricao) elDescricao.value = p.descricao || '';
     if (elSla) elSla.value = p.sla || '';
-    if (elResp) elResp.value = p.responsavel || '';
+    
+    if (elResp) {
+        // Se o responsável não estiver na lista (ex: saiu da equipe), adicionamos temporariamente apenas para esta edição
+        const exists = Array.from(elResp.options).some(opt => opt.value === p.responsavel);
+        if (!exists && p.responsavel) {
+            const opt = document.createElement('option');
+            opt.value = p.responsavel;
+            opt.textContent = p.responsavel + ' (Inativo)';
+            elResp.appendChild(opt);
+        }
+        elResp.value = p.responsavel || '';
+    }
 
     if (elBtnLabel) elBtnLabel.textContent = 'Salvar Alterações';
     if (elFormTitle) elFormTitle.textContent = 'Editando Protocolo';
@@ -110,7 +174,7 @@ window.salvarProtocolo = async function () {
     const numero = elNumero.value.trim();
     const descricao = elDescricao.value.trim();
     const sla = elSla ? elSla.value : null;
-    const responsavel = elResp ? elResp.value.trim() : '';
+    const responsavel = elResp ? elResp.value : '';
 
     if (!numero || !descricao) {
         showToast("Número e Descrição são obrigatórios.", "warning");
@@ -214,7 +278,7 @@ window.renderizarProtocolos = function () {
                             <p class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-widest flex items-center gap-3 m-0">
                                 <span class="flex items-center gap-1"><i class="ph ph-calendar"></i> ${p.dataStr}</span>
                                 ${slaBadge}
-                                <span class="flex items-center gap-1 text-[var(--primary)]"><i class="ph ph-user-focus"></i> Responsável: ${p.responsavel || 'Não definido'}</span>
+                                <span class="flex items-center gap-1 text-[var(--primary)] text-[0.7rem]"><i class="ph ph-user-focus"></i> Responsável: ${p.responsavel || 'Não definido'}</span>
                             </p>
                         </div>
                     </div>

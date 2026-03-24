@@ -222,17 +222,19 @@ function renderAdminUsersList() {
             </label>
         ` : '';
 
+        const btnEditNome = Button({ text: "Editar", icon: "<i class='ph ph-pencil-simple mr-1'></i>", variant: "outline", onClick: `window.editarNomeUsuario('${u.id}', '${u.user}')` });
         const btnAlterarSenha = Button({ text: "Senha", icon: "<i class='ph ph-key mr-1'></i>", variant: "outline", onClick: `window.alterarSenhaUsuario('${u.id}', '${u.user}')` });
         const btnDelete = !isSelf ? Button({ text: "Excluir", icon: "<i class='ph ph-trash mr-1'></i>", variant: "outline", onClick: `window.deletarUsuario('${u.id}', '${u.user}')` }) : '';
         const btnSave = !isSelf ? Button({ text: "Salvar Permissões", icon: "<i class='ph ph-floppy-disk mr-1'></i>", variant: "primary", onClick: `window.salvarPermissoesUsuario('${u.id}')` }) : '<p class="text-xs text-mutedText italic">Permissões de administrador raiz não podem ser alteradas.</p>';
 
         d.innerHTML = `
-            <div class="flex justify-between items-center mb-4">
+            <div class="flex justify-between items-center mb-4 gap-4 flex-wrap sm:flex-nowrap">
                 <div class="flex items-center gap-2 text-lg font-bold text-mainText">
                     <i class="ph ph-user"></i> ${u.user}
                     ${adminBadge}
                 </div>
-                <div class="flex gap-2 relative z-10">
+                <div class="flex flex-wrap gap-2 relative z-10 sm:justify-end">
+                    ${btnEditNome}
                     ${btnAlterarSenha}
                     ${btnDelete}
                 </div>
@@ -319,6 +321,91 @@ window.alterarSenhaUsuario = async function (userId, userName) {
     } catch (e) {
         console.error(e);
         showToast("Erro ao alterar senha", "error");
+    }
+}
+
+window.editarNomeUsuario = async function (userId, oldUserName) {
+    const defaultName = oldUserName;
+    const newName = prompt(`Digite o novo nome para o usuário '${oldUserName}':\n\nIsso atualizará o nome deste usuário em todas as equipes, tarefas e protocolos do Hub.`, defaultName);
+    
+    if (newName === null) return; // cancelou
+    if (!newName.trim() || newName.trim() === oldUserName) return; // vazio ou igual
+
+    try {
+        // Verificar se novo nome ja existe
+        const qCheck = query(collection(db, "users"), where("user", "==", newName.trim()));
+        const snapCheck = await getDocs(qCheck);
+        if (!snapCheck.empty) return showToast("Este nome de usuário já está em uso por outra conta.", "error");
+
+        showToast("Sincronizando atualização, por favor aguarde...", "warning");
+
+        // 1. Atualizar base 'users'
+        await updateDoc(doc(db, "users", userId), { user: newName.trim() });
+
+        // 2. Collection de Equipes (nome da coleção + campo 'nome')
+        const equipeCollections = [
+            "equipe", "auditoria_equipe", "varejo_equipe", "cd_equipe", 
+            "operacao_equipe", "marketing_equipe", "gente_gestao_equipe", 
+            "fiscal_equipe", "diretoria_equipe", "controladoria_equipe", 
+            "equipe_expansao", "financeiro_equipe"
+        ];
+        
+        for (let col of equipeCollections) {
+            const q = query(collection(db, col), where("nome", "==", oldUserName));
+            const snaps = await getDocs(q);
+            snaps.forEach(async (d) => {
+                await updateDoc(doc(db, col, d.id), { nome: newName.trim() });
+            });
+        }
+
+        // 3. Collections genéricas onde o usuário pode ser autor/responsável
+        const genericCollections = [
+            "projetos", "auditoria_projetos", "projetos_expansao",
+            "protocolos_suporte", "atas", "logs", "notifications"
+        ];
+
+        for (let col of genericCollections) {
+            // Strings diretas
+            let qAutor = query(collection(db, col), where("autor", "==", oldUserName));
+            let sAutor = await getDocs(qAutor);
+            sAutor.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { autor: newName.trim() }); });
+
+            let qResp = query(collection(db, col), where("responsavel", "==", oldUserName));
+            let sResp = await getDocs(qResp);
+            sResp.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { responsavel: newName.trim() }); });
+
+            let qMembro = query(collection(db, col), where("membroResponsavel", "==", oldUserName));
+            let sMembro = await getDocs(qMembro);
+            sMembro.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { membroResponsavel: newName.trim() }); });
+
+            let qUser = query(collection(db, col), where("user", "==", oldUserName));
+            let sUser = await getDocs(qUser);
+            sUser.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { user: newName.trim() }); });
+
+            // Array contain (responsaveis)
+            let qArray = query(collection(db, col), where("responsaveis", "array-contains", oldUserName));
+            let sArray = await getDocs(qArray);
+            sArray.forEach(async (d) => { 
+                let data = d.data();
+                if(data.responsaveis) {
+                    let newArr = data.responsaveis.map(r => r === oldUserName ? newName.trim() : r);
+                    await updateDoc(doc(db, col, d.id), { responsaveis: newArr });
+                }
+            });
+        }
+
+        // Atualizar localStorage se o usuário editou a si mesmo
+        if (currentUser === oldUserName) {
+            localStorage.setItem('loggedUser', newName.trim());
+            currentUser = newName.trim();
+        }
+
+        showToast("Usuário atualizado com sucesso em todos os registros!");
+        carregarUsuariosAdmin(); 
+
+    } catch (e) {
+        console.error(e);
+        showToast("Erro durante a atualização em cascata", "error");
     }
 }
 
