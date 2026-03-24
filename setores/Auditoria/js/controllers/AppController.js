@@ -328,6 +328,7 @@ function initApp() {
                 { id: 'planejamento', label: 'Planejamento', icon: 'ph-bold ph-calendar-check' },
                 { id: 'mapeamento', label: 'Mapeamento (Novo)', icon: 'ph-bold ph-map-trifold' },
                 { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
+                { id: 'protocolos', label: 'Protocolos', icon: 'ph-bold ph-ticket' },
                 { id: 'metapwr', label: 'Meta PWR (MVP)', icon: 'ph-bold ph-target' },
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
             ]
@@ -362,6 +363,7 @@ function initApp() {
     if (typeof window.initPlanejamentoListeners === 'function') window.initPlanejamentoListeners();
     if (typeof window.initTarefasListeners === 'function') window.initTarefasListeners();
     if (typeof window.initMapeamentoListeners === 'function') window.initMapeamentoListeners();
+    if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
     if (typeof window.initLinksListeners === 'function') window.initLinksListeners('Auditoria');
 
     // Data padrão hoje
@@ -376,7 +378,7 @@ function initApp() {
 window.initApp = initApp;
 
 window.switchView = function (view) {
-    const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'mapeamento', 'tarefas', 'metapwr', 'links'];
+    const views = ['dashboard', 'auditoriaOnline', 'planejamento', 'mapeamento', 'tarefas', 'protocolos', 'metapwr', 'links'];
     
     // Use CoreUI
     window.CoreUI.switchView(view, views);
