@@ -243,7 +243,7 @@ window.NotificationService = {
             oscillator.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.08);
             
             gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
-            gainNode.gain.linearRampToValueAtTime(0.40, audioCtx.currentTime + 0.05); // aumenta volume rápido até 40%
+            gainNode.gain.linearRampToValueAtTime(1.0, audioCtx.currentTime + 0.05); // Volume em 100%
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5); // diminui mais devagar
             
             oscillator.connect(gainNode);
