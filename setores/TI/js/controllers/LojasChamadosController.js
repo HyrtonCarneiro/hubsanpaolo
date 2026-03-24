@@ -378,6 +378,24 @@ window.deletarComentario = async function (firebaseId) {
     }
 }
 
+window.reabrirComentario = async function (firebaseId) {
+    try {
+        await updateDoc(doc(db, "logs", firebaseId), {
+            resolvido: false,
+            autorResolucao: deleteField(), // Usando o wrapper global definido no firebase-init.js
+            dataResolucao: deleteField(),
+            timestampResolvido: deleteField()
+        });
+        showToast("Ocorrência reaberta");
+        if (typeof window.registrarAtividade === 'function') {
+            window.registrarAtividade('chamado', `Chamado reaberto por ${currentUser}`);
+        }
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao reabrir ocorrência: " + (e.message || e), "error");
+    }
+}
+
 function renderizarComentarios(hist) {
     var container = document.getElementById('listaComentarios');
     if (!container) return;
@@ -412,7 +430,8 @@ function renderizarComentarios(hist) {
         if (!c.resolvido) {
             resolveSection = '<button class="inline-flex items-center justify-center gap-1.5 px-4 py-2 mt-2 sm:mt-0 font-semibold rounded-lg bg-[var(--success)] text-white shadow hover:brightness-110 transition-all sm:w-auto w-full" onclick="window.resolverComentario(\'' + c.firebaseId + '\')"><i class="ph ph-check font-bold"></i> Resolver</button>';
         } else {
-            resolveSection = '<span class="text-[var(--success)] font-bold text-sm flex items-center gap-1"><i class="ph-fill ph-check-circle text-lg"></i> Resolvido por ' + c.autorResolucao + ' em ' + c.dataResolucao + '</span>';
+            resolveSection = '<div class="flex flex-col gap-1"><span class="text-[var(--success)] font-bold text-sm flex items-center gap-1"><i class="ph-fill ph-check-circle text-lg"></i> Resolvido por ' + c.autorResolucao + '</span>' +
+                             '<button class="text-[0.65rem] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] transition-all flex items-center gap-1.5 mt-1" onclick="window.reabrirComentario(\'' + c.firebaseId + '\')"><i class="ph ph-arrow-u-up-left"></i> Reabrir Chamado</button></div>';
         }
 
         var setorBadge = c.setor ? '<span class="inline-block px-2 py-0.5 rounded-md text-xs font-bold bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] ml-1">📍 ' + c.setor + '</span>' : '';
