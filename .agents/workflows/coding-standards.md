@@ -80,6 +80,7 @@ hubsanpaolo/
 3. **Nomes de lojas únicos**: Cada loja em `data.js` deve ter nome único (ex: "AEROPORTO LOJA SALVADOR")
 4. **Template literals**: Usar concatenação `'view-' + v` ao invés de backtick em scripts manipulados por PowerShell
 5. **Null checks**: Sempre verificar `if (element)` antes de `.innerHTML`, `.style`, `.classList`
+6. **Future-Proof**: Priorizar implementações que não exijam atualizações manuais no código central ao adicionar novos setores ou abas (ex: usar registros globais em `window.appConfig`).
 
 ## Lista de Setores (ordem alfabética, Diretoria primeiro)
 Diretoria, Auditoria, Centro_Distribuicao, Controladoria, Expansao, Financeiro, Fiscal, Gente_Gestao, Marketing, Operacao, TI, Varejo

@@ -6,6 +6,24 @@
 let currentUser = localStorage.getItem('loggedUser') || null;
 let allUsersCache = [];
 
+// Configuração Centralizada de Setores e suas Coleções de Equipe
+window.appConfig = {
+    sectors: [
+        { id: "Diretoria", title: "Painel Diretoria", icon: "ph-fill ph-crown", color: true, equipeCol: "diretoria_equipe" },
+        { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false, equipeCol: "auditoria_equipe" },
+        { id: "Centro_Distribuicao", title: "Centro de Distribuição", icon: "ph-fill ph-package", color: false, equipeCol: "cd_equipe" },
+        { id: "Controladoria", title: "Controladoria", icon: "ph-fill ph-chart-line-up", color: false, equipeCol: "controladoria_equipe" },
+        { id: "Expansao", title: "Expansão", icon: "ph-fill ph-map-pin-line", color: false, equipeCol: "equipe_expansao" },
+        { id: "Financeiro", title: "Financeiro", icon: "ph-fill ph-bank", color: false, equipeCol: "financeiro_equipe" },
+        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false, equipeCol: "fiscal_equipe" },
+        { id: "Gente_Gestao", title: "Gente e Gestão", icon: "ph-fill ph-users-three", color: false, equipeCol: "gente_gestao_equipe" },
+        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false, equipeCol: "marketing_equipe" },
+        { id: "Operacao", title: "Operação", icon: "ph-fill ph-gear", color: false, equipeCol: "operacao_equipe" },
+        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false, equipeCol: "equipe" },
+        { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false, equipeCol: "varejo_equipe" }
+    ]
+};
+
 function showToast(msg, type = 'success') {
     Toastify({
         text: msg, duration: 3000, gravity: "bottom", position: "right",
@@ -25,7 +43,7 @@ window.handleAuth = async function () {
 
         if (querySnapshot.empty) {
             if (user === 'admin' && pass === '$@np@010') {
-                const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
+                const allSectors = window.appConfig.sectors.map(s => s.id);
                 await addDoc(collection(db, "users"), { user: 'admin', pass: '$@np@010', setores_permitidos: allSectors, isSuperAdmin: true });
                 localStorage.setItem('loggedUser', user);
                 localStorage.setItem('userSectors', JSON.stringify(allSectors));
@@ -50,7 +68,7 @@ window.handleAuth = async function () {
         if (userData.pass === pass) {
             let sectors = userData.setores_permitidos || ["TI"];
             if (user === 'admin') {
-                sectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
+                sectors = window.appConfig.sectors.map(s => s.id);
             }
             localStorage.setItem('userSectors', JSON.stringify(sectors));
             localStorage.setItem('loggedUser', user);
@@ -86,34 +104,19 @@ function initApp() {
     const urlParams = new URLSearchParams(window.location.search);
     const forceHub = urlParams.get('hub') === '1';
 
-    if (sectors.length === 1 && sectors[0] !== 'Admin' && !forceHub) {
+    if (sectors.length === 1 && sectors[0] !== 'Admin' && sectors[0] !== 'admin' && !forceHub) {
         window.location.href = `./setores/${sectors[0]}/index.html`;
         return;
     }
 
     document.getElementById('hub-container').style.display = 'block';
 
-    const allHubSectors = [
-        { id: "Diretoria", title: "Painel Diretoria", icon: "ph-fill ph-crown", color: true },
-        { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false },
-        { id: "Centro_Distribuicao", title: "Centro de Distribuição", icon: "ph-fill ph-package", color: false },
-        { id: "Controladoria", title: "Controladoria", icon: "ph-fill ph-chart-line-up", color: false },
-        { id: "Expansao", title: "Expansão", icon: "ph-fill ph-map-pin-line", color: false },
-        { id: "Financeiro", title: "Financeiro", icon: "ph-fill ph-bank", color: false },
-        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false },
-        { id: "Gente_Gestao", title: "Gente e Gestão", icon: "ph-fill ph-users-three", color: false },
-        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false },
-        { id: "Operacao", title: "Operação", icon: "ph-fill ph-gear", color: false },
-        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false },
-        { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
-    ];
-
     const isSuperAdmin = localStorage.getItem('isSuperAdmin') === 'true';
 
     const hubGrid = document.getElementById('hub-grid');
     if (hubGrid) {
         let gridHTML = '';
-        allHubSectors.forEach(sec => {
+        window.appConfig.sectors.forEach(sec => {
             const isActive = sectors.includes(sec.id) || isSuperAdmin;
             if (isActive) {
                 gridHTML += SectorCard({
@@ -144,7 +147,6 @@ window.goToSector = function (sector) {
 window.abrirModalAdmin = async function () {
     const el = document.getElementById('modalAdminUsers');
     el.style.display = 'flex';
-    // Timeout to allow display:flex to apply before opacity transition
     setTimeout(() => { el.classList.add('show'); }, 10);
     carregarUsuariosAdmin();
 }
@@ -166,7 +168,6 @@ async function carregarUsuariosAdmin() {
             allUsersCache.push({ id: doc.id, ...doc.data() });
         });
 
-        // Põe o admin em primeiro
         allUsersCache.sort((a, b) => {
             if (a.user === 'admin') return -1;
             if (b.user === 'admin') return 1;
@@ -186,7 +187,6 @@ function renderAdminUsersList() {
     listHtml.innerHTML = '';
 
     const termo = document.getElementById('buscaUsuarioAdmin') ? document.getElementById('buscaUsuarioAdmin').value.toLowerCase().trim() : '';
-    const allSectors = ["Diretoria", "Auditoria", "Centro_Distribuicao", "Controladoria", "Expansao", "Financeiro", "Fiscal", "Gente_Gestao", "Marketing", "Operacao", "TI", "Varejo"];
 
     let usuariosFiltrados = allUsersCache.filter(u => u.user.toLowerCase().includes(termo));
 
@@ -198,13 +198,13 @@ function renderAdminUsersList() {
     usuariosFiltrados.forEach(u => {
         const currentPerms = Array.isArray(u.setores_permitidos) ? u.setores_permitidos : ["TI"];
 
-        let checksHtml = allSectors.map(sec => {
-            const isChecked = currentPerms.includes(sec);
+        let checksHtml = window.appConfig.sectors.map(sec => {
+            const isChecked = currentPerms.includes(sec.id);
             const isAdminStr = u.user === 'admin' ? 'disabled' : '';
             return `
                 <label class="inline-flex items-center gap-2 text-sm p-2 bg-gray-50 border border-gray-200 rounded cursor-pointer hover:bg-gray-100 transition-colors">
-                    <input type="checkbox" value="${sec}" class="chk-sector-${u.id} rounded text-brandOrange focus:ring-brandOrange" ${isChecked ? 'checked' : ''} ${isAdminStr}> 
-                    <span class="text-mainText">${sec}</span>
+                    <input type="checkbox" value="${sec.id}" class="chk-sector-${u.id} rounded text-brandOrange focus:ring-brandOrange" ${isChecked ? 'checked' : ''} ${isAdminStr}> 
+                    <span class="text-mainText">${sec.id}</span>
                 </label>
             `;
         }).join('');
@@ -268,7 +268,7 @@ window.salvarPermissoesUsuario = async function (userId) {
             isSuperAdmin: isSuper
         });
         showToast("Permissões atualizadas com sucesso!");
-        carregarUsuariosAdmin(); // Atualiza cache
+        carregarUsuariosAdmin();
     } catch (e) {
         console.error(e);
         showToast("Erro ao atualizar permissões", "error");
@@ -281,7 +281,7 @@ window.deletarUsuario = async function (userId, userName) {
     try {
         await deleteDoc(doc(db, "users", userId));
         showToast("Usuário deletado");
-        carregarUsuariosAdmin(); // Refresh da lista
+        carregarUsuariosAdmin();
     } catch (e) {
         console.error(e);
         showToast("Erro ao deletar usuário", "error");
@@ -312,7 +312,7 @@ window.criarUsuarioAdmin = async function () {
 
 window.alterarSenhaUsuario = async function (userId, userName) {
     const novaSenha = prompt(`Digite a nova senha para o usuário '${userName}':`);
-    if (novaSenha === null) return; // cancelou
+    if (novaSenha === null) return;
     if (!novaSenha.trim()) return showToast("Senha não pode ser vazia", "error");
 
     try {
@@ -325,14 +325,12 @@ window.alterarSenhaUsuario = async function (userId, userName) {
 }
 
 window.editarNomeUsuario = async function (userId, oldUserName) {
-    const defaultName = oldUserName;
-    const newName = prompt(`Digite o novo nome para o usuário '${oldUserName}':\n\nIsso atualizará o nome deste usuário em todas as equipes, tarefas e protocolos do Hub.`, defaultName);
+    const newName = prompt(`Digite o novo nome para o usuário '${oldUserName}':\n\nIsso atualizará o nome deste usuário em todas as equipes, tarefas e protocolos do Hub.`, oldUserName);
     
-    if (newName === null) return; // cancelou
-    if (!newName.trim() || newName.trim() === oldUserName) return; // vazio ou igual
+    if (newName === null) return;
+    if (!newName.trim() || newName.trim() === oldUserName) return;
 
     try {
-        // Verificar se novo nome ja existe
         const qCheck = query(collection(db, "users"), where("user", "==", newName.trim()));
         const snapCheck = await getDocs(qCheck);
         if (!snapCheck.empty) return showToast("Este nome de usuário já está em uso por outra conta.", "error");
@@ -342,59 +340,47 @@ window.editarNomeUsuario = async function (userId, oldUserName) {
         // 1. Atualizar base 'users'
         await updateDoc(doc(db, "users", userId), { user: newName.trim() });
 
-        // 2. Collection de Equipes (nome da coleção + campo 'nome')
-        const equipeCollections = [
-            "equipe", "auditoria_equipe", "varejo_equipe", "cd_equipe", 
-            "operacao_equipe", "marketing_equipe", "gente_gestao_equipe", 
-            "fiscal_equipe", "diretoria_equipe", "controladoria_equipe", 
-            "equipe_expansao", "financeiro_equipe"
-        ];
-        
-        for (let col of equipeCollections) {
-            const q = query(collection(db, col), where("nome", "==", oldUserName));
+        // 2. Collections de Equipes (Dinâmico via config)
+        for (let sec of window.appConfig.sectors) {
+            if (!sec.equipeCol) continue;
+            const q = query(collection(db, sec.equipeCol), where("nome", "==", oldUserName));
             const snaps = await getDocs(q);
             snaps.forEach(async (d) => {
-                await updateDoc(doc(db, col, d.id), { nome: newName.trim() });
+                await updateDoc(doc(db, sec.equipeCol, d.id), { nome: newName.trim() });
             });
         }
 
-        // 3. Collections genéricas onde o usuário pode ser autor/responsável
+        // 3. Collections genéricas
         const genericCollections = [
             "projetos", "auditoria_projetos", "projetos_expansao",
             "protocolos_suporte", "atas", "logs", "notifications"
         ];
 
         for (let col of genericCollections) {
-            // Strings diretas
-            let qAutor = query(collection(db, col), where("autor", "==", oldUserName));
-            let sAutor = await getDocs(qAutor);
-            sAutor.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { autor: newName.trim() }); });
-
-            let qResp = query(collection(db, col), where("responsavel", "==", oldUserName));
-            let sResp = await getDocs(qResp);
-            sResp.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { responsavel: newName.trim() }); });
-
-            let qMembro = query(collection(db, col), where("membroResponsavel", "==", oldUserName));
-            let sMembro = await getDocs(qMembro);
-            sMembro.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { membroResponsavel: newName.trim() }); });
-
-            let qUser = query(collection(db, col), where("user", "==", oldUserName));
-            let sUser = await getDocs(qUser);
-            sUser.forEach(async (d) => { await updateDoc(doc(db, col, d.id), { user: newName.trim() }); });
+            // Strings diretas (autor, responsavel, etc)
+            const fields = ["autor", "responsavel", "membroResponsavel", "user"];
+            for (let f of fields) {
+                const q = query(collection(db, col), where(f, "==", oldUserName));
+                const s = await getDocs(q);
+                s.forEach(async (d) => {
+                    const updateObj = {};
+                    updateObj[f] = newName.trim();
+                    await updateDoc(doc(db, col, d.id), updateObj);
+                });
+            }
 
             // Array contain (responsaveis)
-            let qArray = query(collection(db, col), where("responsaveis", "array-contains", oldUserName));
-            let sArray = await getDocs(qArray);
+            const qArray = query(collection(db, col), where("responsaveis", "array-contains", oldUserName));
+            const sArray = await getDocs(qArray);
             sArray.forEach(async (d) => { 
-                let data = d.data();
+                const data = d.data();
                 if(data.responsaveis) {
-                    let newArr = data.responsaveis.map(r => r === oldUserName ? newName.trim() : r);
+                    const newArr = data.responsaveis.map(r => r === oldUserName ? newName.trim() : r);
                     await updateDoc(doc(db, col, d.id), { responsaveis: newArr });
                 }
             });
         }
 
-        // Atualizar localStorage se o usuário editou a si mesmo
         if (currentUser === oldUserName) {
             localStorage.setItem('loggedUser', newName.trim());
             currentUser = newName.trim();
@@ -413,18 +399,13 @@ window.editarNomeUsuario = async function (userId, oldUserName) {
 window.abrirModalPerfil = async function () {
     const el = document.getElementById('modalPerfil');
     el.style.display = 'flex';
-
     document.getElementById('perfilUserName').textContent = currentUser || '...';
 
-    // Carregar setores do usuário
     try {
         const sectors = JSON.parse(localStorage.getItem('userSectors')) || [];
-        const sectorNames = {
-            'Diretoria': 'Diretoria', 'TI': 'TI', 'Auditoria': 'Auditoria',
-            'Controladoria': 'Controladoria', 'Expansao': 'Expansão', 'Fiscal': 'Fiscal',
-            'Financeiro': 'Financeiro', 'Marketing': 'Marketing', 'Gente_Gestao': 'Gente e Gestão',
-            'Operacao': 'Operação', 'Varejo': 'Varejo', 'Centro_Distribuicao': 'Centro de Distribuição'
-        };
+        const sectorNames = {};
+        window.appConfig.sectors.forEach(s => sectorNames[s.id] = s.title);
+        
         const nomes = sectors.map(s => sectorNames[s] || s);
         document.getElementById('perfilUserSetores').textContent = nomes.length > 3
             ? nomes.slice(0, 3).join(', ') + ` (+${nomes.length - 3})`
@@ -433,7 +414,6 @@ window.abrirModalPerfil = async function () {
         document.getElementById('perfilUserSetores').textContent = '';
     }
 
-    // Limpar campos
     document.getElementById('perfilSenhaAtual').value = '';
     document.getElementById('perfilNovaSenha').value = '';
     document.getElementById('perfilConfirmarSenha').value = '';
@@ -456,12 +436,10 @@ window.salvarNovaSenha = async function () {
     try {
         const q = query(collection(db, "users"), where("user", "==", currentUser));
         const querySnapshot = await getDocs(q);
-
         if (querySnapshot.empty) return showToast("Usuário não encontrado", "error");
 
         const docRef = querySnapshot.docs[0];
         const userData = docRef.data();
-
         if (userData.pass !== senhaAtual) return showToast("Senha atual incorreta", "error");
 
         await updateDoc(doc(db, "users", docRef.id), { pass: novaSenha });
