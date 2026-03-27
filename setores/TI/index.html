@@ -600,6 +600,119 @@
                 </div>
             </div>
 
+            <div id="view-conhecimento" style="display: none;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Base de Conhecimento</h1>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-180px)]">
+                    <!-- Sidebar da Base de Conhecimento (Categorias) -->
+                    <div class="lg:col-span-1 bg-[var(--surface)] rounded-2xl border border-[var(--border)] flex flex-col overflow-hidden shadow-sm">
+                        <div class="p-4 border-b border-[var(--border)] bg-[var(--bg-color)]/30 flex justify-between items-center">
+                            <span class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">Documentações</span>
+                            <button onclick="window.abrirModalNovaCategoria()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white hover:brightness-110 shadow-lg active:scale-90 transition-all" title="Nova Categoria">
+                                <i class="ph ph-folder-plus text-xl"></i>
+                            </button>
+                        </div>
+                        <div id="kbCategoryList" class="flex-1 overflow-y-auto p-2 space-y-1 custom-scrollbar">
+                            <!-- Categorias injetadas via JS -->
+                            <div class="p-8 text-center text-[var(--text-muted)] opacity-50">
+                                <i class="ph ph-circle-notch animate-spin text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Conteúdo da Documentação -->
+                    <div class="lg:col-span-3 flex flex-col gap-6 overflow-hidden">
+                        <div id="kbContentArea" class="bg-[var(--surface)] rounded-2xl border border-[var(--border)] flex-1 flex flex-col shadow-sm overflow-hidden relative">
+                            <!-- Botão Flutuante de Edição e Exclusão -->
+                            <div id="kbActionButtonContainer" class="absolute top-4 right-4 z-10 hidden flex gap-2">
+                                <button id="btnDeleteKb" class="flex items-center justify-center w-11 h-11 rounded-xl bg-red-500/10 text-red-500 shadow-md hover:bg-red-500 hover:text-white active:scale-95 transition-all" onclick="window.deletarKb()" title="Apagar Documento">
+                                    <i class="ph ph-trash text-xl"></i>
+                                </button>
+                                <button id="btnEditKb" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all" onclick="window.editarDocConhecimento()">
+                                    <i class="ph ph-pencil-simple text-xl"></i> Editar Documento
+                                </button>
+                            </div>
+
+                            <div id="kbWelcomeView" class="flex-1 flex flex-col items-center justify-center p-12 text-center animate-fadeIn">
+                                <div class="w-24 h-24 rounded-3xl bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center text-5xl mb-6 shadow-inner">
+                                    <i class="ph ph-books"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold text-[var(--text-main)] m-0">Central de Conhecimento TI</h2>
+                                <p class="text-[var(--text-muted)] max-w-sm mx-auto mt-4 leading-relaxed">
+                                    Selecione uma documentação ao lado para visualizar os procedimentos ou crie uma nova categoria.
+                                </p>
+                            </div>
+
+                            <div id="kbReaderView" class="flex-1 hidden flex flex-col overflow-hidden animate-fadeIn">
+                                <div class="p-6 border-b border-[var(--border)] bg-[var(--bg-color)]/10">
+                                    <div class="flex items-center gap-2 text-[var(--primary)] text-xs font-black uppercase tracking-widest mb-1 opacity-70" id="kbReaderCategory">---</div>
+                                    <h2 class="text-2xl font-bold text-[var(--text-main)] m-0" id="kbReaderTitle">Título do Documento</h2>
+                                    <div class="flex items-center gap-4 mt-3 text-[0.65rem] font-bold text-[var(--text-muted)] uppercase tracking-tighter">
+                                        <span class="flex items-center gap-1"><i class="ph ph-user"></i> <span id="kbReaderAuthor">---</span></span>
+                                        <span class="flex items-center gap-1"><i class="ph ph-calendar"></i> <span id="kbReaderDate">---</span></span>
+                                    </div>
+                                </div>
+                                <div class="flex-1 overflow-y-auto p-8 rich-text-content leading-relaxed text-[var(--text-main)] custom-scrollbar" id="kbReaderContent">
+                                    <!-- Conteúdo HTML injetado aqui -->
+                                </div>
+                            </div>
+
+                            <div id="kbEditorView" class="flex-1 hidden flex flex-col overflow-hidden animate-fadeIn">
+                                <div class="p-6 border-b border-[var(--border)] flex flex-col gap-4">
+                                    <div class="flex items-center justify-between">
+                                        <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Editando Documentação</h3>
+                                        <div class="flex gap-2">
+                                            <button class="px-5 py-2 rounded-xl bg-red-500/10 text-red-500 font-bold hover:bg-red-500 hover:text-white transition-all active:scale-95" onclick="window.cancelarEdicaoKb()">
+                                                Cancelar
+                                            </button>
+                                            <button class="px-5 py-2 rounded-xl bg-green-600 text-white font-bold shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-2" onclick="window.salvarKb()">
+                                                <i class="ph ph-floppy-disk"></i> Salvar Documento
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="flex flex-col gap-1">
+                                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Título da Documentação</label>
+                                            <input type="text" id="kbEditTitle" placeholder="Ex: Procedimento Pinpad v1" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl focus:border-[var(--primary)] outline-none font-bold text-sm shadow-sm">
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            <label class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest ml-1 opacity-60">Categoria</label>
+                                            <select id="kbEditCategory" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl focus:border-[var(--primary)] outline-none font-bold text-sm shadow-sm">
+                                                <!-- Populado via JS -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 flex flex-col overflow-hidden">
+                                    <div class="flex flex-wrap items-center gap-1.5 p-2.5 bg-[var(--bg-color)]/50 border-b border-[var(--border)]">
+                                        <button type="button" onclick="window.formatDocKb('bold')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90" title="Negrito"><i class="ph-bold ph-text-bolder"></i></button>
+                                        <button type="button" onclick="window.formatDocKb('italic')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90" title="Itálico"><i class="ph-bold ph-text-italic"></i></button>
+                                        <button type="button" onclick="window.formatDocKb('underline')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90" title="Sublinhado"><i class="ph-bold ph-text-underline"></i></button>
+                                        <div class="w-px h-6 bg-[var(--border)] mx-1 opacity-50"></div>
+                                        <button type="button" onclick="window.formatDocKb('insertUnorderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90" title="Lista Marcadores"><i class="ph-bold ph-list-bullets"></i></button>
+                                        <button type="button" onclick="window.formatDocKb('insertOrderedList')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90" title="Lista Numerada"><i class="ph-bold ph-list-numbers"></i></button>
+                                        <div class="w-px h-6 bg-[var(--border)] mx-1 opacity-50"></div>
+                                        <button type="button" onclick="window.formatDocKb('justifyLeft')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90"><i class="ph-bold ph-text-align-left"></i></button>
+                                        <button type="button" onclick="window.formatDocKb('justifyCenter')" class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-[var(--primary)]/10 text-[var(--text-main)] hover:text-[var(--primary)] transition-all active:scale-90"><i class="ph-bold ph-text-align-center"></i></button>
+                                        <select onchange="window.formatDocKb('fontSize', this.value); this.selectedIndex=0;" class="px-3 py-1.5 text-[0.65rem] border border-[var(--border)] rounded-lg bg-[var(--surface)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] font-black uppercase tracking-tighter">
+                                            <option value="" selected disabled>Tamanho</option>
+                                            <option value="3">Padrão</option>
+                                            <option value="5">Médio</option>
+                                            <option value="7">Grande</option>
+                                        </select>
+                                    </div>
+                                    <div id="kbEditText" contenteditable="true" class="flex-1 w-full px-8 py-6 bg-[var(--surface)] text-[var(--text-main)] outline-none overflow-y-auto rich-text-editor leading-relaxed text-sm custom-scrollbar" placeholder="Comece a escrever a documentação aqui..."></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="view-inventario" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
@@ -930,6 +1043,50 @@
         </div>
     </div>
 
+    <!-- MODAL NOVA CATEGORIA (KB) -->
+    <div id="modalKbCategoria" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[400px] max-w-full rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nova Categoria</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalNovaCategoria()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col gap-1.5 mb-5">
+                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Nome da Categoria</label>
+                    <input type="text" id="kbNovaCategoriaNome" placeholder="Ex: Hardware, Sistemas..." class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                </div>
+                <button onclick="window.salvarNovaCategoria()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all">
+                    Criar Categoria
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA DOCUMENTAÇÃO (KB) -->
+    <div id="modalKbDoc" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[450px] max-w-full rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20">
+                <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Nova Documentação</h2>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalNovoDoc()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Título</label>
+                    <input type="text" id="kbNovoDocTitulo" placeholder="Ex: Configuração de Impressora" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Categoria</label>
+                    <select id="kbNovoDocCategoria" class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
+                        <!-- Populado via JS -->
+                    </select>
+                </div>
+                <button onclick="window.criarNovoDocKb()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all mt-2">
+                    Criar e Abrir Editor
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="../../js/firebase-init.js"></script>
     <script src="../../js/data.js"></script>
     
@@ -952,6 +1109,7 @@
     <script src="js/controllers/ChamadosChartController.js"></script>
     <script src="js/controllers/ProjetosEquipeController.js"></script>
     <script src="js/controllers/AtasController.js"></script>
+    <script src="js/controllers/ConhecimentoController.js"></script>
     <script src="js/controllers/AtividadesController.js"></script>
     <script src="js/controllers/MapaController.js"></script>
     <script src="../../js/controllers/ProtocolosController.js"></script>

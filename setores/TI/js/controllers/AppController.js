@@ -74,6 +74,7 @@ function initApp() {
                 { id: 'inventario', label: 'Inventário Tiaguinho', icon: 'ph-bold ph-barcode' },
                 { id: 'mapa', label: 'Mapa Marcas', icon: 'ph-bold ph-map-trifold' },
                 { id: 'tiaguinho', label: 'BI Tiaguinho', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'conhecimento', label: 'Base de Conhecimento', icon: 'ph-bold ph-books' },
                 { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' }
             ]
         });
@@ -86,6 +87,7 @@ function initApp() {
     if (typeof window.initProtocolosListeners === 'function') window.initProtocolosListeners();
     if (typeof window.initAtividadesListener === 'function') window.initAtividadesListener();
     if (typeof window.initLinksListeners === 'function') window.initLinksListeners('TI');
+    if (typeof window.initConhecimentoListeners === 'function') window.initConhecimentoListeners();
     if (typeof window.initChamadosChart === 'function') window.initChamadosChart();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -95,7 +97,7 @@ function initApp() {
 window.initApp = initApp;
 
 window.switchView = function (view) {
-    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'inventario', 'mapa', 'links'];
+    const views = ['analytics', 'lojas', 'projetos', 'atas', 'protocolos', 'metapwr', 'tiaguinho', 'inventario', 'mapa', 'links', 'conhecimento'];
     
     // Use CoreUI switchView
     window.CoreUI.switchView(view, views);
@@ -111,6 +113,7 @@ window.switchView = function (view) {
     if (view === 'atas' && typeof window.renderizarAtas === 'function') window.renderizarAtas();
     if (view === 'protocolos' && typeof window.renderizarProtocolos === 'function') window.renderizarProtocolos();
     if (view === 'mapa' && typeof window.initMapa === 'function') window.initMapa();
+    if (view === 'conhecimento' && typeof window.renderizarConhecimento === 'function') window.renderizarConhecimento();
 }
 
 window.toggleFullscreenBI = function() {
