@@ -423,18 +423,20 @@ function renderizarComentarios(hist) {
         var commentBtn = '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsLog(\'' + c.firebaseId + '\')"><i class="ph ph-chat-centered-dots"></i> ' + (totalComments > 0 ? totalComments + ' Atzs' : 'Atualizar') + '</button>';
 
         var htmlButtons = '';
-        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-transparent border border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors mr-2" onclick="window.abrirModalEditLog(\'' + c.firebaseId + '\')"><i class="ph ph-pencil"></i></button>';
-        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-transparent border border-[var(--border)] text-red-500 hover:bg-red-500 hover:text-white transition-colors" onclick="window.deletarComentario(\'' + c.firebaseId + '\')"><i class="ph ph-trash"></i></button>';
+        htmlButtons += '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">';
+        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] shadow-sm transition-colors" onclick="window.abrirModalEditLog(\'' + c.firebaseId + '\')" title="Editar"><i class="ph ph-pencil"></i></button>';
+        htmlButtons += '<button class="w-8 h-8 inline-flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-red-500 hover:bg-red-500 hover:text-white shadow-sm transition-colors" onclick="window.deletarComentario(\'' + c.firebaseId + '\')" title="Excluir"><i class="ph ph-trash"></i></button>';
+        htmlButtons += '</div>';
 
         var resolveSection = '';
         if (!c.resolvido) {
-            resolveSection = '<button class="inline-flex items-center justify-center gap-1.5 px-4 py-2 mt-2 sm:mt-0 font-semibold rounded-lg bg-[var(--success)] text-white shadow hover:brightness-110 transition-all sm:w-auto w-full" onclick="window.resolverComentario(\'' + c.firebaseId + '\')"><i class="ph ph-check font-bold"></i> Resolver</button>';
+            resolveSection = '<button class="inline-flex items-center justify-center gap-1.5 px-4 py-2 font-semibold rounded-lg bg-[var(--success)] text-white shadow hover:brightness-110 transition-all text-xs" onclick="window.resolverComentario(\'' + c.firebaseId + '\')"><i class="ph ph-check font-bold"></i> Resolver</button>';
         } else {
-            resolveSection = '<div class="flex flex-col gap-1"><span class="text-[var(--success)] font-bold text-sm flex items-center gap-1"><i class="ph-fill ph-check-circle text-lg"></i> Resolvido por ' + c.autorResolucao + '</span>' +
-                             '<button class="text-[0.65rem] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] transition-all flex items-center gap-1.5 mt-1" onclick="window.reabrirComentario(\'' + c.firebaseId + '\')"><i class="ph ph-arrow-u-up-left"></i> Reabrir Chamado</button></div>';
+            resolveSection = '<div class="flex flex-col gap-0.5"><span class="text-[var(--success)] font-bold text-[0.7rem] flex items-center gap-1"><i class="ph-fill ph-check-circle text-base"></i> Resolvido</span>' +
+                             '<button class="text-[0.6rem] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] transition-all flex items-center gap-1 mt-0.5" onclick="window.reabrirComentario(\'' + c.firebaseId + '\')"><i class="ph ph-arrow-u-up-left"></i> Reabrir</button></div>';
         }
 
-        var setorBadge = c.setor ? '<span class="inline-block px-2 py-0.5 rounded-md text-xs font-bold bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] ml-1">📍 ' + c.setor + '</span>' : '';
+        var setorBadge = c.setor ? '<span class="inline-block px-2 py-0.5 rounded-md text-[0.65rem] font-bold bg-[var(--surface)] text-[var(--text-main)] border border-[var(--border)] ml-1">📍 ' + c.setor + '</span>' : '';
 
         var anexoHtml = '';
         if (c.anexoUrl) {
@@ -442,7 +444,7 @@ function renderizarComentarios(hist) {
             if (isImg) {
                 anexoHtml = '<div class="mt-3"><a href="' + c.anexoUrl + '" target="_blank"><img src="' + c.anexoUrl + '" class="max-w-full max-h-[200px] rounded-lg border border-[var(--border)] object-cover shadow-sm"></a></div>';
             } else {
-                anexoHtml = '<div class="mt-3"><a href="' + c.anexoUrl + '" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface)] text-[var(--text-main)] text-sm font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline"><i class="ph ph-link"></i> Ver Link/Anexo</a></div>';
+                anexoHtml = '<div class="mt-3"><a href="' + c.anexoUrl + '" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface)] text-[var(--text-main)] text-[0.7rem] font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors no-underline"><i class="ph ph-link"></i> Ver Link/Anexo</a></div>';
             }
         }
 
@@ -454,32 +456,33 @@ function renderizarComentarios(hist) {
                 recentUpdatesHtml += 
                     '<div class="flex items-start gap-2 text-[0.7rem] bg-black/5 dark:bg-white/5 p-2 rounded-lg">' +
                         '<span class="font-bold text-[var(--primary)] shrink-0">' + up.autor + ':</span>' +
-                        '<span class="text-[var(--text-main)] leading-tight">' + up.texto + '</span>' +
+                        '<span class="text-[var(--text-main)] font-medium leading-tight">' + up.texto + '</span>' +
                     '</div>';
             });
             recentUpdatesHtml += '</div>';
         }
 
         div.innerHTML =
-            '<div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[' + resolveBg + '] to-transparent pointer-events-none"></div>' +
-            '<div class="flex justify-between items-start mb-3 relative z-10 flex-wrap gap-2">' +
+            '<div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[' + resolveBg + '] to-transparent pointer-events-none opacity-30"></div>' +
+            htmlButtons +
+            '<div class="flex justify-between items-start mb-3 relative z-10 flex-wrap gap-2 pr-10">' + 
                 '<div class="flex flex-col">' +
-                    '<span class="font-bold text-[var(--text-main)] flex items-center gap-1.5"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + c.autor + '</span>' +
-                    '<span class="text-xs text-[var(--text-muted)] mt-0.5">' + c.dataStr + '</span>' +
+                    '<span class="font-bold text-[var(--text-main)] flex items-center gap-1.5 text-sm md:text-base"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + c.autor + '</span>' +
+                    '<span class="text-[0.65rem] text-[var(--text-muted)] mt-0.5">' + c.dataStr + '</span>' +
                 '</div>' +
                 '<div class="flex flex-wrap gap-1 items-center">' +
-                    '<span class="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] dark:bg-[rgba(var(--primary-rgb),0.2)] dark:text-blue-400 border border-[var(--primary)]/20">' + (c.tag || 'Geral') + '</span>' +
+                    '<span class="inline-block px-2.5 py-1 rounded-md text-[0.65rem] font-bold bg-[rgba(var(--primary-rgb),0.1)] text-[var(--primary)] dark:bg-[rgba(var(--primary-rgb),0.2)] dark:text-blue-400 border border-[var(--primary)]/20">' + (c.tag || 'Geral') + '</span>' +
                     setorBadge +
                 '</div>' +
             '</div>' +
-            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10">' + c.texto + anexoHtml + recentUpdatesHtml + '</div>' +
-            '<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pt-3 border-t border-[var(--border)] gap-3 relative z-10">' +
-                '<div class="flex items-center gap-3">' +
+            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10 px-1">' + c.texto + anexoHtml + recentUpdatesHtml + '</div>' +
+            '<div class="flex flex-wrap justify-between items-center pt-3 border-t border-[var(--border)] gap-y-3 relative z-10">' +
+                '<div class="flex items-center gap-2 flex-wrap">' +
                     resolveSection +
                     commentBtn +
                 '</div>' +
-                '<div class="flex items-center w-full sm:w-auto mt-2 sm:mt-0 justify-end transition-opacity">' +
-                    badgePrazo + ' ' + badgeResp + ' ' + htmlButtons +
+                '<div class="flex flex-wrap items-center gap-1.5 justify-end flex-1 ml-4">' +
+                    badgePrazo + ' ' + badgeResp +
                 '</div>' +
             '</div>';
         container.appendChild(div);
@@ -516,6 +519,9 @@ window.fecharModalEditLog = function () {
 
 window.confirmarEdicaoLog = async function () {
     var id = document.getElementById('editLogId').value;
+    var texto = document.getElementById('editLogTexto').value;
+    var tag = document.getElementById('editLogTag').value;
+    var setor = document.getElementById('editLogSetor').value;
     var dt = document.getElementById('editLogPrazo').value;
 
     if (!texto.trim() || window.tempResponsaveisLogEdit.length === 0) return showToast("Descrição e responsáveis são obrigatórios", "error");
