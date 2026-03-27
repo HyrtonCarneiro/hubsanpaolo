@@ -420,7 +420,7 @@ function renderizarComentarios(hist) {
         var badgeResp = resps.map(r => '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[0.65rem] font-extrabold bg-[var(--primary)] text-white border border-[var(--primary)]"><i class="ph ph-user-check"></i> ' + r + '</span>').join(' ');
 
         var totalComments = (c.atualizacoes || []).length;
-        var commentBtn = '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsLog(\'' + c.firebaseId + '\')"><i class="ph ph-chat-centered-dots"></i> ' + (totalComments > 0 ? totalComments + ' Atzs' : 'Atualizar') + '</button>';
+        var commentBtn = '<button class="inline-flex items-center gap-1.5 px-3 py-1.5 text-[0.7rem] font-bold rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all" onclick="window.abrirModalCommentsLog(\'' + c.firebaseId + '\')"><i class="ph ph-chat-centered-dots"></i> ' + (totalComments > 0 ? totalComments + ' Comentários' : 'Comentar') + '</button>';
 
         var htmlButtons = '';
         htmlButtons += '<div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">';
