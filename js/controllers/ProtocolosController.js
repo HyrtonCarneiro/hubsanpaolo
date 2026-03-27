@@ -297,6 +297,13 @@ window.renderizarProtocolos = function () {
                         ${p.descricao}
                     </div>
                 </div>
+
+                <div class="mt-3 pt-3 border-t border-[var(--border)]/30 flex justify-end">
+                    <button onclick="window.abrirModalCommentsProtocolo('${p.firebaseId}')" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--bg-color)] border border-[var(--border)] text-[0.7rem] font-bold text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+                        <i class="ph ph-chat-centered-text text-sm"></i>
+                        ${(p.comentarios || []).length > 0 ? `<span>${p.comentarios.length}</span> Comentários` : 'Comentar'}
+                    </button>
+                </div>
             </div>
         `;
         container.appendChild(div);
@@ -349,4 +356,122 @@ window.limparFiltrosProtocolos = function () {
     if (document.getElementById('protocoloFilterResponsavel')) document.getElementById('protocoloFilterResponsavel').value = 'todos';
     
     window.renderizarProtocolos();
+};
+
+// ====== COMENTÁRIOS DO PROTOCOLO ======
+window.abrirModalCommentsProtocolo = function (id) {
+    const p = window.sysProtocolos.find(x => x.firebaseId === id);
+    if (!p) return;
+
+    const idInput = document.getElementById('commentProtocoloId');
+    if (idInput) idInput.value = p.firebaseId;
+    
+    const infoP = document.getElementById('commentProtocoloInfo');
+    if (infoP) infoP.innerText = `Protocolo: ${p.numero || '---'} | Sistema: ${p.sistema}`;
+    
+    const descP = document.getElementById('commentProtocoloDesc');
+    if (descP) descP.innerText = p.descricao || '';
+
+    window.renderizarComentariosProtocolo(p);
+
+    const modal = document.getElementById('modalCommentsProtocolo');
+    if (modal) modal.classList.add('show');
+};
+
+window.fecharModalCommentsProtocolo = function () {
+    const modal = document.getElementById('modalCommentsProtocolo');
+    if (modal) modal.classList.remove('show');
+};
+
+window.renderizarComentariosProtocolo = function (p) {
+    const container = document.getElementById('listaComentariosProtocolo');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const comentarios = p.comentarios || [];
+    if (comentarios.length === 0) {
+        container.innerHTML = '<p class="text-[var(--text-muted)] text-center py-4 text-sm italic">Nenhum comentário ainda.</p>';
+        return;
+    }
+
+    comentarios.forEach((c, index) => {
+        const isAutor = c.autor === window.currentUser;
+        const div = document.createElement('div');
+        div.className = 'bg-[var(--bg-color)]/50 p-3 rounded-xl border border-[var(--border)] relative group animate-fadeIn';
+        div.innerHTML = `
+            <div class="flex justify-between items-center mb-1">
+                <span class="text-[0.65rem] font-black text-[var(--primary)] uppercase tracking-widest">${c.autor}</span>
+                <span class="text-[0.6rem] text-[var(--text-muted)] font-bold">${c.data}</span>
+            </div>
+            <p class="text-sm text-[var(--text-main)] m-0 leading-relaxed">${c.texto}</p>
+            ${isAutor ? `
+            <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onclick="window.editarComentarioProtocolo('${p.firebaseId}', ${index})" class="w-6 h-6 flex items-center justify-center rounded bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="ph ph-pencil-simple text-xs"></i></button>
+                <button onclick="window.deletarComentarioProtocolo('${p.firebaseId}', ${index})" class="w-6 h-6 flex items-center justify-center rounded bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all"><i class="ph ph-trash text-xs"></i></button>
+            </div>
+            ` : ''}
+        `;
+        container.appendChild(div);
+    });
+    container.scrollTop = container.scrollHeight;
+};
+
+window.salvarComentarioProtocolo = async function () {
+    const id = document.getElementById('commentProtocoloId').value;
+    const input = document.getElementById('novoComentarioProtocolo');
+    const texto = input.value.trim();
+
+    if (!texto) return;
+
+    const p = window.sysProtocolos.find(x => x.firebaseId === id);
+    if (!p) return;
+
+    const novosComentarios = p.comentarios || [];
+    novosComentarios.push({
+        autor: window.currentUser || 'Sistema',
+        texto: texto,
+        data: new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+    });
+
+    try {
+        await window.ProtocolosLogic.atualizar(id, { comentarios: novosComentarios });
+        input.value = '';
+        showToast("Comentário adicionado");
+    } catch (e) {
+        showToast("Erro ao comentar: " + e.message, "error");
+    }
+};
+
+window.editarComentarioProtocolo = async function (id, index) {
+    const p = window.sysProtocolos.find(x => x.firebaseId === id);
+    if (!p || !p.comentarios || !p.comentarios[index]) return;
+
+    const novoTexto = prompt("Editar comentário:", p.comentarios[index].texto);
+    if (novoTexto === null || novoTexto.trim() === "" || novoTexto === p.comentarios[index].texto) return;
+
+    p.comentarios[index].texto = novoTexto.trim();
+    p.comentarios[index].data = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) + ' (editado)';
+
+    try {
+        await window.ProtocolosLogic.atualizar(id, { comentarios: p.comentarios });
+        showToast("Comentário atualizado");
+    } catch (e) {
+        showToast("Erro ao editar: " + e.message, "error");
+    }
+};
+
+window.deletarComentarioProtocolo = async function (id, index) {
+    if (!confirm("Deseja apagar este comentário?")) return;
+
+    const p = window.sysProtocolos.find(x => x.firebaseId === id);
+    if (!p || !p.comentarios) return;
+
+    p.comentarios.splice(index, 1);
+
+    try {
+        await window.ProtocolosLogic.atualizar(id, { comentarios: p.comentarios });
+        showToast("Comentário removido");
+    } catch (e) {
+        showToast("Erro ao remover: " + e.message, "error");
+    }
 };
