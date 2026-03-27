@@ -583,16 +583,28 @@ function renderizarAtualizacoesChamado(lista) {
         return;
     }
 
-    lista.sort((a,b) => a.timestamp - b.timestamp).forEach(function (c) {
+    lista.sort((a,b) => a.timestamp - b.timestamp).forEach(function (c, index) {
+        var actions = '';
+        if (c.autor === currentUser) {
+            actions = 
+                '<div class="flex gap-2">' +
+                    '<button class="text-[0.6rem] font-bold text-[var(--text-muted)] hover:text-[var(--primary)] transition-all flex items-center gap-1" onclick="window.editarComentarioLog(\'' + document.getElementById('commentLogId').value + '\', ' + index + ')"><i class="ph ph-pencil"></i> Editar</button>' +
+                    '<button class="text-[0.6rem] font-bold text-red-400 hover:text-red-500 transition-all flex items-center gap-1" onclick="window.deletarComentarioLog(\'' + document.getElementById('commentLogId').value + '\', ' + index + ')"><i class="ph ph-trash"></i> Apagar</button>' +
+                '</div>';
+        }
+
         var div = document.createElement('div');
         div.className = 'mb-4 last:mb-0';
         div.innerHTML =
             '<div class="flex gap-3">' +
                 '<div class="w-8 h-8 rounded-full bg-[var(--primary)] text-white flex items-center justify-center font-bold text-xs shrink-0">' + (c.autor ? c.autor.charAt(0).toUpperCase() : '?') + '</div>' +
                 '<div class="flex-1">' +
-                    '<div class="flex items-center gap-2 mb-1">' +
-                        '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
-                        '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+                    '<div class="flex items-center justify-between mb-1">' +
+                        '<div class="flex items-center gap-2">' +
+                            '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
+                            '<span class="text-[0.65rem] text-[var(--text-muted)]">' + c.data + '</span>' +
+                        '</div>' +
+                        actions +
                     '</div>' +
                     '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + c.texto + '</div>' +
                 '</div>' +
@@ -636,6 +648,45 @@ window.salvarComentarioLog = async function () {
     } catch (e) {
         console.error(e);
         showToast("Erro ao registrar atualização", "error");
+    }
+}
+
+window.deletarComentarioLog = async function (id, index) {
+    if (!confirm("Tem certeza que deseja apagar este comentário?")) return;
+    try {
+        var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === id; });
+        if (!log) return;
+
+        var novasAtualizacoes = [...(log.atualizacoes || [])];
+        novasAtualizacoes.splice(index, 1);
+
+        await updateDoc(doc(db, "logs", id), { atualizacoes: novasAtualizacoes });
+        renderizarAtualizacoesChamado(novasAtualizacoes);
+        showToast("Comentário removido");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao remover comentário", "error");
+    }
+}
+
+window.editarComentarioLog = async function (id, index) {
+    var log = (window.sysLogs[lojaAtualId] || []).find(function (l) { return l.firebaseId === id; });
+    if (!log) return;
+
+    var comment = log.atualizacoes[index];
+    var novoTexto = prompt("Editar comentário:", comment.texto);
+    if (novoTexto === null || novoTexto.trim() === "" || novoTexto === comment.texto) return;
+
+    try {
+        var novasAtualizacoes = [...(log.atualizacoes || [])];
+        novasAtualizacoes[index].texto = novoTexto.trim();
+
+        await updateDoc(doc(db, "logs", id), { atualizacoes: novasAtualizacoes });
+        renderizarAtualizacoesChamado(novasAtualizacoes);
+        showToast("Comentário atualizado");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao atualizar comentário", "error");
     }
 }
 
