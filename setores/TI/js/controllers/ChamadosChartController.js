@@ -96,7 +96,7 @@ window.atualizarGraficoChamados = function() {
             },
             layout: {
                 padding: {
-                    top: 20
+                    top: 40
                 }
             },
             plugins: {
@@ -128,6 +128,7 @@ window.atualizarGraficoChamados = function() {
                 },
                 y: {
                     beginAtZero: true,
+                    grace: '10%',
                     grid: { 
                         display: true,
                         color: document.body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.25)' : 'rgba(0, 0, 0, 0.25)',

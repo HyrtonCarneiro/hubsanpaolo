@@ -107,7 +107,7 @@ window.atualizarGraficos = function () {
         maintainAspectRatio: false,
         layout: {
             padding: {
-                top: 30
+                top: 45
             }
         },
         onClick: (e, elements, chart) => {
@@ -142,7 +142,7 @@ window.atualizarGraficos = function () {
             options: { 
                 ...commonOptions,
                 plugins: { 
-                    title: { display: true, text: 'Pendências por Unidade', color: textColor }, 
+                    title: { display: true, text: 'Pendências por Unidade', color: textColor, padding: { bottom: 25 } }, 
                     legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
                     datalabels: baseLabels
                 } 
@@ -163,11 +163,11 @@ window.atualizarGraficos = function () {
             options: {
                 ...commonOptions,
                 plugins: { 
-                    title: { display: true, text: 'Volume de Chamados por Estado', color: textColor }, 
+                    title: { display: true, text: 'Volume de Chamados por Estado', color: textColor, padding: { bottom: 25 } }, 
                     legend: { labels: { color: textColor } },
                     datalabels: { ...baseLabels, anchor: 'end', align: 'top' }
                 },
-                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
+                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true, grace: '15%' } }
             }
         });
     }
@@ -184,7 +184,7 @@ window.atualizarGraficos = function () {
             options: { 
                 ...commonOptions,
                 plugins: { 
-                    title: { display: true, text: 'Status das Tarefas Ativas', color: textColor }, 
+                    title: { display: true, text: 'Status das Tarefas Ativas', color: textColor, padding: { bottom: 25 } }, 
                     legend: { labels: { color: textColor } },
                     datalabels: baseLabels
                 } 
@@ -205,11 +205,11 @@ window.atualizarGraficos = function () {
             options: {
                 ...commonOptions,
                 plugins: { 
-                    title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor }, 
+                    title: { display: true, text: 'Distribuição de Tarefas Ativas', color: textColor, padding: { bottom: 25 } }, 
                     legend: { display: false },
                     datalabels: { ...baseLabels, anchor: 'end', align: 'top' }
                 },
-                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
+                scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true, grace: '15%' } }
             }
         });
     }
@@ -231,7 +231,7 @@ window.atualizarGraficos = function () {
             options: { 
                 ...commonOptions,
                 plugins: { 
-                    title: { display: true, text: 'Chamados Pendentes por Tag', color: textColor }, 
+                    title: { display: true, text: 'Chamados Pendentes por Tag', color: textColor, padding: { bottom: 25 } }, 
                     legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
                     datalabels: baseLabels
                 } 
@@ -258,12 +258,12 @@ window.atualizarGraficos = function () {
                 ...commonOptions,
                 indexAxis: 'y', // Horizontal bar is often better for lists
                 plugins: { 
-                    title: { display: true, text: 'Chamados Pendentes por Setor', color: textColor }, 
+                    title: { display: true, text: 'Chamados Pendentes por Setor', color: textColor, padding: { bottom: 25 } }, 
                     legend: { display: false },
                     datalabels: { ...baseLabels, anchor: 'end', align: 'right' }
                 },
                 scales: { 
-                    x: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true },
+                    x: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true, grace: '10%' },
                     y: { ticks: { color: textColor } }
                 }
             }
