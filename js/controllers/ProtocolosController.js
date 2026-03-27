@@ -10,6 +10,7 @@ window.initProtocolosListeners = function () {
     if (window.ProtocolosLogic) {
         window.ProtocolosLogic.initListener((protocolos) => {
             window.sysProtocolos = protocolos;
+            window.popularFiltrosProtocolos();
             window.renderizarProtocolos();
         });
     }
@@ -184,9 +185,36 @@ window.renderizarProtocolos = function () {
     const container = document.getElementById('listaProtocolosContainer');
     if (!container) return;
 
+    // Pega valores dos filtros
+    const filBusca = (document.getElementById('protocoloFilterBusca')?.value || "").toLowerCase().trim();
+    const filSistema = document.getElementById('protocoloFilterSistema')?.value || "todos";
+    const filStatus = document.getElementById('protocoloFilterStatus')?.value || "todos";
+    const filResp = document.getElementById('protocoloFilterResponsavel')?.value || "todos";
+
     container.innerHTML = '';
 
-    if (window.sysProtocolos.length === 0) {
+    // Aplicar Filtros
+    let protocolosFiltrados = window.sysProtocolos.filter(p => {
+        // Filtro de Sistema
+        if (filSistema !== "todos" && p.sistema !== filSistema) return false;
+        
+        // Filtro de Status
+        if (filStatus !== "todos" && p.status !== filStatus) return false;
+        
+        // Filtro de Responsável
+        if (filResp !== "todos" && p.responsavel !== filResp) return false;
+        
+        // Filtro de Busca (Número ou Descrição)
+        if (filBusca) {
+            const num = (p.numero || "").toLowerCase();
+            const desc = (p.descricao || "").toLowerCase();
+            if (!num.includes(filBusca) && !desc.includes(filBusca)) return false;
+        }
+
+        return true;
+    });
+
+    if (protocolosFiltrados.length === 0) {
         container.innerHTML = `
             <div class="flex flex-col items-center justify-center p-16 text-center bg-[var(--surface)] rounded-2xl border-2 border-dashed border-[var(--border)] animate-fadeIn">
                 <div class="w-20 h-20 rounded-full bg-black/5 flex items-center justify-center mb-6">
@@ -200,7 +228,7 @@ window.renderizarProtocolos = function () {
 
     const hoje = new Date().toISOString().split('T')[0];
 
-    window.sysProtocolos.forEach(function (p) {
+    protocolosFiltrados.forEach(function (p) {
         const isResolvido = p.status === 'Resolvido';
         const isAtrasado = p.sla_prazo && p.sla_prazo < hoje && !isResolvido;
         
@@ -273,4 +301,52 @@ window.renderizarProtocolos = function () {
         `;
         container.appendChild(div);
     });
+};
+
+window.popularFiltrosProtocolos = function () {
+    const select = document.getElementById('protocoloFilterResponsavel');
+    if (!select) return;
+
+    const valorAtual = select.value;
+    const responsaveis = new Set();
+
+    // 1. Pegar dos caches de equipe (dependendo do setor)
+    if (window.membrosEquipe && window.membrosEquipe.length > 0) {
+        window.membrosEquipe.forEach(m => responsaveis.add(m.nome));
+    }
+    if (window.audiEquipe && window.audiEquipe.length > 0) {
+        window.audiEquipe.forEach(m => responsaveis.add(m.nome));
+    }
+    
+    // 2. Pegar responsáveis que já possuem protocolos (mesmo que não estejam no cache da equipe atual)
+    if (window.sysProtocolos && window.sysProtocolos.length > 0) {
+        window.sysProtocolos.forEach(p => {
+            if (p.responsavel) responsaveis.add(p.responsavel);
+        });
+    }
+
+    let html = '<option value="todos">Todos Responsáveis</option>';
+    [...responsaveis].sort().forEach(nome => {
+        html += `<option value="${nome}">${nome}</option>`;
+    });
+
+    select.innerHTML = html;
+    if (valorAtual && html.includes(`value="${valorAtual}"`)) {
+        select.value = valorAtual;
+    }
+};
+
+window.limparFiltrosProtocolos = function () {
+    if (document.getElementById('protocoloFilterBusca')) document.getElementById('protocoloFilterBusca').value = '';
+    
+    // No Auditoria o sistema padrão é Athenas, no TI é Todos
+    const isAuditoria = window.location.pathname.includes('Auditoria');
+    if (document.getElementById('protocoloFilterSistema')) {
+        document.getElementById('protocoloFilterSistema').value = isAuditoria ? 'Athenas' : 'todos';
+    }
+    
+    if (document.getElementById('protocoloFilterStatus')) document.getElementById('protocoloFilterStatus').value = 'todos';
+    if (document.getElementById('protocoloFilterResponsavel')) document.getElementById('protocoloFilterResponsavel').value = 'todos';
+    
+    window.renderizarProtocolos();
 };

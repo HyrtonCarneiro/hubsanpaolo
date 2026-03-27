@@ -667,6 +667,34 @@
                     </div>
                 </div>
 
+                <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] mb-6 flex flex-col md:flex-row gap-4 items-center justify-between shadow-sm animate-fadeIn">
+                    <div class="relative w-full md:flex-1 max-w-md">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
+                        <input type="text" id="protocoloFilterBusca" placeholder="Buscar por número ou descrição..." 
+                            class="w-full pl-11 pr-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all shadow-sm"
+                            oninput="window.renderizarProtocolos()">
+                    </div>
+                    <div class="flex gap-2 flex-wrap w-full md:w-auto">
+                        <select id="protocoloFilterSistema" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] text-sm font-bold text-[var(--text-main)] shadow-sm" onchange="window.renderizarProtocolos()">
+                            <option value="todos">Todos Sistemas</option>
+                            <option value="Athenas" selected>Athenas</option>
+                            <option value="Degust">Degust</option>
+                            <option value="Delivery's">Delivery's</option>
+                        </select>
+                        <select id="protocoloFilterStatus" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] text-sm font-bold text-[var(--text-main)] shadow-sm" onchange="window.renderizarProtocolos()">
+                            <option value="todos">Todos Status</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Resolvido">Resolvido</option>
+                        </select>
+                        <select id="protocoloFilterResponsavel" class="px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] text-sm font-bold text-[var(--text-main)] shadow-sm" onchange="window.renderizarProtocolos()">
+                            <option value="todos">Todos Responsáveis</option>
+                        </select>
+                        <button onclick="window.limparFiltrosProtocolos()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 transition-all font-bold shadow-sm" title="Limpar Filtros">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div id="listaProtocolosContainer" class="flex flex-col gap-4">
                     <!-- Populado via JS -->
                 </div>
