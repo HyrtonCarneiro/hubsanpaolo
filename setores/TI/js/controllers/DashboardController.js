@@ -5,6 +5,8 @@ let chartInstStatus = null;
 let chartInstRegiao = null;
 window.chartInstTarefaStatus = null;
 window.chartInstTarefaEquipe = null;
+let chartInstTags = null;
+let chartInstSetores = null;
 
 // Novo Estado Global de Filtros (Estilo PowerBI)
 window.tiDashboardFilters = {
@@ -90,6 +92,8 @@ window.atualizarGraficos = function () {
     var elChartRegionais = document.getElementById('chartRegionais');
     var elChartTarefaStatus = document.getElementById('chartTarefaStatus');
     var elChartTarefaEquipe = document.getElementById('chartTarefaEquipe');
+    var elChartTags = document.getElementById('chartTags');
+    var elChartSetores = document.getElementById('chartSetores');
 
     // Configuração padrão de labels
     const baseLabels = {
@@ -201,6 +205,62 @@ window.atualizarGraficos = function () {
                     datalabels: { ...baseLabels, anchor: 'end', align: 'top' }
                 },
                 scales: { x: { ticks: { color: textColor } }, y: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true } }
+            }
+        });
+    }
+
+    if (elChartTags) {
+        if (chartInstTags) chartInstTags.destroy();
+        var labelsTags = Object.keys(l_metrics.tagCount).sort();
+        var valuesTags = labelsTags.map(function(t) { return l_metrics.tagCount[t]; });
+        
+        chartInstTags = new Chart(elChartTags, {
+            type: 'doughnut',
+            data: {
+                labels: labelsTags,
+                datasets: [{ 
+                    data: valuesTags, 
+                    backgroundColor: ['#f43f5e', '#ec4899', '#d946ef', '#a855f7', '#8b5cf6', '#6366f1', '#3b82f6'] 
+                }]
+            },
+            options: { 
+                ...commonOptions,
+                plugins: { 
+                    title: { display: true, text: 'Chamados Pendentes por Tag', color: textColor }, 
+                    legend: { position: 'bottom', labels: { color: textColor, font: { size: 10 } } },
+                    datalabels: baseLabels
+                } 
+            }
+        });
+    }
+
+    if (elChartSetores) {
+        if (chartInstSetores) chartInstSetores.destroy();
+        var labelsSetores = Object.keys(l_metrics.setorCount).sort();
+        var valuesSetores = labelsSetores.map(function(s) { return l_metrics.setorCount[s]; });
+        
+        chartInstSetores = new Chart(elChartSetores, {
+            type: 'bar', // Using bar for sectors as they might be many
+            data: {
+                labels: labelsSetores,
+                datasets: [{ 
+                    label: 'Pendentes',
+                    data: valuesSetores, 
+                    backgroundColor: '#10b981' 
+                }]
+            },
+            options: { 
+                ...commonOptions,
+                indexAxis: 'y', // Horizontal bar is often better for lists
+                plugins: { 
+                    title: { display: true, text: 'Chamados Pendentes por Setor', color: textColor }, 
+                    legend: { display: false },
+                    datalabels: { ...baseLabels, anchor: 'end', align: 'right' }
+                },
+                scales: { 
+                    x: { ticks: { color: textColor, stepSize: 1, precision: 0 }, beginAtZero: true },
+                    y: { ticks: { color: textColor } }
+                }
             }
         });
     }

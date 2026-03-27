@@ -17,7 +17,9 @@ const DashboardLogic = {
             totalPendentes: 0,
             totalResolvidos: 0,
             regiaoCount: {},
-            lojaCallCount: {}
+            lojaCallCount: {},
+            tagCount: {},
+            setorCount: {}
         };
 
         if (!lojas || !logs) return metrics;
@@ -77,6 +79,12 @@ const DashboardLogic = {
                     metrics.totalPendentes++;
                     if (loja.nome) {
                         metrics.lojaCallCount[loja.nome] = (metrics.lojaCallCount[loja.nome] || 0) + 1;
+                    }
+                    if (l.tag) {
+                        metrics.tagCount[l.tag] = (metrics.tagCount[l.tag] || 0) + 1;
+                    }
+                    if (l.setor) {
+                        metrics.setorCount[l.setor] = (metrics.setorCount[l.setor] || 0) + 1;
                     }
                 } else {
                     metrics.totalResolvidos++;

@@ -51,13 +51,15 @@ window.renderizarConhecimento = function () {
         const catDocs = window.sysKbDocs.filter(d => d.categoryId === cat.id);
         
         html += `
-            <div class="mb-4">
-                <div class="flex items-center justify-between px-3 py-2 text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest bg-[var(--bg-color)]/20 rounded-lg group">
-                    <span class="flex items-center gap-2"><i class="ph ph-folder text-sm text-[var(--primary)]"></i> ${cat.name}</span>
-                    <div class="flex gap-1.5 transition-all duration-300">
-                        <button onclick="window.abrirModalNovoDoc('${cat.id}')" class="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--primary)]/10 text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all shadow-sm" title="Novo Documento"><i class="ph ph-plus-bold text-xs"></i></button>
-                        <button onclick="window.abrirModalEditarCategoria('${cat.id}')" class="w-7 h-7 flex items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 hover:bg-blue-500 hover:text-white transition-all shadow-sm" title="Editar Categoria"><i class="ph ph-pencil-simple-bold text-xs"></i></button>
-                        <button onclick="window.deletarCategoria('${cat.id}')" class="w-7 h-7 flex items-center justify-center rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Excluir Categoria"><i class="ph ph-trash-bold text-xs"></i></button>
+            <div class="mb-5">
+                <div class="flex items-center justify-between px-3 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-xl group hover:shadow-sm transition-all shadow-sm mb-2">
+                    <span class="flex items-center gap-2.5 font-bold text-sm text-[var(--text-main)] truncate">
+                        <i class="ph-fill ph-folder-open text-lg text-[var(--primary)]"></i> ${cat.name}
+                    </span>
+                    <div class="flex items-center gap-0.5 shrink-0">
+                        <button onclick="window.abrirModalNovoDoc('${cat.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-[var(--primary)]/10 hover:text-[var(--primary)] transition-all" title="Novo Documento"><i class="ph ph-plus-circle text-lg"></i></button>
+                        <button onclick="window.abrirModalEditarCategoria('${cat.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-blue-500/10 hover:text-blue-500 transition-all" title="Editar Categoria"><i class="ph ph-pencil-simple text-lg"></i></button>
+                        <button onclick="window.deletarCategoria('${cat.id}')" class="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:bg-red-500/10 hover:text-red-500 transition-all" title="Excluir Categoria"><i class="ph ph-trash text-lg"></i></button>
                     </div>
                 </div>
                 <div class="mt-1 space-y-0.5 pl-2">
