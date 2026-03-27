@@ -184,6 +184,13 @@
                     </div>
                 </div>
 
+                <!-- SEÇÃO: GESTÃO DE CHAMADOS -->
+                <div class="mb-5 flex items-center gap-2 opacity-60">
+                    <div class="h-[1px] flex-1 bg-[var(--border)]"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">Indicadores de Chamados</span>
+                    <div class="h-[1px] flex-1 bg-[var(--border)]"></div>
+                </div>
+
                 <!-- Gráfico de Tendência (PowerBI Style - Dashboard) -->
                 <div id="chartChamadosCard" class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] mb-8 shadow-sm">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -208,6 +215,7 @@
                         <canvas id="chartChamadosCanvas"></canvas>
                     </div>
                 </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
                     <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
                         <canvas id="chartStatus"></canvas>
@@ -216,20 +224,29 @@
                         <canvas id="chartRegionais"></canvas>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
-                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
-                        <canvas id="chartTarefaStatus"></canvas>
-                    </div>
-                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
-                        <canvas id="chartTarefaEquipe"></canvas>
-                    </div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
                     <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
                         <canvas id="chartTags"></canvas>
                     </div>
                     <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
                         <canvas id="chartSetores"></canvas>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO: PROJETOS E EQUIPE -->
+                <div class="mb-5 flex items-center gap-2 opacity-60">
+                    <div class="h-[1px] flex-1 bg-[var(--border)]"></div>
+                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--text-muted)]">Gestão de Projetos e Equipe</span>
+                    <div class="h-[1px] flex-1 bg-[var(--border)]"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
+                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
+                        <canvas id="chartTarefaStatus"></canvas>
+                    </div>
+                    <div class="bg-[var(--surface)] p-5 rounded-xl border border-[var(--border)] h-[350px] shadow-sm flex flex-col">
+                        <canvas id="chartTarefaEquipe"></canvas>
                     </div>
                 </div>
 

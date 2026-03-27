@@ -94,6 +94,11 @@ window.atualizarGraficoChamados = function() {
                 intersect: false,
                 mode: 'index',
             },
+            layout: {
+                padding: {
+                    top: 20
+                }
+            },
             plugins: {
                 legend: {
                     position: 'top',

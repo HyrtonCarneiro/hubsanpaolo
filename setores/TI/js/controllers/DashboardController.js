@@ -105,6 +105,11 @@ window.atualizarGraficos = function () {
     const commonOptions = {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+            padding: {
+                top: 30
+            }
+        },
         onClick: (e, elements, chart) => {
             if (elements.length > 0) {
                 const index = elements[0].index;
