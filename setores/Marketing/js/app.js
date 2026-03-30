@@ -47,6 +47,7 @@ function initApp() {
                 { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
                 { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
                 { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' },
+                { id: 'ianzinho', label: 'BI Ianzinho', icon: 'ph-bold ph-chart-pie-slice' },
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
             ]
         });
@@ -60,12 +61,27 @@ function initApp() {
 }
 
 window.switchView = function (view) {
-    const views = ['dashboard', 'tarefas', 'metapwr', 'links'];
+    const views = ['dashboard', 'tarefas', 'metapwr', 'ianzinho', 'links'];
     window.CoreUI.switchView(view, views);
 }
 
 window.toggleSidebar = function () {
     window.CoreUI.toggleSidebar();
+}
+
+window.toggleFullscreenBI = function() {
+    const container = document.getElementById('ianzinhoContainer');
+    if (!container) return;
+
+    if (container.classList.contains('bi-expanded')) {
+        container.classList.remove('bi-expanded');
+        const exitBtn = container.querySelector('.exit-bi-btn');
+        if (exitBtn) exitBtn.classList.add('hidden');
+    } else {
+        container.classList.add('bi-expanded');
+        const exitBtn = container.querySelector('.exit-bi-btn');
+        if (exitBtn) exitBtn.classList.remove('hidden');
+    }
 }
 
 window.toggleDarkMode = function () {

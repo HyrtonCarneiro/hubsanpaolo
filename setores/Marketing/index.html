@@ -42,6 +42,24 @@
         }
     </script>
     <link rel="stylesheet" href="../../css/styles.css">
+    <style>
+        /* Custom Fullscreen for BI */
+        .bi-expanded {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            background: var(--bg-color);
+        }
+        .bi-expanded iframe {
+            height: 100% !important;
+            width: 100% !important;
+        }
+    </style>
 </head>
 
 <body class="bg-background text-mainText font-sans antialiased transition-colors duration-300 dark:bg-[#1a0f07] dark:text-[#f5f0e6]">
@@ -91,6 +109,26 @@
                     <h2 class="text-2xl font-bold text-[var(--text-main)]">Área em Desenvolvimento</h2>
                     <p class="text-[var(--text-muted)] max-w-lg mx-auto mt-3">Acompanhamento das Metas
                         PWR de Marketing será liberado em breve.</p>
+                </div>
+            </div>
+
+            <div id="view-ianzinho" style="display: none; height: 100%;">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">BI Ianzinho</h1>
+                    </div>
+                    <button onclick="window.toggleFullscreenBI()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-bold shadow-sm hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 transition-all duration-300 active:scale-95">
+                        <i class="ph ph-arrows-out text-xl"></i> Expandir Dashboard
+                    </button>
+                </div>
+                <div id="ianzinhoContainer"
+                    class="group w-full h-[calc(100vh-140px)] rounded-xl overflow-hidden shadow-lg border border-[var(--border)] relative transition-all duration-300">
+                    <button onclick="window.toggleFullscreenBI()" class="hidden md:group-hover:flex absolute top-4 right-10 z-[10000] items-center gap-2 px-4 py-2 rounded-full bg-white/90 dark:bg-black/80 backdrop-blur-md shadow-2xl border border-[var(--border)] text-[var(--text-main)] font-bold hover:scale-105 transition-all exit-bi-btn">
+                        <i class="ph ph-arrows-in text-xl font-bold"></i> Recolher Tela
+                    </button>
+                    <iframe title="BI Ianzinho" width="100%" height="100%"
+                        src="https://sanpaologelato.com.br/food/dashboard.html"
+                        frameborder="0" allowFullScreen="true" class="border-none w-full h-full"></iframe>
                 </div>
             </div>
 
