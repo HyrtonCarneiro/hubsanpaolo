@@ -263,6 +263,10 @@ window.NotificationService = {
  */
 window.emitNotification = async function(user, message, link = "") {
     if (!user || !message) return;
+    
+    // Evita enviar notificação para si mesmo
+    if (user === window.currentUser) return;
+    
     try {
         await window.addDoc(window.collection(window.db, "notifications"), {
             user: user,
