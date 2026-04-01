@@ -260,7 +260,7 @@ function renderizarAudiProjetosList() {
     var container = document.getElementById('audi-projetos-list');
     if (!container) return;
     
-    container.className = 'grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-280px)] p-2 w-full overflow-hidden';
+    container.className = 'grid grid-cols-1 lg:grid-cols-3 gap-4 h-[1500px] p-2 w-full overflow-hidden';
     container.innerHTML = '';
 
     if (window.audiCurrentMember === 'Geral') {
@@ -364,7 +364,7 @@ function criarCardTarefaAudi(p, classBadge) {
 
 function renderizarVisaoUnificadaAudi(container) {
     container.classList.remove('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
-    container.className = 'flex flex-col gap-8 w-full h-[calc(100vh-280px)] overflow-y-auto custom-scrollbar';
+    container.className = 'flex flex-col gap-8 w-full h-[1500px] overflow-y-auto custom-scrollbar';
 
     const colunas = [
         { id: 'Pendente', titulo: 'Pendentes', badge: 'bg-red-50 text-red-600 border-red-100' },
