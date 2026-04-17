@@ -376,7 +376,7 @@ function criarCardTarefa(p, classBadge) {
         lastTwo.forEach(c => {
             recentCommentsHtml += 
                 '<div class="text-[0.65rem] text-[var(--text-muted)] italic line-clamp-1 border-l-2 border-[var(--primary)]/30 pl-2">' +
-                    '<span class="font-bold not-italic text-[var(--primary)]">' + c.autor + ':</span> ' + c.texto +
+                    '<span class="font-bold not-italic text-[var(--primary)]">' + c.autor + ':</span> ' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) +
                 '</div>';
         });
         recentCommentsHtml += '</div>';
@@ -511,7 +511,7 @@ function renderizarComentariosTarefa(comentarios) {
                         '<span class="font-bold text-xs text-[var(--text-main)]">' + c.autor + '</span>' +
                         '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium underline underline-offset-2 decoration-[var(--border)]">' + c.data + '</span>' +
                     '</div>' +
-                    '<div class="bg-[var(--bg-color)] p-3.5 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm leading-relaxed">' + c.texto + '</div>' +
+                    '<div class="bg-[var(--bg-color)] p-3.5 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm leading-relaxed">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>' +
                 '</div>' +
             '</div>';
         container.appendChild(div);
@@ -585,7 +585,7 @@ window.abrirModalEditProj = function (firebaseId) {
     document.getElementById('viewProjResp').innerHTML = viewResps.map(r => `<span class="px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold border border-[var(--primary)]/20">${r}</span>`).join(' ');
 
     document.getElementById('viewProjStatus').innerText = p.status;
-    document.getElementById('viewProjDesc').innerText = p.desc;
+    document.getElementById('viewProjDesc').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.desc) : p.desc;
     
     // Configurar modo edição
     window.tempResponsaveisEdit = [...viewResps];
@@ -783,7 +783,7 @@ function renderizarComentariosTarefaDetalhe(comentarios) {
                 '<span class="font-bold text-xs text-[var(--primary)] uppercase tracking-tight">' + c.autor + '</span>' +
                 '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium">' + c.data + '</span>' +
             '</div>' +
-            '<div class="text-[var(--text-main)] leading-relaxed">' + c.texto + '</div>';
+            '<div class="text-[var(--text-main)] leading-relaxed">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>';
         container.appendChild(div);
     });
 }

@@ -294,7 +294,7 @@ window.renderizarProtocolos = function () {
 
                 <div class="bg-[var(--bg-color)]/30 p-3 rounded-xl border border-[var(--border)]/50 relative group">
                     <div class="text-[0.85rem] leading-relaxed text-[var(--text-main)] whitespace-pre-line ${isResolvido ? 'line-through opacity-50' : ''}">
-                        ${p.descricao}
+                        ${window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.descricao) : p.descricao}
                     </div>
                 </div>
 
@@ -370,7 +370,7 @@ window.abrirModalCommentsProtocolo = function (id) {
     if (infoP) infoP.innerText = `Protocolo: ${p.numero || '---'} | Sistema: ${p.sistema}`;
     
     const descP = document.getElementById('commentProtocoloDesc');
-    if (descP) descP.innerText = p.descricao || '';
+    if (descP) descP.innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.descricao || '') : (p.descricao || '');
 
     window.renderizarComentariosProtocolo(p);
 
@@ -403,7 +403,7 @@ window.renderizarComentariosProtocolo = function (p) {
                 <span class="text-[0.65rem] font-black text-[var(--primary)] uppercase tracking-widest">${c.autor}</span>
                 <span class="text-[0.6rem] text-[var(--text-muted)] font-bold">${c.data}</span>
             </div>
-            <p class="text-sm text-[var(--text-main)] m-0 leading-relaxed">${c.texto}</p>
+            <p class="text-sm text-[var(--text-main)] m-0 leading-relaxed">${window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto}</p>
             ${isAutor ? `
             <div class="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button onclick="window.editarComentarioProtocolo('${p.firebaseId}', ${index})" class="w-6 h-6 flex items-center justify-center rounded bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all"><i class="ph ph-pencil-simple text-xs"></i></button>

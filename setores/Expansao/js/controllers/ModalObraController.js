@@ -241,7 +241,7 @@ window.ModalObraController = {
                     <div class="font-bold text-brandOrange dark:text-[#f97316] flex justify-between items-center mb-1">
                         ${c.autor || 'Usuário'} <span class="text-[0.7rem] text-mutedText dark:text-[#d4bda8] font-normal">${c.dataHora}</span>
                     </div>
-                    <div class="text-mainText dark:text-white mt-1 leading-snug break-words">${c.texto}</div>
+                    <div class="text-mainText dark:text-white mt-1 leading-snug break-words">${window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto}</div>
                 </div>
             `);
         });

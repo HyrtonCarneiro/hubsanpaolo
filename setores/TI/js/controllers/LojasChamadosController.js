@@ -456,7 +456,7 @@ function renderizarComentarios(hist) {
                 recentUpdatesHtml += 
                     '<div class="flex items-start gap-2 text-[0.7rem] bg-black/5 dark:bg-white/5 p-2 rounded-lg">' +
                         '<span class="font-bold text-[var(--primary)] shrink-0">' + up.autor + ':</span>' +
-                        '<span class="text-[var(--text-main)] font-medium leading-tight">' + up.texto + '</span>' +
+                        '<span class="text-[var(--text-main)] font-medium leading-tight">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(up.texto) : up.texto) + '</span>' +
                     '</div>';
             });
             recentUpdatesHtml += '</div>';
@@ -475,7 +475,7 @@ function renderizarComentarios(hist) {
                     setorBadge +
                 '</div>' +
             '</div>' +
-            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10 px-1">' + c.texto + anexoHtml + recentUpdatesHtml + '</div>' +
+            '<div class="text-[var(--text-main)] text-sm leading-relaxed whitespace-pre-line mb-4 relative z-10 px-1">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + anexoHtml + recentUpdatesHtml + '</div>' +
             '<div class="flex flex-wrap justify-between items-center pt-3 border-t border-[var(--border)] gap-y-3 relative z-10">' +
                 '<div class="flex items-center gap-2 flex-wrap">' +
                     resolveSection +
@@ -563,7 +563,7 @@ window.abrirModalCommentsLog = function (firebaseId) {
 
     document.getElementById('commentLogId').value = log.firebaseId;
     document.getElementById('commentLogLoja').innerText = "Loja: " + document.getElementById('modalTitle').innerText;
-    document.getElementById('commentLogTexto').innerText = log.texto;
+    document.getElementById('commentLogTexto').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(log.texto) : log.texto;
 
     renderizarAtualizacoesChamado(log.atualizacoes || []);
     document.getElementById('modalCommentsLog').classList.add('show');
@@ -606,7 +606,7 @@ function renderizarAtualizacoesChamado(lista) {
                         '</div>' +
                         actions +
                     '</div>' +
-                    '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + c.texto + '</div>' +
+                    '<div class="bg-[var(--bg-color)] p-3 rounded-2xl rounded-tl-none border border-[var(--border)] text-sm text-[var(--text-main)] shadow-sm">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>' +
                 '</div>' +
             '</div>';
         container.appendChild(div);

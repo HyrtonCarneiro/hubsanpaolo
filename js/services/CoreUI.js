@@ -91,6 +91,17 @@ window.CoreUI = {
 
     goToHub: function () {
         window.location.href = '../../index.html?hub=1';
+    },
+
+    linkify: function (text) {
+        if (!text) return '';
+        // Impede de quebrar links já existentes e ignora pontuação no final
+        var urlRegex = /(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/g;
+        return text.replace(urlRegex, function(url) {
+            // Se a string testada já fizer parte de um HTML com href, não aplicamos
+            if (url.indexOf('href=') !== -1) return url;
+            return '<a href="' + url + '" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 underline break-all" onclick="event.stopPropagation()">' + url + '</a>';
+        });
     }
 };
 

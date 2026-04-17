@@ -595,7 +595,7 @@ function renderizarComentariosTarefaDetalheAudi(comentarios) {
                 <span class="text-[var(--primary)]">${c.autor}</span>
                 <span class="opacity-50">${c.data}</span>
             </div>
-            <p class="m-0">${c.texto}</p>
+            <p class="m-0">${window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto}</p>
         </div>
     `).join('');
 }
