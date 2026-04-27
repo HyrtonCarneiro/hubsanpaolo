@@ -584,18 +584,105 @@ window.removerItemChecklistMarketing = async function(idx) {
 }
 
 // COMENTÁRIOS
+window.comentarioEditandoMarketingProjIdx = null;
+
 function renderizarComentariosTarefaDetalheMarketing(comentarios) {
     var container = document.getElementById('listaComentariosProjDetalhe');
     if (!container) return;
-    container.innerHTML = comentarios.map(c => `
-        <div class="p-3 bg-[var(--bg-color)]/30 rounded-xl border border-[var(--border)] text-xs animate-fadeIn">
-            <div class="flex justify-between mb-1 font-bold">
-                <span class="text-[var(--primary)]">${c.autor}</span>
-                <span class="opacity-50">${c.data}</span>
-            </div>
-            <p class="m-0">${window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto}</p>
-        </div>
-    `).join('');
+    container.innerHTML = '';
+
+    if (!comentarios || comentarios.length === 0) {
+        container.innerHTML = '<p class="text-xs text-[var(--text-muted)] italic">Nenhum comentário.</p>';
+        return;
+    }
+
+    comentarios.forEach(function (c, idx) {
+        var div = document.createElement('div');
+        div.className = 'p-4 bg-[var(--bg-color)]/50 rounded-xl border border-[var(--border)] text-sm shadow-sm animate-fadeIn group relative';
+        
+        var isCurrentEditor = window.comentarioEditandoMarketingProjIdx === idx;
+        if (isCurrentEditor) {
+            div.classList.add('ring-2', 'ring-[var(--primary)]', 'ring-opacity-50');
+        }
+
+        var actionBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" onclick="window.editarComentarioMarketingProjetoDetalhe(' + idx + ')" title="Editar"><i class="ph ph-pencil-simple text-sm"></i></button>' +
+            '<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 transition-all shadow-sm active:scale-95" onclick="window.excluirComentarioMarketingProjetoDetalhe(' + idx + ')" title="Excluir"><i class="ph ph-trash text-sm"></i></button>' +
+            '</div>';
+
+        div.innerHTML = 
+            actionBtns +
+            '<div class="flex justify-between items-center mb-2 pr-16">' +
+                '<span class="font-bold text-xs text-[var(--primary)] uppercase tracking-tight">' + (c.autor || 'Usuário') + '</span>' +
+                '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium">' + c.data + (c.editado ? ' (editado)' : '') + '</span>' +
+            '</div>' +
+            '<div class="text-[var(--text-main)] leading-relaxed whitespace-pre-wrap break-words pr-2">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>';
+        container.appendChild(div);
+    });
+}
+
+window.editarComentarioMarketingProjetoDetalhe = function(idx) {
+    var id = document.getElementById('editMarketingProjId').value;
+    var p = null;
+    Object.keys(window.marketingProjetos).forEach(function (m) {
+        var found = window.marketingProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+
+    if (!p || !p.comentarios || !p.comentarios[idx]) return;
+
+    window.comentarioEditandoMarketingProjIdx = idx;
+    var input = document.getElementById('novoComentarioProjDetalhe');
+    input.value = p.comentarios[idx].texto;
+    input.focus();
+
+    document.getElementById('btnCancelarEditComentarioProj').classList.remove('hidden');
+    document.getElementById('btnCancelarEditComentarioProj').classList.add('flex');
+    document.getElementById('lblSalvarComentarioProj').innerText = 'Salvar Edição';
+    
+    renderizarComentariosTarefaDetalheMarketing(p.comentarios);
+}
+
+window.cancelarEdicaoComentarioMarketingProjetoDetalhe = function() {
+    window.comentarioEditandoMarketingProjIdx = null;
+    document.getElementById('novoComentarioProjDetalhe').value = '';
+    
+    document.getElementById('btnCancelarEditComentarioProj').classList.add('hidden');
+    document.getElementById('btnCancelarEditComentarioProj').classList.remove('flex');
+    document.getElementById('lblSalvarComentarioProj').innerText = 'Enviar';
+    
+    var id = document.getElementById('editMarketingProjId').value;
+    var p = null;
+    Object.keys(window.marketingProjetos).forEach(function (m) {
+        var found = window.marketingProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+    if (p && p.comentarios) renderizarComentariosTarefaDetalheMarketing(p.comentarios);
+}
+
+window.excluirComentarioMarketingProjetoDetalhe = async function(idx) {
+    if (!confirm('Deseja excluir este comentário?')) return;
+
+    var id = document.getElementById('editMarketingProjId').value;
+    var p = null;
+    Object.keys(window.marketingProjetos).forEach(function (m) {
+        var found = window.marketingProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+
+    if (!p || !p.comentarios || !p.comentarios[idx]) return;
+
+    p.comentarios.splice(idx, 1);
+
+    try {
+        await updateDoc(doc(db, "marketing_projetos", id), { comentarios: p.comentarios });
+        if (window.comentarioEditandoMarketingProjIdx === idx) window.cancelarEdicaoComentarioMarketingProjetoDetalhe();
+        renderizarComentariosTarefaDetalheMarketing(p.comentarios);
+        showToast("Comentário removido!");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao remover comentário", "error");
+    }
 }
 
 window.salvarComentarioMarketingProjetoDetalhe = async function() {
@@ -603,19 +690,35 @@ window.salvarComentarioMarketingProjetoDetalhe = async function() {
     var input = document.getElementById('novoComentarioProjDetalhe');
     var texto = input.value.trim();
     if (!texto) return;
+    
     let p = null;
     Object.keys(window.marketingProjetos).forEach(m => {
         const found = window.marketingProjetos[m].find(x => x.firebaseId === id);
         if (found) p = found;
     });
+    if (!p) return;
+
+    var user = localStorage.getItem('loggedUser') || 'Usuário';
+    var dStr = new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+    
     var novos = p.comentarios || [];
-    novos.push({
-        autor: currentUser, texto,
-        data: new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
-    });
-    await updateDoc(doc(db, "marketing_projetos", id), { comentarios: novos });
-    input.value = '';
-    renderizarComentariosTarefaDetalheMarketing(novos);
+    
+    if (window.comentarioEditandoMarketingProjIdx !== null && window.comentarioEditandoMarketingProjIdx < novos.length) {
+        novos[window.comentarioEditandoMarketingProjIdx].texto = texto;
+        novos[window.comentarioEditandoMarketingProjIdx].editado = true;
+    } else {
+        novos.push({ autor: user, texto, data: dStr });
+    }
+
+    try {
+        await updateDoc(doc(db, "marketing_projetos", id), { comentarios: novos });
+        window.cancelarEdicaoComentarioMarketingProjetoDetalhe();
+        renderizarComentariosTarefaDetalheMarketing(novos);
+        showToast("Comentário salvo!");
+    } catch(e) {
+        console.error(e);
+        showToast("Erro ao salvar comentário", "error");
+    }
 }
 
 window.confirmarEdicaoMarketingProj = async function () {

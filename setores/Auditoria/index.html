@@ -906,11 +906,19 @@
                         <div id="listaComentariosProjDetalhe" class="flex flex-col gap-3 mb-4">
                             <!-- Populado JS -->
                         </div>
-                        <div class="flex gap-2">
-                             <input type="text" id="novoComentarioProjDetalhe" placeholder="Digite seu comentário..." class="flex-1 px-4 py-2 bg-[var(--surface)] border border-[var(--border)] rounded-lg text-[var(--text-main)] transition-colors focus:border-[var(--primary)] outline-none shadow-sm">
-                             <button class="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-md transition-all hover:-translate-y-0.5" onclick="window.salvarComentarioProjetoDetalhe()">
-                                 <i class="ph ph-paper-plane-right"></i>
-                             </button>
+                        <div class="flex flex-col gap-2 bg-[var(--surface)] p-3 rounded-2xl border border-[var(--border)] shadow-sm focus-within:border-[var(--primary)] focus-within:shadow-md transition-all">
+                            <textarea id="novoComentarioProjDetalhe" rows="2" placeholder="Digite seu comentário ou atualização..." class="w-full px-2 py-1 bg-transparent text-[var(--text-main)] text-sm resize-none outline-none custom-scrollbar" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); window.salvarComentarioProjetoDetalhe(); }"></textarea>
+                            <div class="flex justify-between items-center px-1">
+                                <span class="text-[0.65rem] text-[var(--text-muted)] font-medium">Use <kbd class="px-1.5 py-0.5 bg-[var(--bg-color)] border border-[var(--border)] rounded text-[10px]">Shift+Enter</kbd> para pular linha</span>
+                                <div class="flex gap-2 items-center">
+                                    <button id="btnCancelarEditComentarioProj" class="hidden items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-color)] text-[var(--text-muted)] text-xs font-bold border border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-all shadow-sm active:scale-95" onclick="window.cancelarEdicaoComentarioProjetoDetalhe()">
+                                        <i class="ph ph-x"></i> Cancelar
+                                    </button>
+                                    <button id="btnSalvarComentarioProjDetalhe" class="flex items-center justify-center gap-2 px-5 py-2 rounded-xl bg-[var(--primary)] text-white text-sm font-bold shadow-md hover:-translate-y-0.5 hover:shadow-lg hover:brightness-110 transition-all active:scale-95" onclick="window.salvarComentarioProjetoDetalhe()">
+                                        <i class="ph ph-paper-plane-right text-lg"></i> <span id="lblSalvarComentarioProj">Enviar</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

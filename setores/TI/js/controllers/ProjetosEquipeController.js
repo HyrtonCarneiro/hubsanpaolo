@@ -765,6 +765,8 @@ window.toggleEditModeProj = function() {
     }
 }
 
+window.comentarioEditandoProjIdx = null;
+
 function renderizarComentariosTarefaDetalhe(comentarios) {
     var container = document.getElementById('listaComentariosProjDetalhe');
     if (!container) return;
@@ -775,17 +777,93 @@ function renderizarComentariosTarefaDetalhe(comentarios) {
         return;
     }
 
-    comentarios.forEach(function (c) {
+    comentarios.forEach(function (c, idx) {
         var div = document.createElement('div');
-        div.className = 'p-4 bg-[var(--bg-color)]/50 rounded-xl border border-[var(--border)] text-sm shadow-sm animate-fadeIn';
+        div.className = 'p-4 bg-[var(--bg-color)]/50 rounded-xl border border-[var(--border)] text-sm shadow-sm animate-fadeIn group relative';
+        
+        var isCurrentEditor = window.comentarioEditandoProjIdx === idx;
+        if (isCurrentEditor) {
+            div.classList.add('ring-2', 'ring-[var(--primary)]', 'ring-opacity-50');
+        }
+
+        var actionBtns = '<div class="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">' +
+            '<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all shadow-sm active:scale-95" onclick="window.editarComentarioProjetoDetalhe(' + idx + ')" title="Editar"><i class="ph ph-pencil-simple text-sm"></i></button>' +
+            '<button class="w-7 h-7 flex items-center justify-center rounded-lg bg-[var(--surface)] border border-[var(--border)] text-[var(--text-muted)] hover:text-red-500 hover:border-red-500 transition-all shadow-sm active:scale-95" onclick="window.excluirComentarioProjetoDetalhe(' + idx + ')" title="Excluir"><i class="ph ph-trash text-sm"></i></button>' +
+            '</div>';
+
         div.innerHTML = 
-            '<div class="flex justify-between items-center mb-2">' +
-                '<span class="font-bold text-xs text-[var(--primary)] uppercase tracking-tight">' + c.autor + '</span>' +
-                '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium">' + c.data + '</span>' +
+            actionBtns +
+            '<div class="flex justify-between items-center mb-2 pr-16">' +
+                '<span class="font-bold text-xs text-[var(--primary)] uppercase tracking-tight">' + (c.autor || 'Usuário') + '</span>' +
+                '<span class="text-[0.65rem] text-[var(--text-muted)] font-medium">' + c.data + (c.editado ? ' (editado)' : '') + '</span>' +
             '</div>' +
-            '<div class="text-[var(--text-main)] leading-relaxed">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>';
+            '<div class="text-[var(--text-main)] leading-relaxed whitespace-pre-wrap break-words pr-2">' + (window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(c.texto) : c.texto) + '</div>';
         container.appendChild(div);
     });
+}
+
+window.editarComentarioProjetoDetalhe = function(idx) {
+    var id = document.getElementById('editProjId').value;
+    var p = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+
+    if (!p || !p.comentarios || !p.comentarios[idx]) return;
+
+    window.comentarioEditandoProjIdx = idx;
+    var input = document.getElementById('novoComentarioProjDetalhe');
+    input.value = p.comentarios[idx].texto;
+    input.focus();
+
+    document.getElementById('btnCancelarEditComentarioProj').classList.remove('hidden');
+    document.getElementById('btnCancelarEditComentarioProj').classList.add('flex');
+    document.getElementById('lblSalvarComentarioProj').innerText = 'Salvar Edição';
+    
+    renderizarComentariosTarefaDetalhe(p.comentarios);
+}
+
+window.cancelarEdicaoComentarioProjetoDetalhe = function() {
+    window.comentarioEditandoProjIdx = null;
+    document.getElementById('novoComentarioProjDetalhe').value = '';
+    
+    document.getElementById('btnCancelarEditComentarioProj').classList.add('hidden');
+    document.getElementById('btnCancelarEditComentarioProj').classList.remove('flex');
+    document.getElementById('lblSalvarComentarioProj').innerText = 'Enviar';
+    
+    var id = document.getElementById('editProjId').value;
+    var p = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+    if (p && p.comentarios) renderizarComentariosTarefaDetalhe(p.comentarios);
+}
+
+window.excluirComentarioProjetoDetalhe = async function(idx) {
+    if (!confirm('Deseja excluir este comentário?')) return;
+
+    var id = document.getElementById('editProjId').value;
+    var p = null;
+    Object.keys(window.sysProjetos).forEach(function (m) {
+        var found = window.sysProjetos[m].find(function (x) { return x.firebaseId === id; });
+        if (found) p = found;
+    });
+
+    if (!p || !p.comentarios || !p.comentarios[idx]) return;
+
+    p.comentarios.splice(idx, 1);
+
+    try {
+        await updateDoc(doc(db, "projetos", id), { comentarios: p.comentarios });
+        if (window.comentarioEditandoProjIdx === idx) window.cancelarEdicaoComentarioProjetoDetalhe();
+        renderizarComentariosTarefaDetalhe(p.comentarios);
+        showToast("Comentário removido!");
+    } catch (e) {
+        console.error(e);
+        showToast("Erro ao remover comentário", "error");
+    }
 }
 
 window.salvarComentarioProjetoDetalhe = async function() {
@@ -806,13 +884,19 @@ window.salvarComentarioProjetoDetalhe = async function() {
     var dStr = new Date().toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 
     var novoArr = (p.comentarios || []);
-    novoArr.push({ autor: user, texto: texto, data: dStr });
+    
+    if (window.comentarioEditandoProjIdx !== null && window.comentarioEditandoProjIdx < novoArr.length) {
+        novoArr[window.comentarioEditandoProjIdx].texto = texto;
+        novoArr[window.comentarioEditandoProjIdx].editado = true;
+    } else {
+        novoArr.push({ autor: user, texto: texto, data: dStr });
+    }
 
     try {
         await updateDoc(doc(db, "projetos", id), { comentarios: novoArr });
-        document.getElementById('novoComentarioProjDetalhe').value = '';
+        window.cancelarEdicaoComentarioProjetoDetalhe();
         renderizarComentariosTarefaDetalhe(novoArr);
-        showToast("Comentário adicionado");
+        showToast("Comentário salvo!");
     } catch (e) {
         console.error(e);
         showToast("Erro ao salvar comentário", "error");
