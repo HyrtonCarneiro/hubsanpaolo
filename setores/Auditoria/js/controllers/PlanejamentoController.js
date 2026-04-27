@@ -114,7 +114,7 @@ window.renderizarTabelaPlanejamento = function () {
         if (cfg.dataProxima) {
             var mesProx = cfg.dataProxima.substring(0, 7);
             var realizadoNoMes = (window.historicoMapeamento || []).find(function(m) {
-                return m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesProx);
+                return m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= cfg.dataProxima);
             });
             if (realizadoNoMes) {
                 status = "CONCLUIDA";
@@ -182,7 +182,7 @@ window.renderizarTabelaPlanejamento = function () {
         if (r.proximaRaw) {
             var mesProx = r.proximaRaw.substring(0, 7); // YYYY-MM
             var realizadoNoMes = (window.historicoMapeamento || []).find(function(m) {
-                return m.nomeLoja === r.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesProx);
+                return m.nomeLoja === r.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= r.proximaRaw);
             });
 
             if (realizadoNoMes) {
