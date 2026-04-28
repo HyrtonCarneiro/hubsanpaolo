@@ -209,6 +209,7 @@ window.handleDropMarketing = async function (e, newStatus) {
 window.salvarMarketingProjeto = async function () {
     if (!window.marketingCurrentMember) return showToast("Selecione ou crie um membro da equipe antes", "error");
     var desc = document.getElementById('markProjDesc').value;
+    var detalhes = document.getElementById('markProjDetalhes').value;
     var dem = document.getElementById('markProjDemand').value;
     var dt = document.getElementById('markProjDate').value;
     var status = document.getElementById('markProjStatus').value;
@@ -221,7 +222,7 @@ window.salvarMarketingProjeto = async function () {
 
     try {
         await addDoc(collection(db, "marketing_projetos"), {
-            desc: desc, demandante: dem, dataAtv: dAtv, status: status,
+            desc: desc, detalhes: detalhes || '', demandante: dem, dataAtv: dAtv, status: status,
             membroResponsavel: window.tempMarketingResponsaveisCriacao[0],
             responsaveis: window.tempMarketingResponsaveisCriacao,
             anexoUrl: anexoUrl || null,
@@ -231,6 +232,7 @@ window.salvarMarketingProjeto = async function () {
         });
         
         document.getElementById('markProjDesc').value = '';
+        document.getElementById('markProjDetalhes').value = '';
         document.getElementById('markProjDemand').value = '';
         document.getElementById('markProjDate').value = '';
         if (fileInput) fileInput.value = '';
@@ -436,6 +438,7 @@ window.abrirModalEditMarketingProj = function (firebaseId) {
 
     document.getElementById('editMarketingProjId').value = p.firebaseId;
     document.getElementById('editMarketingProjDesc').value = p.desc;
+    document.getElementById('editMarketingProjDetalhes').value = p.detalhes || '';
     document.getElementById('editMarketingProjDemand').value = p.demandante;
     var parts = p.dataAtv.split('/');
     if (parts.length === 3) document.getElementById('editMarketingProjDate').value = parts[2] + '-' + parts[1] + '-' + parts[0];
@@ -444,8 +447,15 @@ window.abrirModalEditMarketingProj = function (firebaseId) {
     // Detalhe
     document.getElementById('viewProjDemand').innerText = p.demandante;
     document.getElementById('viewProjDate').innerText = p.dataAtv;
-    document.getElementById('viewProjDesc').innerText = p.desc;
+    document.getElementById('viewProjDesc').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.desc) : p.desc;
     document.getElementById('viewProjStatus').innerText = p.status;
+    
+    if (p.detalhes) {
+        document.getElementById('viewProjDetalhesContainer').classList.remove('hidden');
+        document.getElementById('viewProjDetalhes').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.detalhes) : p.detalhes;
+    } else {
+        document.getElementById('viewProjDetalhesContainer').classList.add('hidden');
+    }
 
     var resps = p.responsaveis && p.responsaveis.length > 0 ? p.responsaveis : [p.membroResponsavel || 'Geral'];
     document.getElementById('viewProjResp').innerHTML = resps.map(r => `<span class="px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold border border-[var(--primary)]/20">${r}</span>`).join(' ');
@@ -736,6 +746,7 @@ window.salvarComentarioMarketingProjetoDetalhe = async function() {
 window.confirmarEdicaoMarketingProj = async function () {
     var id = document.getElementById('editMarketingProjId').value;
     var desc = document.getElementById('editMarketingProjDesc').value;
+    var detalhes = document.getElementById('editMarketingProjDetalhes').value;
     var dem = document.getElementById('editMarketingProjDemand').value;
     var dt = document.getElementById('editMarketingProjDate').value;
     var status = document.getElementById('editMarketingProjStatus').value;
@@ -745,7 +756,7 @@ window.confirmarEdicaoMarketingProj = async function () {
     
     try {
         await updateDoc(doc(db, "marketing_projetos", id), {
-            desc, demandante: dem, status,
+            desc, detalhes: detalhes || '', demandante: dem, status,
             dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
             membroResponsavel: window.tempMarketingResponsaveisEdit[0],
             responsaveis: window.tempMarketingResponsaveisEdit
