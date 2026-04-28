@@ -21,6 +21,18 @@ window.initProjetosEquipeListeners = function () {
                     window.sysProjetos[r].push(data);
                 });
             });
+
+            // Ordenar por prazo (dataAtv) - mais próximos no topo
+            Object.keys(window.sysProjetos).forEach(function(r) {
+                window.sysProjetos[r].sort(function(a, b) {
+                    if (!a.dataAtv) return 1;
+                    if (!b.dataAtv) return -1;
+                    var pA = a.dataAtv.split('/');
+                    var pB = b.dataAtv.split('/');
+                    return new Date(pA[2], pA[1] - 1, pA[0]).getTime() - new Date(pB[2], pB[1] - 1, pB[0]).getTime();
+                });
+            });
+
             renderizarProjetosList();
             if (typeof window.atualizarGraficos === 'function') window.atualizarGraficos();
         });

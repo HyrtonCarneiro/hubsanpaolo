@@ -26,6 +26,18 @@ window.initMarketingTarefasListeners = function () {
                     window.marketingProjetos[r].push(data);
                 });
             });
+
+            // Ordenar por prazo (dataAtv) - mais próximos no topo
+            Object.keys(window.marketingProjetos).forEach(function(r) {
+                window.marketingProjetos[r].sort(function(a, b) {
+                    if (!a.dataAtv) return 1;
+                    if (!b.dataAtv) return -1;
+                    var pA = a.dataAtv.split('/');
+                    var pB = b.dataAtv.split('/');
+                    return new Date(pA[2], pA[1] - 1, pA[0]).getTime() - new Date(pB[2], pB[1] - 1, pB[0]).getTime();
+                });
+            });
+
             renderizarMarketingProjetosList();
         }, function (err) { console.error("Erro Projetos Marketing:", err); });
 
