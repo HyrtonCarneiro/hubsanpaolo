@@ -164,6 +164,7 @@ window.toggleFormTarefa = function() {
 window.salvarProjeto = async function () {
     if (!window.currentMember) return showToast("Selecione ou crie um membro da equipe antes", "error");
     var desc = document.getElementById('projDesc').value;
+    var detalhes = document.getElementById('projDetalhes').value;
     var dem = document.getElementById('projDemand').value;
     var dt = document.getElementById('projDate').value;
     var status = document.getElementById('projStatus').value;
@@ -176,7 +177,7 @@ window.salvarProjeto = async function () {
 
     try {
         await addDoc(collection(db, "projetos"), {
-            desc, demandante: dem, dataAtv: dAtv, status,
+            desc, detalhes: detalhes || '', demandante: dem, dataAtv: dAtv, status,
             membroResponsavel: window.tempResponsaveisCriacao[0],
             responsaveis: window.tempResponsaveisCriacao,
             anexoUrl: anexoUrl || null,
@@ -185,6 +186,7 @@ window.salvarProjeto = async function () {
             timestamp: Date.now()
         });
         document.getElementById('projDesc').value = '';
+        document.getElementById('projDetalhes').value = '';
         document.getElementById('projDemand').value = '';
         document.getElementById('projDate').value = '';
         if (fileInput) fileInput.value = '';
@@ -576,6 +578,7 @@ window.abrirModalEditProj = function (firebaseId) {
     // Preencher campos de edição
     document.getElementById('editProjId').value = p.firebaseId;
     document.getElementById('editProjDesc').value = p.desc;
+    document.getElementById('editProjDetalhes').value = p.detalhes || '';
     document.getElementById('editProjDemand').value = p.demandante;
     var parts = p.dataAtv.split('/');
     if (parts.length === 3) document.getElementById('editProjDate').value = parts[2] + '-' + parts[1] + '-' + parts[0];
@@ -598,6 +601,13 @@ window.abrirModalEditProj = function (firebaseId) {
 
     document.getElementById('viewProjStatus').innerText = p.status;
     document.getElementById('viewProjDesc').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.desc) : p.desc;
+    
+    if (p.detalhes) {
+        document.getElementById('viewProjDetalhesContainer').classList.remove('hidden');
+        document.getElementById('viewProjDetalhes').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.detalhes) : p.detalhes;
+    } else {
+        document.getElementById('viewProjDetalhesContainer').classList.add('hidden');
+    }
     
     // Configurar modo edição
     window.tempResponsaveisEdit = [...viewResps];
@@ -922,6 +932,7 @@ window.fecharModalEditProj = function () {
 window.confirmarEdicaoProj = async function () {
     var id = document.getElementById('editProjId').value;
     var desc = document.getElementById('editProjDesc').value;
+    var detalhes = document.getElementById('editProjDetalhes').value;
     var dem = document.getElementById('editProjDemand').value;
     var dt = document.getElementById('editProjDate').value;
     var status = document.getElementById('editProjStatus').value;
@@ -931,7 +942,7 @@ window.confirmarEdicaoProj = async function () {
 
     try {
         await updateDoc(doc(db, "projetos", id), {
-            desc: desc, demandante: dem, dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
+            desc: desc, detalhes: detalhes || '', demandante: dem, dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
             status: status, 
             membroResponsavel: window.tempResponsaveisEdit[0],
             responsaveis: window.tempResponsaveisEdit

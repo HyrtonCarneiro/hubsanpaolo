@@ -210,6 +210,7 @@ window.handleDropAudi = async function (e, newStatus) {
 window.salvarAudiProjeto = async function () {
     if (!window.audiCurrentMember) return showToast("Selecione ou crie um membro da equipe antes", "error");
     var desc = document.getElementById('audiProjDesc').value;
+    var detalhes = document.getElementById('audiProjDetalhes').value;
     var dem = document.getElementById('audiProjDemand').value;
     var dt = document.getElementById('audiProjDate').value;
     var status = document.getElementById('audiProjStatus').value;
@@ -222,7 +223,7 @@ window.salvarAudiProjeto = async function () {
 
     try {
         await addDoc(collection(db, "auditoria_projetos"), {
-            desc: desc, demandante: dem, dataAtv: dAtv, status: status,
+            desc: desc, detalhes: detalhes || '', demandante: dem, dataAtv: dAtv, status: status,
             membroResponsavel: window.tempAudiResponsaveisCriacao[0],
             responsaveis: window.tempAudiResponsaveisCriacao,
             anexoUrl: anexoUrl || null,
@@ -232,6 +233,7 @@ window.salvarAudiProjeto = async function () {
         });
         
         document.getElementById('audiProjDesc').value = '';
+        document.getElementById('audiProjDetalhes').value = '';
         document.getElementById('audiProjDemand').value = '';
         document.getElementById('audiProjDate').value = '';
         if (fileInput) fileInput.value = '';
@@ -438,6 +440,7 @@ window.abrirModalEditAudiProj = function (firebaseId) {
 
     document.getElementById('editAudiProjId').value = p.firebaseId;
     document.getElementById('editAudiProjDesc').value = p.desc;
+    document.getElementById('editAudiProjDetalhes').value = p.detalhes || '';
     document.getElementById('editAudiProjDemand').value = p.demandante;
     var parts = p.dataAtv.split('/');
     if (parts.length === 3) document.getElementById('editAudiProjDate').value = parts[2] + '-' + parts[1] + '-' + parts[0];
@@ -446,8 +449,15 @@ window.abrirModalEditAudiProj = function (firebaseId) {
     // Detalhe
     document.getElementById('viewProjDemand').innerText = p.demandante;
     document.getElementById('viewProjDate').innerText = p.dataAtv;
-    document.getElementById('viewProjDesc').innerText = p.desc;
+    document.getElementById('viewProjDesc').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.desc) : p.desc;
     document.getElementById('viewProjStatus').innerText = p.status;
+    
+    if (p.detalhes) {
+        document.getElementById('viewProjDetalhesContainer').classList.remove('hidden');
+        document.getElementById('viewProjDetalhes').innerHTML = window.CoreUI && window.CoreUI.linkify ? window.CoreUI.linkify(p.detalhes) : p.detalhes;
+    } else {
+        document.getElementById('viewProjDetalhesContainer').classList.add('hidden');
+    }
 
     var resps = p.responsaveis && p.responsaveis.length > 0 ? p.responsaveis : [p.membroResponsavel || 'Geral'];
     document.getElementById('viewProjResp').innerHTML = resps.map(r => `<span class="px-2 py-0.5 rounded bg-[var(--primary)]/10 text-[var(--primary)] text-xs font-bold border border-[var(--primary)]/20">${r}</span>`).join(' ');
@@ -738,6 +748,7 @@ window.salvarComentarioProjetoDetalhe = async function() {
 window.confirmarEdicaoAudiProj = async function () {
     var id = document.getElementById('editAudiProjId').value;
     var desc = document.getElementById('editAudiProjDesc').value;
+    var detalhes = document.getElementById('editAudiProjDetalhes').value;
     var dem = document.getElementById('editAudiProjDemand').value;
     var dt = document.getElementById('editAudiProjDate').value;
     var status = document.getElementById('editAudiProjStatus').value;
@@ -747,7 +758,7 @@ window.confirmarEdicaoAudiProj = async function () {
     
     try {
         await updateDoc(doc(db, "auditoria_projetos", id), {
-            desc, demandante: dem, status,
+            desc, detalhes: detalhes || '', demandante: dem, status,
             dataAtv: parts[2] + '/' + parts[1] + '/' + parts[0],
             membroResponsavel: window.tempAudiResponsaveisEdit[0],
             responsaveis: window.tempAudiResponsaveisEdit
