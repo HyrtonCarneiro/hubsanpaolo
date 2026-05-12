@@ -80,26 +80,36 @@ window.editarLink = function (linkId) {
     window.editingLinkId = linkId;
     
     // Fill form
-    document.getElementById('linkTitulo').value = link.titulo;
-    document.getElementById('linkUrl').value = link.url;
+    document.getElementById('linkTitulo').value = link.titulo || '';
+    document.getElementById('linkUrl').value = link.url || '';
     document.getElementById('linkDescricao').value = link.descricao || '';
 
     // UI Updates
     const btnSalvar = document.getElementById('btnSalvarLink');
     if (btnSalvar) {
         btnSalvar.innerHTML = '<i class="ph ph-check-circle text-xl"></i> Salvar Alterações';
-        btnSalvar.classList.replace('bg-spLaranja', 'bg-spPistache'); // If using brand colors
-        btnSalvar.classList.replace('bg-[var(--primary)]', 'bg-green-600'); 
+        if (btnSalvar.classList.contains('bg-spLaranja')) {
+            btnSalvar.classList.replace('bg-spLaranja', 'bg-spPistache');
+            btnSalvar.dataset.originalBg = 'bg-spLaranja';
+        } else if (btnSalvar.classList.contains('bg-[var(--primary)]')) {
+            btnSalvar.classList.replace('bg-[var(--primary)]', 'bg-green-600');
+            btnSalvar.dataset.originalBg = 'bg-[var(--primary)]';
+        }
     }
 
     const btnCancelar = document.getElementById('btnCancelarEdicao');
     if (btnCancelar) {
-        btnCancelar.style.display = 'flex';
+        btnCancelar.classList.remove('hidden');
+        btnCancelar.classList.add('flex');
+        btnCancelar.style.display = '';
     }
 
-    // Scroll to form
-    const formTitle = document.querySelector('h3 i.ph-plus-circle')?.parentElement;
-    if (formTitle) formTitle.scrollIntoView({ behavior: 'smooth' });
+    // Scroll accurately to the form inputs container in the current view
+    const tituloInput = document.getElementById('linkTitulo');
+    if (tituloInput) {
+        tituloInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => tituloInput.focus(), 300); // Focus for better UX
+    }
 };
 
 window.cancelarEdicao = function () {
@@ -114,13 +124,22 @@ window.cancelarEdicao = function () {
     const btnSalvar = document.getElementById('btnSalvarLink');
     if (btnSalvar) {
         btnSalvar.innerHTML = '<i class="ph ph-floppy-disk text-xl"></i> Adicionar Link';
-        btnSalvar.classList.remove('bg-spPistache', 'bg-green-600');
-        // Original colors are handled by classes in HTML, we just remove the "edit" overrides
+        if (btnSalvar.dataset.originalBg) {
+            if (btnSalvar.dataset.originalBg === 'bg-spLaranja') {
+                btnSalvar.classList.replace('bg-spPistache', 'bg-spLaranja');
+            } else {
+                btnSalvar.classList.replace('bg-green-600', 'bg-[var(--primary)]');
+            }
+        } else {
+            // Fallback in case dataset isn't set
+            btnSalvar.classList.remove('bg-spPistache', 'bg-green-600');
+        }
     }
 
     const btnCancelar = document.getElementById('btnCancelarEdicao');
     if (btnCancelar) {
-        btnCancelar.style.display = 'none';
+        btnCancelar.classList.add('hidden');
+        btnCancelar.classList.remove('flex');
     }
 };
 
