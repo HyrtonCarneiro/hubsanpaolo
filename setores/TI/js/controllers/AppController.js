@@ -67,7 +67,7 @@ function initApp() {
             navItems: [
                 { id: 'analytics', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
                 { id: 'lojas', label: 'Lojas e Chamados', icon: 'ph-bold ph-buildings' },
-                { id: 'projetos', label: 'Tarefas Equipe', icon: 'ph-bold ph-kanban' },
+                { id: 'projetos', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
                 { id: 'atas', label: 'Atas de Reunião', icon: 'ph-bold ph-notebook' },
                 { id: 'protocolos', label: 'Protocolo de Chamados', icon: 'ph-bold ph-ticket' },
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' },

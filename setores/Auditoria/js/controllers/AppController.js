@@ -326,10 +326,10 @@ function initApp() {
                 { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
                 { id: 'auditoriaOnline', label: 'Auditoria Online', icon: 'ph-bold ph-clipboard-text' },
                 { id: 'planejamento', label: 'Planejamento', icon: 'ph-bold ph-calendar-check' },
-                { id: 'mapeamento', label: 'Mapeamento (Novo)', icon: 'ph-bold ph-map-trifold' },
+                { id: 'mapeamento', label: 'Mapeamento', icon: 'ph-bold ph-map-trifold' },
                 { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
                 { id: 'protocolos', label: 'Protocolo de Chamados', icon: 'ph-bold ph-ticket' },
-                { id: 'metapwr', label: 'Meta PWR (MVP)', icon: 'ph-bold ph-target' },
+                { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' },
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }
             ]
         });

@@ -448,7 +448,7 @@ function renderizarVisaoUnificada(container) {
         colunas.forEach(col => {
             const pNestaColuna = projs.filter(p => (p.status || 'Pendente') === col.id);
             rowHtml += `
-                <div class="p-4 flex flex-col gap-3 min-h-[150px]">
+                <div class="p-4 flex flex-col gap-3 min-h-[150px] transition-all duration-300" ondragover="window.handleDragOver(event)" ondragleave="window.handleDragLeave(event)" ondrop="window.handleDrop(event, '${col.id}')">
                     <div class="flex items-center justify-between mb-2">
                         <span class="text-[0.650rem] font-extrabold uppercase tracking-tighter px-2 py-0.5 rounded border ${col.badge}">${col.titulo}</span>
                         <span class="text-[0.65rem] text-[var(--text-muted)] font-bold">${pNestaColuna.length}</span>
@@ -461,7 +461,7 @@ function renderizarVisaoUnificada(container) {
 
                 // Card simplificado para visão geral
                 rowHtml += `
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md hover:border-[var(--primary)] transition-all duration-300 cursor-pointer active:scale-[0.98]" onclick="window.abrirModalEditProj('${p.firebaseId}')">
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 shadow-sm hover:shadow-md hover:border-[var(--primary)] transition-all duration-300 cursor-move active:scale-[0.98]" draggable="true" ondragstart="window.handleDragStart(event, '${p.firebaseId}')" ondragend="window.handleDragEnd(event)" onclick="if(!event.target.closest('button') && !event.target.closest('a')) window.abrirModalEditProj('${p.firebaseId}')">
                         <div class="text-[0.8rem] font-bold text-[var(--text-main)] mb-2 line-clamp-2 leading-snug">${p.desc}</div>
                         <div class="flex flex-wrap gap-1.5 mb-3">${badges}</div>
                         <div class="flex justify-between items-center text-[0.65rem] text-[var(--text-muted)] font-bold uppercase tracking-tight">

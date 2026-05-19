@@ -57,8 +57,8 @@ function initApp() {
                 userName: currentUser,
                 navItems: [
                     { id: 'dashboard', label: 'Dashboard', icon: 'ph-bold ph-chart-pie-slice' },
-                    { id: 'obras', label: 'Kanban', icon: 'ph-bold ph-buildings' },
-                    { id: 'gantt', label: 'Cronograma', icon: 'ph-bold ph-calendar' },
+                    { id: 'obras', label: 'Painel de Obras', icon: 'ph-bold ph-buildings' },
+                    { id: 'gantt', label: 'Cronograma de Obras', icon: 'ph-bold ph-calendar' },
                     { id: 'tarefas', label: 'Tarefas da Equipe', icon: 'ph-bold ph-kanban' },
                     { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' },
                     { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' }

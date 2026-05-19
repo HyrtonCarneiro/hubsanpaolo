@@ -406,7 +406,18 @@ function renderizarComentarios(hist) {
         return;
     }
 
-    hist.forEach(function (c) {
+    // Ordenar: chamados pendentes acima (resolvido = false/undefined) e resolvidos (resolvido = true) no final.
+    // Mantendo a ordem de timestamp decrescente para itens com o mesmo status.
+    var sortedHist = [...hist].sort(function (a, b) {
+        var statusA = a.resolvido ? 1 : 0;
+        var statusB = b.resolvido ? 1 : 0;
+        if (statusA !== statusB) {
+            return statusA - statusB; // 0 (pendente) vem antes de 1 (resolvido)
+        }
+        return (b.timestamp || 0) - (a.timestamp || 0); // Decrescente por timestamp
+    });
+
+    sortedHist.forEach(function (c) {
         var div = document.createElement('div');
         var resolveColor = c.resolvido ? 'var(--success)' : 'var(--sp-red)';
         var resolveBg = c.resolvido ? 'rgba(16,185,129,0.05)' : 'rgba(218,13,23,0.05)';

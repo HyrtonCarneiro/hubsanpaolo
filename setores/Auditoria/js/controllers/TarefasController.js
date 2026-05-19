@@ -406,11 +406,11 @@ function renderizarVisaoUnificadaAudi(container) {
 
         colunas.forEach(col => {
             const pNestaColuna = projs.filter(p => (p.status || 'Pendente') === col.id);
-            rowHtml += `<div class="p-4 flex flex-col gap-3 min-h-[100px]">`;
+            rowHtml += `<div class="p-4 flex flex-col gap-3 min-h-[100px] transition-all duration-300" ondragover="window.handleDragOverAudi(event)" ondragleave="window.handleDragLeaveAudi(event)" ondrop="window.handleDropAudi(event, '${col.id}')">`;
             
             pNestaColuna.forEach(p => {
                 rowHtml += `
-                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-3 shadow-sm hover:border-[var(--primary)] transition-all cursor-pointer" onclick="window.abrirModalEditAudiProj('${p.firebaseId}')">
+                    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-lg p-3 shadow-sm hover:border-[var(--primary)] transition-all cursor-move active:scale-[0.98]" draggable="true" ondragstart="window.handleDragStartAudi(event, '${p.firebaseId}')" ondragend="window.handleDragEndAudi(event)" onclick="if(!event.target.closest('button') && !event.target.closest('a')) window.abrirModalEditAudiProj('${p.firebaseId}')">
                         <div class="text-[0.75rem] font-bold text-[var(--text-main)] mb-1 line-clamp-1">${p.desc}</div>
                         <div class="flex justify-between items-center text-[0.6rem] text-[var(--text-muted)] font-bold uppercase">
                             <span>${p.dataAtv}</span>
