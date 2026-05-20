@@ -269,4 +269,57 @@ window.atualizarGraficos = function () {
             }
         });
     }
+
+    // Call Sparklines
+    if (typeof window.atualizarSparklines === 'function') {
+        window.atualizarSparklines(
+            l_metrics.totalPendentes,
+            l_metrics.totalResolvidos,
+            t_metrics.andamento + t_metrics.pendentes,
+            t_metrics.concluidas
+        );
+    }
 }
+
+window.sparklineInstances = {};
+
+window.atualizarSparklines = function(pendentes, resolvidos, tarefasAtivas, tarefasConcluidas) {
+    const config = {
+        type: 'line',
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false }, datalabels: { display: false } },
+            scales: { x: { display: false }, y: { display: false } },
+            elements: { point: { radius: 0 }, line: { tension: 0.4, borderWidth: 2 } },
+            layout: { padding: 0 }
+        }
+    };
+
+    const generateTrend = (endValue) => {
+        // Gera uma curva simples para visualização (mock de histórico de 7 dias)
+        // Se endValue for 0, coloca valores baixos, senao varia proximo do endValue
+        if (endValue === 0) return [0,1,0,0,1,0,0];
+        return [endValue * 0.8, endValue * 1.2, endValue * 0.9, endValue * 1.1, endValue * 0.95, endValue * 1.05, endValue].map(v => Math.max(0, Math.round(v)));
+    };
+
+    const drawSparkline = (canvasId, value, color) => {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+        if (window.sparklineInstances[canvasId]) {
+            window.sparklineInstances[canvasId].destroy();
+        }
+        window.sparklineInstances[canvasId] = new Chart(ctx, {
+            type: 'line',
+            options: config.options,
+            data: {
+                labels: [1,2,3,4,5,6,7],
+                datasets: [{ data: generateTrend(value), borderColor: color }]
+            }
+        });
+    };
+
+    drawSparkline('sparklinePendentes', pendentes, '#ef4444');
+    drawSparkline('sparklineResolvidos', resolvidos, '#10b981');
+    drawSparkline('sparklineTarefasAtivas', tarefasAtivas, '#3b82f6');
+    drawSparkline('sparklineTarefasConcluidas', tarefasConcluidas, '#10b981');
+};

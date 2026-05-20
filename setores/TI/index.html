@@ -142,7 +142,7 @@
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Dashboard</h1>
                     </div>
                     <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95 shadow-sm" onclick="window.abrirModalEquipe()">
+                        <button class="btn-secondary" onclick="window.abrirModalEquipe()">
                             <i class="ph ph-users"></i> Gerenciar Equipe
                         </button>
                     </div>
@@ -159,6 +159,9 @@
                             <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statPendentes">0</p>
                             <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Ativos</p>
                         </div>
+                        <div class="ml-auto w-16 h-10 opacity-70">
+                            <canvas id="sparklinePendentes"></canvas>
+                        </div>
                     </div>
                     <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
                         <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-all duration-500 shadow-inner">
@@ -167,6 +170,9 @@
                         <div>
                             <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statChamadosResolvidos">0</p>
                             <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Chamados Concluídos</p>
+                        </div>
+                        <div class="ml-auto w-16 h-10 opacity-70">
+                            <canvas id="sparklineResolvidos"></canvas>
                         </div>
                     </div>
                     <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
@@ -177,6 +183,9 @@
                             <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasAtivas">0</p>
                             <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Ativas</p>
                         </div>
+                        <div class="ml-auto w-16 h-10 opacity-70">
+                            <canvas id="sparklineTarefasAtivas"></canvas>
+                        </div>
                     </div>
                     <div class="bg-[var(--surface)] p-6 rounded-2xl border border-[var(--border)] flex items-center gap-5 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1">
                         <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl bg-emerald-500/10 text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500 shadow-inner">
@@ -185,6 +194,9 @@
                         <div>
                             <p class="text-3xl font-black text-[var(--text-main)] m-0 leading-none" id="statTarefasConcluidas">0</p>
                             <p class="text-[var(--text-muted)] text-[0.65rem] font-black uppercase tracking-widest mt-2 mb-0 opacity-70">Tarefas Concluídas</p>
+                        </div>
+                        <div class="ml-auto w-16 h-10 opacity-70">
+                            <canvas id="sparklineTarefasConcluidas"></canvas>
                         </div>
                     </div>
                 </div>
@@ -279,10 +291,10 @@
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Lojas e Chamados</h1>
                     </div>
                     <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
+                        <button class="btn-primary" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
                             <i class="ph ph-plus"></i> Novo Chamado
                         </button>
-                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-transparent text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarLojasExcel()">
+                        <button class="btn-secondary" onclick="window.exportarLojasExcel()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
                         </button>
                     </div>
@@ -350,7 +362,7 @@
                                 class="pl-11 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-sm transition-all duration-300 focus:border-[var(--primary)] outline-none w-48 focus:w-64 shadow-sm"
                                 oninput="window.renderizarProjetosList()">
                         </div>
-                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarProjetosExcel()">
+                        <button class="btn-secondary" onclick="window.exportarProjetosExcel()">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Exportar Excel</span>
                         </button>
                     </div>
@@ -411,10 +423,10 @@
                         </div>
                     </div>
 
-                    <button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--primary)] text-white border border-[var(--primary)] font-semibold shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md hover:brightness-110" onclick="window.salvarProjeto()">
+                    <button class="btn-primary" onclick="window.salvarProjeto()">
                         <i class="ph ph-floppy-disk text-lg"></i> Salvar Registro
                     </button>
-                    <button class="ml-3 px-5 py-2.5 rounded-lg bg-[var(--bg-color)] text-[var(--text-muted)] border border-[var(--border)] font-semibold transition-all hover:bg-black/5 dark:hover:bg-white/5" onclick="window.toggleFormTarefa()">Cancelar</button>
+                    <button class="btn-secondary ml-3" onclick="window.toggleFormTarefa()">Cancelar</button>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[1500px] p-2 w-full overflow-hidden" id="projetos-list">
@@ -468,7 +480,7 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarProtocolo()">
+                        <button class="btn-primary" onclick="window.salvarProtocolo()">
                             <i class="ph ph-floppy-disk text-xl"></i> Registrar Protocolo
                         </button>
                     </div>
@@ -539,10 +551,10 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button id="btnSalvarLink" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--primary)] text-white font-bold shadow-sm transition-all duration-300 hover:shadow-md hover:brightness-110 active:scale-95" onclick="window.salvarLink('TI')">
+                        <button id="btnSalvarLink" class="btn-primary" onclick="window.salvarLink('TI')">
                             <i class="ph ph-floppy-disk text-xl"></i> Adicionar Link
                         </button>
-                        <button id="btnCancelarEdicao" class="hidden items-center gap-2 px-6 py-3 rounded-xl bg-[var(--bg-color)] border border-[var(--border)] text-[var(--text-main)] font-bold shadow-sm transition-all duration-300 hover:bg-black/5 active:scale-95" onclick="window.cancelarEdicao()">
+                        <button id="btnCancelarEdicao" class="hidden btn-secondary" onclick="window.cancelarEdicao()">
                             <i class="ph ph-x-circle text-xl"></i> Cancelar
                         </button>
                     </div>
@@ -672,7 +684,7 @@
                     <div class="lg:col-span-1 bg-[var(--surface)] rounded-2xl border border-[var(--border)] flex flex-col overflow-hidden shadow-sm">
                         <div class="p-4 border-b border-[var(--border)] bg-[var(--bg-color)]/30 flex justify-between items-center">
                             <span class="text-xs font-black text-[var(--text-muted)] uppercase tracking-widest">Documentações</span>
-                            <button onclick="window.abrirModalNovaCategoria()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--primary)] text-white hover:brightness-110 shadow-lg active:scale-90 transition-all" title="Nova Categoria">
+                            <button onclick="window.abrirModalNovaCategoria()" class="btn-primary" title="Nova Categoria">
                                 <i class="ph ph-folder-plus text-xl"></i>
                             </button>
                         </div>
@@ -692,7 +704,7 @@
                                 <button id="btnDeleteKb" class="flex items-center justify-center w-11 h-11 rounded-xl bg-red-500/10 text-red-500 shadow-md hover:bg-red-500 hover:text-white active:scale-95 transition-all" onclick="window.deletarKb()" title="Apagar Documento">
                                     <i class="ph ph-trash text-xl"></i>
                                 </button>
-                                <button id="btnEditKb" class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[var(--primary)] text-white font-bold shadow-lg hover:brightness-110 active:scale-95 transition-all" onclick="window.editarDocConhecimento()">
+                                <button id="btnEditKb" class="btn-primary" onclick="window.editarDocConhecimento()">
                                     <i class="ph ph-pencil-simple text-xl"></i> Editar Documento
                                 </button>
                             </div>
@@ -726,10 +738,10 @@
                                     <div class="flex items-center justify-between">
                                         <h3 class="text-lg font-bold text-[var(--text-main)] m-0">Editando Documentação</h3>
                                         <div class="flex gap-2">
-                                            <button class="px-5 py-2 rounded-xl bg-red-500/10 text-red-500 font-bold hover:bg-red-500 hover:text-white transition-all active:scale-95" onclick="window.cancelarEdicaoKb()">
+                                            <button class="btn-secondary text-red-500 border-red-500 hover:bg-red-50" onclick="window.cancelarEdicaoKb()">
                                                 Cancelar
                                             </button>
-                                            <button class="px-5 py-2 rounded-xl bg-green-600 text-white font-bold shadow-md hover:brightness-110 active:scale-95 transition-all flex items-center gap-2" onclick="window.salvarKb()">
+                                            <button class="btn-primary" onclick="window.salvarKb()">
                                                 <i class="ph ph-floppy-disk"></i> Salvar Documento
                                             </button>
                                         </div>
@@ -1131,7 +1143,7 @@
                     <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Nome da Categoria</label>
                     <input type="text" id="kbNovaCategoriaNome" placeholder="Ex: Hardware, Sistemas..." class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
                 </div>
-                <button onclick="window.salvarNovaCategoria()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all">
+                <button onclick="window.salvarNovaCategoria()" class="w-full btn-primary mt-2">
                     Criar Categoria
                 </button>
             </div>
@@ -1151,7 +1163,7 @@
                     <label class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase ml-1 opacity-60">Nome da Categoria</label>
                     <input type="text" id="kbEditCategoryNome" placeholder="Ex: Hardware, Sistemas..." class="w-full px-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all font-bold text-sm">
                 </div>
-                <button onclick="window.confirmarEdicaoCategoria()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all">
+                <button onclick="window.confirmarEdicaoCategoria()" class="w-full btn-primary mt-2">
                     Salvar Alterações
                 </button>
             </div>
@@ -1176,7 +1188,7 @@
                         <!-- Populado via JS -->
                     </select>
                 </div>
-                <button onclick="window.criarNovoDocKb()" class="w-full bg-[var(--primary)] text-white py-3 rounded-xl font-bold shadow-lg shadow-[var(--primary)]/20 hover:brightness-110 active:scale-95 transition-all mt-2">
+                <button onclick="window.criarNovoDocKb()" class="w-full btn-primary mt-2">
                     Criar e Abrir Editor
                 </button>
             </div>

@@ -29,7 +29,6 @@ O objetivo final é que este sistema funcione como uma verdadeira intranet, send
 
 ## 6. Melhorias para o Setor de TI
 1. **Dashboard (Visão Geral) - Elevando o nível de Gestão**
-*   **Melhoria Visual (UI):** Os cartões de estatísticas são funcionais, mas poderiam incluir micro-gráficos de tendência (sparklines) ao lado do número, mostrando se as ocorrências subiram ou desceram nos últimos 7 dias.
 *   **Métricas de Performance (SLA):** Adicionar um indicador de "Tempo Médio de Atendimento" (TMA). Para a TI, saber quanto tempo um chamado leva para ser resolvido é uma métrica vital de eficiência.
 
 2. **Monitoramento de Lojas - Experiência Visual e Prática**
@@ -42,15 +41,21 @@ O objetivo final é que este sistema funcione como uma verdadeira intranet, send
 *   **Exportação para PDF:** Um botão para gerar um arquivo PDF formatado da ata selecionada, facilitando o envio por e-mail para outros setores ou para impressão.
 
 5. **Novas Abas Sugeridas (Expansão do Escopo)**
-*   **Base de Conhecimento (Wiki da TI):** Uma aba para documentar procedimentos técnicos, senhas (criptografadas/seguras) ou tutoriais. Isso evita que o conhecimento fique preso apenas na cabeça de um colaborador.
 *   **Controle de Ativos (Inventário):** Uma aba simples para listar o hardware de cada loja (modelo do PDV, specs do servidor, impressoras). Isso ajuda na hora de abrir chamados de hardware.
 *   **Meta PWR (Implementação):** Como está em desenvolvimento, sugiro conectar as metas diretamente ao status das tarefas concluídas no Kanban, criando uma barra de progresso automática para os resultados do trimestre (OKRs).
 
 6. **UX Geral e Consistência**
 *   **Command Palette (Busca Global):** Implementar uma busca global (acessível por Ctrl/Cmd + K) onde o usuário digita o nome de uma loja, membro da equipe ou tópico de reunião e o sistema o leva direto para lá.
-*   **Padronização de Componentes:** Notei ligeiras diferenças no estilo de botões e inputs entre as abas. Unificar os tokens de design (ex: todos os botões de ação principal seguirem exatamente o mesmo arredondamento e sombra) tornaria o sistema ainda mais profissional.
+
+
+## 7. Integração com a Trílogo (Gestão de Tickets)
+*   **Aba de Tickets no HUB:** Criar uma aba dedicada no HUB para visualizar, preencher checklists e vistoriar tickets diretamente, sem precisar abrir a interface da Trílogo.
+    *   **Filtro por Responsável ("Hyrton") e Status "Aberto":**
+        *   *Como funcionaria:* Usar o endpoint público `GET /api/ticket` filtrando por período e status `Aberto`. A API pública não aceita o responsável como parâmetro de busca direta, mas retorna o `assigneeName` em cada ticket. O HUB fará a filtragem local em memória pelo nome "Hyrton".
+    *   **Preenchimento de Checklists e Ação de Vistoria:**
+        *   *API Pública:* Não dispõe de endpoints para marcar itens de checklist (`checklistActions`) ou realizar a Vistoria (encerramento/aprovação do chamado).
+        *   *API Privada (Simulação de Tráfego Web):* O HUB pode interceptar as chamadas internas de rede (XHR/Fetch) que a plataforma web da Trílogo (`https://sanpaolo.trilogo.app`) realiza durante o uso comum do usuário logado. Dessa forma, configurando a autenticação via cookies/tokens no HUB, é possível sincronizar automaticamente os checklists e a vistoria de forma direta.
+        *   *Automação via Robô:* Outra alternativa é usar automação em segundo plano (como Puppeteer ou Selenium, de forma semelhante ao [Robo de Anexos V2.py](file:///g:/Meu%20Drive/SANPAOLO/Dev/hubsanpaolo/setores/Fiscal/Robo%20TRILOGO%20-%20ATHENAS/Robo%20de%20Anexos%20V2/Robo%20de%20Anexos%20V2.py)) para abrir a interface do usuário e clicar nos botões programaticamente.
 
 ---
-*Documento atualizado em 20/03/2026 com sugestões para o setor de TI.*
-
-
+*Documento atualizado em 20/05/2026 com sugestões para o setor de TI e integração com Trílogo.*

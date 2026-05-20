@@ -144,3 +144,55 @@ body.sidebar-collapsed .sidebar-icon-toggle {
 .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
+/* --- Padronização de Componentes (Design Tokens) --- */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    background-color: var(--primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--primary);
+    cursor: pointer;
+}
+.btn-primary:hover {
+    box-shadow: var(--shadow-md);
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+.btn-primary:active {
+    transform: scale(0.95);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: var(--radius-md);
+    background-color: transparent;
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 0.875rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border: 1px solid var(--border);
+    cursor: pointer;
+}
+.btn-secondary:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(var(--primary-rgb), 0.05);
+    transform: translateY(-2px);
+}
+.btn-secondary:active {
+    transform: scale(0.95);
+}
+
