@@ -73,7 +73,7 @@ function initApp() {
                 { id: 'links', label: 'Links Úteis', icon: 'ph-bold ph-link' },
                 { id: 'inventario', label: 'Inventário Tiaguinho', icon: 'ph-bold ph-barcode' },
                 { id: 'mapa', label: 'Mapa de Lojas', icon: 'ph-bold ph-map-trifold' },
-                { id: 'tiaguinho', label: 'BI Tiaguinho', icon: 'ph-bold ph-chart-pie-slice' },
+                { id: 'tiaguinho', label: 'BI do Lulu', icon: 'ph-bold ph-chart-pie-slice' },
                 { id: 'conhecimento', label: 'Base de Conhecimento', icon: 'ph-bold ph-books' },
                 { id: 'metapwr', label: 'Meta PWR', icon: 'ph-bold ph-target' }
             ]
