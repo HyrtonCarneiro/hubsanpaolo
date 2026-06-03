@@ -74,5 +74,6 @@ window.lojasIniciais = [
     { id: 67, estado: 'MT', nome: 'PANTANAL SHOPPING / CUIABA', lat: -15.58218, lng: -56.07696 },
     { id: 68, estado: 'MT', nome: 'SHOPPING ESTAÇÃO CUIABA', lat: -15.5901447, lng: -56.1206767 },
     { id: 69, estado: 'AL', nome: 'PARQUE SHOPPING MACEIO', lat: -9.6276766, lng: -35.6992105 },
-    { id: 70, estado: 'RRPART', nome: 'CSC', lat: -3.7329444408904586, lng: -38.49672375888681 }
+    { id: 70, estado: 'RRPART', nome: 'CSC', lat: -3.7329444408904586, lng: -38.49672375888681 },
+    { id: 71, estado: 'CE', nome: 'WORK CAFE SANTANDER', lat: -3.7396344, lng: -38.4881501 }
 ];
