@@ -291,7 +291,7 @@
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Lojas e Chamados</h1>
                     </div>
                     <div class="flex gap-3">
-                        <button class="btn-primary" onclick="document.getElementById('searchInput').focus(); showToast('Selecione uma loja abaixo para registrar o chamado', 'success');">
+                        <button class="btn-primary" onclick="window.abrirModalSelecionarLoja()">
                             <i class="ph ph-plus"></i> Novo Chamado
                         </button>
                         <button class="btn-secondary" onclick="window.exportarLojasExcel()">
@@ -799,6 +799,28 @@
             </div>
 
         </main>
+    </div>
+
+    <!-- MODAL SELECIONAR LOJA PARA NOVO CHAMADO -->
+    <div id="modalSelecionarLoja" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">
+        <div class="bg-[var(--surface)] w-[500px] max-w-full max-h-[80vh] flex flex-col rounded-2xl shadow-2xl relative translate-y-4 transition-transform duration-300 [&.show_.modal-content]:translate-y-0 overflow-hidden modal-content border border-[var(--border)]">
+            <div class="flex justify-between items-center px-6 py-4 border-b border-[var(--border)] bg-black/5 dark:bg-black/20 z-10">
+                <div>
+                    <h2 class="text-xl font-bold text-[var(--text-main)] m-0">Selecionar Loja</h2>
+                    <p class="text-xs text-[var(--text-muted)] m-0 mt-1">Busque e selecione para abrir um chamado</p>
+                </div>
+                <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharModalSelecionarLoja()"><i class="ph ph-x"></i></button>
+            </div>
+            <div class="p-4 border-b border-[var(--border)]">
+                <div class="relative w-full">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
+                    <input type="text" id="searchInputModalLoja" placeholder="Buscar por nome da loja ou regional..." class="w-full pl-11 pr-4 py-2.5 bg-[var(--bg-color)]/50 border border-[var(--border)] rounded-xl outline-none focus:border-[var(--primary)] transition-all text-sm font-semibold shadow-sm" oninput="window.filtrarLojasModal()">
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2 scroll-smooth custom-scrollbar" id="listaLojasModal">
+                <!-- Lojas populadas via JS -->
+            </div>
+        </div>
     </div>
 
     <div id="modalLoja" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 [&.show]:opacity-100 [&.show]:pointer-events-auto p-4">

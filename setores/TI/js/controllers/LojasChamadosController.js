@@ -201,6 +201,61 @@ window.renderizarLojas = function () {
     }
 }
 
+// --- Novas Funções para o Modal de Selecionar Loja ---
+window.abrirModalSelecionarLoja = function() {
+    document.getElementById('searchInputModalLoja').value = '';
+    window.renderizarListaLojasModal();
+    document.getElementById('modalSelecionarLoja').classList.add('show');
+    setTimeout(() => document.getElementById('searchInputModalLoja').focus(), 100);
+}
+
+window.fecharModalSelecionarLoja = function() {
+    document.getElementById('modalSelecionarLoja').classList.remove('show');
+}
+
+window.filtrarLojasModal = function() {
+    window.renderizarListaLojasModal();
+}
+
+window.renderizarListaLojasModal = function() {
+    var container = document.getElementById('listaLojasModal');
+    if (!container) return;
+    var search = document.getElementById('searchInputModalLoja').value.toLowerCase();
+    container.innerHTML = '';
+    
+    var filtradas = lojasIniciais.filter(function(loja) {
+        return loja.nome.toLowerCase().includes(search) || loja.estado.toLowerCase().includes(search);
+    });
+    
+    if (filtradas.length === 0) {
+        container.innerHTML = '<div class="text-center p-4 text-[var(--text-muted)] text-sm">Nenhuma loja encontrada.</div>';
+        return;
+    }
+    
+    var html = '<div class="grid grid-cols-1 gap-2 p-2">';
+    filtradas.forEach(function(loja) {
+        html += '<div class="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] bg-[var(--bg-color)] hover:border-[var(--primary)] hover:bg-[var(--primary)]/5 cursor-pointer transition-all shadow-sm" onclick="window.selecionarLojaParaChamado(\'' + loja.id + '\', \'' + loja.nome + '\', \'' + loja.estado + '\')">' +
+            '<div class="flex flex-col">' +
+                '<span class="font-bold text-[var(--text-main)] text-sm">' + loja.nome + '</span>' +
+                '<span class="text-[0.65rem] font-black text-[var(--text-muted)] uppercase tracking-widest mt-0.5 opacity-70">' + loja.estado + '</span>' +
+            '</div>' +
+            '<i class="ph ph-caret-right text-[var(--text-muted)]"></i>' +
+        '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+window.selecionarLojaParaChamado = function(id, nome, estado) {
+    window.fecharModalSelecionarLoja();
+    abrirModal(id, nome, estado);
+    var form = document.getElementById('formNovaOcorrencia');
+    if (form && form.classList.contains('hidden')) {
+        window.toggleFormOcorrencia();
+    }
+}
+// -----------------------------------------------------
+
 function abrirModal(id, nome, estado) {
     lojaAtualId = id;
     document.getElementById('modalTitle').innerText = nome;
