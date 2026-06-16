@@ -548,18 +548,36 @@ window.renderizarControleMensal = function () {
 
     window.lojasIniciais.forEach(lojaBase => {
         const cfg = (window.planejamentoCache || []).find(p => p.loja === lojaBase.nome) || {};
-        if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
-            const auditor = cfg.auditor || 'Sistema';
-            if (!auditoresMap[auditor]) auditoresMap[auditor] = { concluidas: 0, total: 0 };
-            
-            auditoresMap[auditor].total++;
+        
+        const realizadoMapeamento = (window.historicoMapeamento || []).find(m => 
+            m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesAtualIso)
+        );
+        const notaDoMes = (window.notasCache || []).find(n => 
+            n.loja === lojaBase.nome && n.data && n.data.startsWith(mesAtualIso)
+        );
+        
+        const isConcluida = !!realizadoMapeamento || !!notaDoMes;
+        
+        let auditor = cfg.auditor || 'Sistema';
+        if (notaDoMes && notaDoMes.auditor) auditor = notaDoMes.auditor;
 
-            // Check if concluida
-            const mesProx = cfg.dataProxima.substring(0, 7);
-            const realizadoNoMes = (window.historicoMapeamento || []).find(m => 
-                m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= cfg.dataProxima)
-            );
-            if (realizadoNoMes) {
+        let contabiliza = false;
+        if (isConcluida) {
+            contabiliza = true;
+        } else if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
+            contabiliza = true;
+        } else {
+            const hojeMes = new Date().toISOString().substring(0, 7);
+            if (mesAtualIso < hojeMes) {
+                // Em meses passados, se não foi concluída, contabiliza como pendente para o auditor atual
+                contabiliza = true; 
+            }
+        }
+
+        if (contabiliza) {
+            if (!auditoresMap[auditor]) auditoresMap[auditor] = { concluidas: 0, total: 0 };
+            auditoresMap[auditor].total++;
+            if (isConcluida) {
                 auditoresMap[auditor].concluidas++;
             }
         }
@@ -622,23 +640,40 @@ window.renderizarControleLoja = function() {
     window.lojasIniciais.forEach(lojaBase => {
         const cfg = (window.planejamentoCache || []).find(p => p.loja === lojaBase.nome) || {};
         
+        const realizadoMapeamento = (window.historicoMapeamento || []).find(m => 
+            m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && m.dataTentativa.startsWith(mesAtualIso)
+        );
+        const notaDoMes = (window.notasCache || []).find(n => 
+            n.loja === lojaBase.nome && n.data && n.data.startsWith(mesAtualIso)
+        );
+        
+        const isConcluida = !!realizadoMapeamento || !!notaDoMes;
+
         let status = "NAO_AGENDADA";
         let notaStr = "";
         let auditor = cfg.auditor || "A Definir";
         let dataAgendada = cfg.dataProxima || "";
 
-        if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
-            const mesProx = cfg.dataProxima.substring(0, 7);
-            const realizadoNoMes = (window.historicoMapeamento || []).find(m => 
-                m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= cfg.dataProxima)
-            );
-            if (realizadoNoMes) {
-                status = "CONCLUIDA";
-                const notaDoMes = (window.notasCache || []).find(n => n.loja === lojaBase.nome && n.data === realizadoNoMes.dataTentativa);
-                if (notaDoMes) notaStr = parseFloat(notaDoMes.nota).toFixed(1);
-            } else {
+        if (isConcluida) {
+            status = "CONCLUIDA";
+            if (notaDoMes) {
+                auditor = notaDoMes.auditor || auditor;
+                notaStr = parseFloat(notaDoMes.nota).toFixed(1);
+                dataAgendada = notaDoMes.data;
+            } else if (realizadoMapeamento) {
+                dataAgendada = realizadoMapeamento.dataTentativa;
+            }
+        } else {
+            if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
                 const hoje = new Date().toISOString().substring(0, 10);
                 status = hoje > cfg.dataProxima ? "ATRASADA" : "AGENDADA";
+            } else {
+                const hojeMes = new Date().toISOString().substring(0, 7);
+                if (mesAtualIso < hojeMes) {
+                    status = "PENDENTE"; // Passou e não foi feita
+                } else {
+                    status = "NAO_AGENDADA"; // Mês atual ou futuro e sem agendamento
+                }
             }
         }
 
@@ -689,13 +724,14 @@ window.renderizarControleLoja = function() {
                         </div>
                         <div class="flex items-center justify-between text-xs text-[var(--text-muted)]">
                             <span class="flex items-center gap-1"><i class="ph-fill ph-user-circle"></i> ${l.auditor}</span>
-                            <span>${l.dataAgendada.split('-').reverse().join('/')}</span>
+                            <span>${l.dataAgendada ? l.dataAgendada.split('-').reverse().join('/') : '-'}</span>
                         </div>
                     </div>
                 `;
-            } else if (l.status === "AGENDADA" || l.status === "ATRASADA") {
-                const corStatus = l.status === "ATRASADA" ? "text-spRed" : "text-spLaranja";
-                const textoStatus = l.status === "ATRASADA" ? "Atrasada" : "Agendada";
+            } else if (l.status === "AGENDADA" || l.status === "ATRASADA" || l.status === "PENDENTE") {
+                const isAtrasadaOrPendente = l.status === "ATRASADA" || l.status === "PENDENTE";
+                const corStatus = isAtrasadaOrPendente ? "text-spRed" : "text-spLaranja";
+                const textoStatus = l.status === "PENDENTE" ? "Pendente" : (l.status === "ATRASADA" ? "Atrasada" : "Agendada");
                 html += `
                     <div class="flex flex-col p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm shadow-sm gap-1">
                         <div class="flex items-center justify-between">
@@ -704,7 +740,7 @@ window.renderizarControleLoja = function() {
                         </div>
                         <div class="flex items-center justify-between text-xs text-[var(--text-muted)] opacity-80">
                             <span class="flex items-center gap-1"><i class="ph-fill ph-user-circle"></i> ${l.auditor}</span>
-                            <span>Prev: ${l.dataAgendada.split('-').reverse().join('/')}</span>
+                            <span>${l.dataAgendada ? 'Prev: ' + l.dataAgendada.split('-').reverse().join('/') : '-'}</span>
                         </div>
                     </div>
                 `;
