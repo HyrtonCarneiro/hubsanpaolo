@@ -24,6 +24,7 @@ window.initPlanejamentoListeners = function () {
             
             window.renderizarTabelaPlanejamento();
             if (typeof window.renderDashboard === 'function') window.renderDashboard();
+            if (window.sidebarControleAberto) window.renderizarControleMensal();
         }, function (err) { console.error("Erro Planejamento:", err); });
     } catch (e) {
         console.error("Erro ao iniciar listener planejamento", e);
@@ -466,3 +467,259 @@ window.processarImportacaoPlanejamento = async function (dados) {
         showToast("Erro crítico no processamento. Verifique o log.", "error");
     }
 }
+
+// --- CONTROLE MENSAL (Sidebar) ---
+window.sidebarControleAberto = false;
+window.ctrlTabAtual = 'auditor';
+
+window.abrirControleMensal = function () {
+    document.getElementById('sidebarControleMensal').classList.remove('translate-x-full');
+    document.getElementById('overlayControleMensal').classList.remove('hidden');
+    // Força reflow
+    void document.getElementById('overlayControleMensal').offsetWidth;
+    document.getElementById('overlayControleMensal').classList.remove('opacity-0');
+    window.sidebarControleAberto = true;
+
+    // Inicializa o input com o mês atual caso esteja vazio
+    const inputMes = document.getElementById('ctrlMesInput');
+    if (inputMes && !inputMes.value) {
+        inputMes.value = new Date().toISOString().substring(0, 7);
+    }
+
+    window.renderizarControleMensal();
+};
+
+window.fecharControleMensal = function () {
+    document.getElementById('sidebarControleMensal').classList.add('translate-x-full');
+    const overlay = document.getElementById('overlayControleMensal');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+    }, 300);
+    window.sidebarControleAberto = false;
+};
+
+window.switchTabControle = function (tab) {
+    window.ctrlTabAtual = tab;
+    document.getElementById('tabCtrlAuditor').classList.replace(
+        tab === 'auditor' ? 'border-transparent' : 'border-[var(--primary)]',
+        tab === 'auditor' ? 'border-[var(--primary)]' : 'border-transparent'
+    );
+    document.getElementById('tabCtrlAuditor').classList.replace(
+        tab === 'auditor' ? 'text-[var(--text-muted)]' : 'text-[var(--primary)]',
+        tab === 'auditor' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'
+    );
+
+    document.getElementById('tabCtrlLoja').classList.replace(
+        tab === 'loja' ? 'border-transparent' : 'border-[var(--primary)]',
+        tab === 'loja' ? 'border-[var(--primary)]' : 'border-transparent'
+    );
+    document.getElementById('tabCtrlLoja').classList.replace(
+        tab === 'loja' ? 'text-[var(--text-muted)]' : 'text-[var(--primary)]',
+        tab === 'loja' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'
+    );
+
+    if (tab === 'auditor') {
+        document.getElementById('viewCtrlAuditor').classList.remove('hidden');
+        document.getElementById('viewCtrlLoja').classList.add('hidden');
+    } else {
+        document.getElementById('viewCtrlAuditor').classList.add('hidden');
+        document.getElementById('viewCtrlLoja').classList.remove('hidden');
+    }
+};
+
+window.renderizarControleMensal = function () {
+    if (!window.sidebarControleAberto) return;
+
+    const inputMes = document.getElementById('ctrlMesInput');
+    let mesAtualIso;
+    if (inputMes && inputMes.value) {
+        mesAtualIso = inputMes.value;
+    } else {
+        const dataAtual = new Date();
+        mesAtualIso = dataAtual.toISOString().substring(0, 7); // YYYY-MM
+    }
+
+    // 1. Por Auditor
+    const auditoresMap = {};
+    (window.audiEquipe || []).forEach(m => {
+        auditoresMap[m.nome] = { concluidas: 0, total: 0 };
+    });
+
+    window.lojasIniciais.forEach(lojaBase => {
+        const cfg = (window.planejamentoCache || []).find(p => p.loja === lojaBase.nome) || {};
+        if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
+            const auditor = cfg.auditor || 'Sistema';
+            if (!auditoresMap[auditor]) auditoresMap[auditor] = { concluidas: 0, total: 0 };
+            
+            auditoresMap[auditor].total++;
+
+            // Check if concluida
+            const mesProx = cfg.dataProxima.substring(0, 7);
+            const realizadoNoMes = (window.historicoMapeamento || []).find(m => 
+                m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= cfg.dataProxima)
+            );
+            if (realizadoNoMes) {
+                auditoresMap[auditor].concluidas++;
+            }
+        }
+    });
+
+    const listaAuditores = Object.keys(auditoresMap).map(nome => ({
+        nome: nome,
+        concluidas: auditoresMap[nome].concluidas,
+        total: auditoresMap[nome].total
+    })).sort((a, b) => b.total - a.total);
+
+    document.getElementById('ctrlTotalAuditores').innerText = listaAuditores.length;
+
+    const containerAuditor = document.getElementById('listaCtrlAuditor');
+    containerAuditor.innerHTML = '';
+    
+    if (listaAuditores.length === 0) {
+        containerAuditor.innerHTML = '<div class="text-sm text-[var(--text-muted)]">Nenhum auditor encontrado.</div>';
+    } else {
+        listaAuditores.forEach(aud => {
+            const hasAgendamentos = aud.total > 0;
+            const isCompleted = hasAgendamentos && aud.concluidas === aud.total;
+            const bgCor = isCompleted ? 'bg-spPistache/10 text-spPistache' : (hasAgendamentos ? 'bg-spLaranja/10 text-spLaranja' : 'bg-black/5 dark:bg-white/5 text-[var(--text-muted)]');
+            const iconCor = isCompleted ? 'text-spPistache' : (hasAgendamentos ? 'text-spLaranja' : 'text-[var(--text-muted)]');
+            const statusTexto = hasAgendamentos ? `${aud.concluidas} de ${aud.total} concluídas` : 'Sem agendamentos (0)';
+
+            containerAuditor.innerHTML += `
+                <div class="flex items-center justify-between p-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full ${bgCor} flex items-center justify-center">
+                            <i class="ph-fill ph-user ${iconCor} text-lg"></i>
+                        </div>
+                        <div>
+                            <div class="text-sm font-bold text-[var(--text-main)]">${aud.nome}</div>
+                            <div class="text-xs font-semibold ${isCompleted ? 'text-spPistache' : (hasAgendamentos ? 'text-spLaranja' : 'text-[var(--text-muted)]')}">${statusTexto}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // 2. Por Loja (render inicial)
+    window.renderizarControleLoja();
+};
+
+window.renderizarControleLoja = function() {
+    const search = (document.getElementById('ctrlSearchLoja').value || '').toUpperCase();
+    
+    const inputMes = document.getElementById('ctrlMesInput');
+    let mesAtualIso;
+    if (inputMes && inputMes.value) {
+        mesAtualIso = inputMes.value;
+    } else {
+        const dataAtual = new Date();
+        mesAtualIso = dataAtual.toISOString().substring(0, 7);
+    }
+
+    const lojasStatus = [];
+    window.lojasIniciais.forEach(lojaBase => {
+        const cfg = (window.planejamentoCache || []).find(p => p.loja === lojaBase.nome) || {};
+        
+        let status = "NAO_AGENDADA";
+        let notaStr = "";
+        let auditor = cfg.auditor || "A Definir";
+        let dataAgendada = cfg.dataProxima || "";
+
+        if (cfg.dataProxima && cfg.dataProxima.startsWith(mesAtualIso)) {
+            const mesProx = cfg.dataProxima.substring(0, 7);
+            const realizadoNoMes = (window.historicoMapeamento || []).find(m => 
+                m.nomeLoja === lojaBase.nome && m.realizada === 'SIM' && (m.dataTentativa.startsWith(mesProx) || m.dataTentativa >= cfg.dataProxima)
+            );
+            if (realizadoNoMes) {
+                status = "CONCLUIDA";
+                const notaDoMes = (window.notasCache || []).find(n => n.loja === lojaBase.nome && n.data === realizadoNoMes.dataTentativa);
+                if (notaDoMes) notaStr = parseFloat(notaDoMes.nota).toFixed(1);
+            } else {
+                const hoje = new Date().toISOString().substring(0, 10);
+                status = hoje > cfg.dataProxima ? "ATRASADA" : "AGENDADA";
+            }
+        }
+
+        lojasStatus.push({
+            loja: lojaBase.nome,
+            estado: lojaBase.estado,
+            status: status,
+            auditor: auditor,
+            dataAgendada: dataAgendada,
+            notaStr: notaStr
+        });
+    });
+
+    const listaLojas = lojasStatus.filter(l => l.loja.includes(search) || l.estado.includes(search));
+    
+    // Agrupar por Regional
+    const porRegional = {};
+    listaLojas.forEach(l => {
+        if (!porRegional[l.estado]) porRegional[l.estado] = [];
+        porRegional[l.estado].push(l);
+    });
+
+    const containerLoja = document.getElementById('listaCtrlLoja');
+    containerLoja.innerHTML = '';
+
+    if (Object.keys(porRegional).length === 0) {
+        containerLoja.innerHTML = '<div class="text-sm text-[var(--text-muted)] text-center py-4">Nenhuma loja encontrada.</div>';
+        return;
+    }
+
+    Object.keys(porRegional).sort().forEach(estado => {
+        const lojas = porRegional[estado].sort((a,b) => a.loja.localeCompare(b.loja));
+        let html = `
+            <div class="mb-4">
+                <div class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <i class="ph-fill ph-map-pin"></i> Regional ${estado}
+                </div>
+                <div class="space-y-2">
+        `;
+
+        lojas.forEach(l => {
+            if (l.status === "CONCLUIDA") {
+                html += `
+                    <div class="flex flex-col p-2.5 rounded-lg border border-spPistache/30 bg-spPistache/5 text-sm shadow-sm gap-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-[var(--text-main)] truncate max-w-[200px]">${l.loja}</span>
+                            ${l.notaStr ? \`<span class="text-xs font-black text-white bg-spPistache px-2 py-0.5 rounded-md">\${l.notaStr}</span>\` : \`<span class="text-[10px] font-bold text-spPistache uppercase">Concluída</span>\`}
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-[var(--text-muted)]">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-user-circle"></i> ${l.auditor}</span>
+                            <span>${l.dataAgendada.split('-').reverse().join('/')}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (l.status === "AGENDADA" || l.status === "ATRASADA") {
+                const corStatus = l.status === "ATRASADA" ? "text-spRed" : "text-spLaranja";
+                const textoStatus = l.status === "ATRASADA" ? "Atrasada" : "Agendada";
+                html += `
+                    <div class="flex flex-col p-2.5 rounded-lg border border-[var(--border)] bg-[var(--surface)] text-sm shadow-sm gap-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-[var(--text-main)] truncate max-w-[200px]">${l.loja}</span>
+                            <span class="text-[10px] font-bold ${corStatus} uppercase">${textoStatus}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-[var(--text-muted)] opacity-80">
+                            <span class="flex items-center gap-1"><i class="ph-fill ph-user-circle"></i> ${l.auditor}</span>
+                            <span>Prev: ${l.dataAgendada.split('-').reverse().join('/')}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="flex items-center justify-between p-2.5 rounded-lg border border-[var(--border)] bg-black/5 dark:bg-white/5 text-sm shadow-sm opacity-60">
+                        <span class="font-semibold text-[var(--text-muted)] truncate max-w-[200px]">${l.loja}</span>
+                        <span class="text-[10px] font-bold text-[var(--text-muted)] uppercase">Não Agendada</span>
+                    </div>
+                `;
+            }
+        });
+
+        html += `</div></div>`;
+        containerLoja.innerHTML += html;
+    });
+};
+

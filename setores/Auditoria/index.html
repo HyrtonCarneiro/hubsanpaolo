@@ -209,9 +209,6 @@
                         </h1>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-md" onclick="window.abrirControleMensal()">
-                            <i class="ph-fill ph-chart-bar text-lg"></i> Controle Mensal
-                        </button>
                         <input type="file" id="importNotasInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarNotasExcel(event)">
                         <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importNotasInput').click()">
                             <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
@@ -273,51 +270,7 @@
                         </table>
                     </div>
                 </div>
-                <!-- OFF-CANVAS CONTROLE MENSAL -->
-                <div id="sidebarControleMensal" class="fixed inset-y-0 right-0 w-full md:w-[450px] bg-[var(--surface)] shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col border-l border-[var(--border)]">
-                    <div class="flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--bg-color)]">
-                        <div class="flex items-center gap-3">
-                            <h2 class="text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
-                                <i class="ph-fill ph-chart-bar text-[var(--primary)]"></i> Controle
-                            </h2>
-                            <input type="month" id="ctrlMesInput" class="bg-[var(--surface)] text-sm font-semibold border border-[var(--border)] rounded-lg px-2 py-1 text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] cursor-pointer" onchange="window.renderizarControleMensal()">
-                        </div>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharControleMensal()">
-                            <i class="ph ph-x text-lg"></i>
-                        </button>
-                    </div>
 
-                    <div class="flex border-b border-[var(--border)]">
-                        <button class="flex-1 py-3 text-sm font-bold text-[var(--primary)] border-b-2 border-[var(--primary)] transition-colors" id="tabCtrlAuditor" onclick="window.switchTabControle('auditor')">Por Auditor</button>
-                        <button class="flex-1 py-3 text-sm font-bold text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-main)] transition-colors" id="tabCtrlLoja" onclick="window.switchTabControle('loja')">Por Loja</button>
-                    </div>
-
-                    <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
-                        <!-- Aba Por Auditor -->
-                        <div id="viewCtrlAuditor" class="space-y-4">
-                            <div class="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 flex items-center justify-between">
-                                <span>Equipe de Auditoria</span>
-                                <span class="bg-[var(--primary)]/10 text-[var(--primary)] px-2 py-0.5 rounded-full text-xs" id="ctrlTotalAuditores">0</span>
-                            </div>
-                            <div id="listaCtrlAuditor" class="space-y-3">
-                                <!-- Preenchido via JS -->
-                            </div>
-                        </div>
-
-                        <!-- Aba Por Loja -->
-                        <div id="viewCtrlLoja" class="hidden space-y-4">
-                            <div class="flex items-center gap-2 mb-3">
-                                <i class="ph ph-magnifying-glass text-[var(--text-muted)] absolute ml-3"></i>
-                                <input type="text" id="ctrlSearchLoja" placeholder="Buscar loja..." class="w-full border border-[var(--border)] rounded-xl pl-9 p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] text-sm" oninput="window.renderizarControleLoja()">
-                            </div>
-                            <div id="listaCtrlLoja" class="space-y-4">
-                                <!-- Preenchido via JS -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- OVERLAY DO OFF-CANVAS -->
-                <div id="overlayControleMensal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300" onclick="window.fecharControleMensal()"></div>
             </div>
 
             <!-- MAPEAMENTO DE TENTATIVAS (Substitui Planilha) -->
@@ -331,6 +284,9 @@
                         </h1>
                     </div>
                     <div class="flex items-center gap-3">
+                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-md" onclick="window.abrirControleMensal()">
+                            <i class="ph-fill ph-chart-bar text-lg"></i> Controle Mensal
+                        </button>
                         <input type="file" id="importPlanejamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarPlanejamentoExcel(event)">
                         <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importPlanejamentoInput').click()">
                             <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
@@ -401,6 +357,52 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- OFF-CANVAS CONTROLE MENSAL -->
+                <div id="sidebarControleMensal" class="fixed inset-y-0 right-0 w-full md:w-[450px] bg-[var(--surface)] shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col border-l border-[var(--border)]">
+                    <div class="flex items-center justify-between p-5 border-b border-[var(--border)] bg-[var(--bg-color)]">
+                        <div class="flex items-center gap-3">
+                            <h2 class="text-lg font-bold text-[var(--text-main)] flex items-center gap-2">
+                                <i class="ph-fill ph-chart-bar text-[var(--primary)]"></i> Controle
+                            </h2>
+                            <input type="month" id="ctrlMesInput" class="bg-[var(--surface)] text-sm font-semibold border border-[var(--border)] rounded-lg px-2 py-1 text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] cursor-pointer" onchange="window.renderizarControleMensal()">
+                        </div>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/10 transition-colors" onclick="window.fecharControleMensal()">
+                            <i class="ph ph-x text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex border-b border-[var(--border)]">
+                        <button class="flex-1 py-3 text-sm font-bold text-[var(--primary)] border-b-2 border-[var(--primary)] transition-colors" id="tabCtrlAuditor" onclick="window.switchTabControle('auditor')">Por Auditor</button>
+                        <button class="flex-1 py-3 text-sm font-bold text-[var(--text-muted)] border-b-2 border-transparent hover:text-[var(--text-main)] transition-colors" id="tabCtrlLoja" onclick="window.switchTabControle('loja')">Por Loja</button>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-5 custom-scrollbar">
+                        <!-- Aba Por Auditor -->
+                        <div id="viewCtrlAuditor" class="space-y-4">
+                            <div class="text-sm font-semibold text-[var(--text-muted)] uppercase mb-3 flex items-center justify-between">
+                                <span>Equipe de Auditoria</span>
+                                <span class="bg-[var(--primary)]/10 text-[var(--primary)] px-2 py-0.5 rounded-full text-xs" id="ctrlTotalAuditores">0</span>
+                            </div>
+                            <div id="listaCtrlAuditor" class="space-y-3">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Aba Por Loja -->
+                        <div id="viewCtrlLoja" class="hidden space-y-4">
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="ph ph-magnifying-glass text-[var(--text-muted)] absolute ml-3"></i>
+                                <input type="text" id="ctrlSearchLoja" placeholder="Buscar loja..." class="w-full border border-[var(--border)] rounded-xl pl-9 p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] text-sm" oninput="window.renderizarControleLoja()">
+                            </div>
+                            <div id="listaCtrlLoja" class="space-y-4">
+                                <!-- Preenchido via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- OVERLAY DO OFF-CANVAS -->
+                <div id="overlayControleMensal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300" onclick="window.fecharControleMensal()"></div>
             </div>
 
             <div id="view-mapeamento" style="display: none;">
