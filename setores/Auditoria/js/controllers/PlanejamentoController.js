@@ -685,7 +685,7 @@ window.renderizarControleLoja = function() {
                     <div class="flex flex-col p-2.5 rounded-lg border border-spPistache/30 bg-spPistache/5 text-sm shadow-sm gap-1">
                         <div class="flex items-center justify-between">
                             <span class="font-bold text-[var(--text-main)] truncate max-w-[200px]">${l.loja}</span>
-                            ${l.notaStr ? \`<span class="text-xs font-black text-white bg-spPistache px-2 py-0.5 rounded-md">\${l.notaStr}</span>\` : \`<span class="text-[10px] font-bold text-spPistache uppercase">Concluída</span>\`}
+                            ${l.notaStr ? '<span class="text-xs font-black text-white bg-spPistache px-2 py-0.5 rounded-md">' + l.notaStr + '</span>' : '<span class="text-[10px] font-bold text-spPistache uppercase">Concluída</span>'}
                         </div>
                         <div class="flex items-center justify-between text-xs text-[var(--text-muted)]">
                             <span class="flex items-center gap-1"><i class="ph-fill ph-user-circle"></i> ${l.auditor}</span>
