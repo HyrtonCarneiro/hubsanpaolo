@@ -56,7 +56,9 @@ window.getLojaByFlexName = function(name) {
         "AEROPORTO SALVADOR": "AEROPORTO LOJA SALVADOR",
         "BOULEVARD": "BOULEVARD",
         "PARNAMIRIM": "PARNAMIRIM",
-        "PREA": "PREA"
+        "PREA": "PREA",
+        "PARTAGE": "PARTAGE SHOPPING",
+        "PARTAGE SHOPPING": "PARTAGE SHOPPING"
     };
 
     // 1. Tentar por sinônimo exato (normalizado)

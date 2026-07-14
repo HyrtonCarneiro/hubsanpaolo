@@ -317,11 +317,13 @@
                         <div class="w-full md:w-[150px]">
                             <select id="planFilterStatus" onchange="window.renderizarTabelaPlanejamento()" class="w-full border border-[var(--border)] rounded-xl p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm text-sm">
                                 <option value="">Status (Todos)</option>
-                                <option value="AGENDADA">Agendada</option>
-                                <option value="ATRASADA">Atrasada</option>
+                                <option value="AGENDADA_OU_ATRASADA">Agendada / Atrasada</option>
                                 <option value="CONCLUIDA">Concluída</option>
                                 <option value="NAO_AGENDADA">Não Agendado</option>
                             </select>
+                        </div>
+                        <div class="w-full md:w-[150px]">
+                            <input type="date" id="planFilterData" onchange="window.renderizarTabelaPlanejamento()" class="w-full border border-[var(--border)] rounded-xl p-2.5 bg-[var(--bg-color)] text-[var(--text-main)] outline-none focus:border-[var(--primary)] transition-all duration-300 shadow-sm text-sm" title="Filtrar por data agendada">
                         </div>
                     </div>
                 </div>

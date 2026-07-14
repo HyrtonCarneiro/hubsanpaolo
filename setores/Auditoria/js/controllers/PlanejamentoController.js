@@ -102,6 +102,7 @@ window.renderizarTabelaPlanejamento = function () {
     var filterRegional = document.getElementById('planFilterRegional')?.value;
     var filterAuditor = document.getElementById('planFilterAuditor')?.value;
     var filterStatus = document.getElementById('planFilterStatus')?.value;
+    var filterData = document.getElementById('planFilterData')?.value;
     
     var searchTerms = (pesqEl ? pesqEl.value : '').toLowerCase().split(' ').filter(t => t);
 
@@ -146,9 +147,10 @@ window.renderizarTabelaPlanejamento = function () {
         );
         const matchesRegional = !filterRegional || r.regional === filterRegional;
         const matchesAuditor = !filterAuditor || r.auditor === filterAuditor;
-        const matchesStatus = !filterStatus || r.status === filterStatus;
+        const matchesStatus = !filterStatus || r.status === filterStatus || (filterStatus === 'AGENDADA_OU_ATRASADA' && (r.status === 'AGENDADA' || r.status === 'ATRASADA'));
+        const matchesData = !filterData || r.proximaRaw === filterData;
 
-        return matchesSearch && matchesRegional && matchesAuditor && matchesStatus;
+        return matchesSearch && matchesRegional && matchesAuditor && matchesStatus && matchesData;
     });
 
     // Sorting
@@ -200,6 +202,15 @@ window.renderizarTabelaPlanejamento = function () {
             }
         }
 
+        // Calcular numero de ligacoes (tentativas) ja feitas para o mes agendado
+        var ligacoesNoMes = 0;
+        if (r.proximaRaw && window.MapeamentoLogic && window.MapeamentoLogic.circularTentativa) {
+            ligacoesNoMes = window.MapeamentoLogic.circularTentativa(r.lojaId, r.proximaRaw, window.historicoMapeamento || []) - 1;
+        }
+        var ligacoesBadge = ligacoesNoMes > 0 
+            ? '<span class="bg-[var(--primary)]/10 text-[var(--primary)] font-black text-[10px] px-2 py-0.5 rounded-full ml-2 shadow-sm whitespace-nowrap" title="' + ligacoesNoMes + ' tentativa(s) de ligação no mês">' + ligacoesNoMes + ' <i class="ph-fill ph-phone text-[10px]"></i></span>' 
+            : '';
+
         var tr = document.createElement('tr');
         tr.className = 'border-b border-[var(--border)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors group';
         
@@ -221,14 +232,14 @@ window.renderizarTabelaPlanejamento = function () {
         `;
 
         tr.innerHTML =
-            '<td class="p-4 text-sm font-semibold text-[var(--text-main)]">' + r.nome + '</td>' +
+            '<td class="p-4 text-sm font-semibold text-[var(--text-main)] flex items-center h-full min-h-[53px]">' + r.nome + ligacoesBadge + '</td>' +
             '<td class="p-4 text-sm font-black text-brandBlue uppercase tracking-tighter"><span class="bg-brandBlue/10 dark:bg-brandBlue/20 px-3 py-1 rounded-2xl shadow-inner border border-brandBlue/20">' + r.regional + '</span></td>' +
             '<td class="p-4 text-sm font-medium text-[var(--text-main)]">' + ultimaStr + '</td>' +
             '<td class="p-4 text-sm">' +
                 '<div class="font-bold text-[var(--primary)]">' + proxStr + '</div>' +
                 statusHtml +
             '</td>' +
-            '<td class="p-4 text-sm text-[var(--text-main)] flex items-center gap-1.5 h-full min-h-[53px]"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + audStr + '</td>' +
+            '<td class="p-4 text-sm text-[var(--text-main)]"><div class="flex items-center gap-1.5"><i class="ph-fill ph-user-circle text-lg text-[var(--text-muted)]"></i> ' + audStr + '</div></td>' +
             '<td class="p-4 text-center">' + actionButtons + '</td>';
         tbody.appendChild(tr);
     });

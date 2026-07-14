@@ -75,5 +75,6 @@ window.lojasIniciais = [
     { id: 68, estado: 'MT', nome: 'SHOPPING ESTAÇÃO CUIABA', lat: -15.5901447, lng: -56.1206767 },
     { id: 69, estado: 'AL', nome: 'PARQUE SHOPPING MACEIO', lat: -9.6276766, lng: -35.6992105 },
     { id: 70, estado: 'RRPART', nome: 'CSC', lat: -3.7329444408904586, lng: -38.49672375888681 },
-    { id: 71, estado: 'CE', nome: 'WORK CAFE SANTANDER', lat: -3.7396344, lng: -38.4881501 }
+    { id: 71, estado: 'CE', nome: 'WORK CAFE SANTANDER', lat: -3.7396344, lng: -38.4881501 },
+    { id: 72, estado: 'PB', nome: 'PARTAGE SHOPPING', lat: -7.234946, lng: -35.869230, cnpj: '35740929000484' }
 ];
