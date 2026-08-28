@@ -78,6 +78,19 @@ window.parseDataUniversal = function (val) {
     }
 };
 
+// Helper para buscar loja por nome flexível (case-insensitive, trim, fuzzy)
+window.getLojaByFlexName = function (nome) {
+    if (!nome) return null;
+    const lojas = window.lojasIniciais || [];
+    const normalizado = nome.toString().trim().toUpperCase();
+    // Busca exata
+    let match = lojas.find(l => l.nome.toUpperCase() === normalizado);
+    if (match) return match;
+    // Busca parcial (contém)
+    match = lojas.find(l => l.nome.toUpperCase().includes(normalizado) || normalizado.includes(l.nome.toUpperCase()));
+    return match || null;
+};
+
 // Helper universal para ler arquivo Excel ou JSON
 window.lerArquivoUniversal = function (file, onData) {
     if (!file) return;

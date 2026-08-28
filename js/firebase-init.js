@@ -54,6 +54,12 @@ window.deleteDoc = function(docRef) {
     return docRef.delete();
 };
 
+/** setDoc(docRef, data, options?) → docRef.set(data, options?) */
+window.setDoc = function(docRef, data, options) {
+    if (options) return docRef.set(data, options);
+    return docRef.set(data);
+};
+
 /** onSnapshot(ref, callback, errCallback?) → ref.onSnapshot(cb, err?) */
 window.onSnapshot = function(ref, callback, errCallback) {
     if (errCallback) return ref.onSnapshot(callback, errCallback);

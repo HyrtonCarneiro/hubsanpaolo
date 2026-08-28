@@ -190,45 +190,5 @@ window.salvarEdicaoNota = async function () {
     }
 }
 
-window.processarImportacaoNotas = async function (dados) {
-    let sucessos = 0;
-    let erros = 0;
-
-    for (const row of dados) {
-        const nomeLoja = (row.LOJA || '').toString().trim().toUpperCase();
-        const data = (row.DATA_AUDITORIA || '').toString().trim();
-        const nota = parseFloat(row.NOTA);
-        const auditor = (row.AUDITOR || '').toString().trim();
-
-        if (!nomeLoja || !data || isNaN(nota)) continue;
-
-        const lojaValida = window.lojasIniciais.find(l => l.nome.toUpperCase() === nomeLoja);
-        if (!lojaValida) continue;
-
-        const payload = {
-            loja: lojaValida.nome,
-            data: data,
-            nota: nota,
-            auditor: auditor || currentUser || 'Sistema',
-            timestamp: new Date().toISOString()
-        };
-
-        try {
-            // Tenta atualizar se já existe nota para aquela loja e data
-            const exist = window.notasCache.find(n => n.loja === lojaValida.nome && n.data === data);
-            if (exist) {
-                await updateDoc(doc(db, "auditoria_notas", exist.id), payload);
-            } else {
-                await addDoc(collection(db, "auditoria_notas"), payload);
-            }
-            sucessos++;
-        } catch (err) {
-            console.error(err);
-            erros++;
-        }
-    }
-
-    showToast(`Importação de Notas: ${sucessos} processadas, ${erros} erros.`, erros > 0 ? "warning" : "success");
-}
-
-
+// NOTA: processarImportacaoNotas foi migrado para ExportController.js
+// com suporte completo a JSON, Excel, progress modal e validação flexível.
