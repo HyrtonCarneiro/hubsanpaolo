@@ -829,18 +829,22 @@ function renderizarListaAudiEquipeGerenciar() {
 }
 
 window.exportarAudiProjetosCSV = function () {
-    var projs = [];
-    Object.values(window.audiProjetos).forEach(arr => projs = projs.concat(arr));
-    // Remover duplicatas por ID (caso muli-resp)
-    var unique = Array.from(new Set(projs.map(a => a.firebaseId))).map(id => projs.find(a => a.firebaseId === id));
-    
-    var csv = "\uFEFFResponsavel,Data,Status,Descricao,Demandante\n";
-    unique.forEach(p => {
-        csv += `"${p.responsaveis?.join(';') || p.membroResponsavel}","${p.dataAtv}","${p.status}","${p.desc}","${p.demandante}"\n`;
-    });
-    var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    var link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "auditoria_tarefas.csv";
-    link.click();
-}
+    if (typeof window.exportarTarefasExcel === 'function') {
+        window.exportarTarefasExcel();
+    } else {
+        var projs = [];
+        Object.values(window.audiProjetos).forEach(arr => projs = projs.concat(arr));
+        var unique = Array.from(new Set(projs.map(a => a.firebaseId))).map(id => projs.find(a => a.firebaseId === id));
+        
+        var csv = "\uFEFFResponsavel,Data,Status,Descricao,Demandante\n";
+        unique.forEach(p => {
+            csv += `"${p.responsaveis?.join(';') || p.membroResponsavel}","${p.dataAtv}","${p.status}","${p.desc}","${p.demandante}"\n`;
+        });
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "auditoria_tarefas.csv";
+        link.click();
+    }
+};
+

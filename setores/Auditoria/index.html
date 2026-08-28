@@ -71,9 +71,18 @@
                             <i class="ph-fill ph-chart-pie-slice text-[var(--primary)] text-2xl"></i> Dashboard
                         </h1>
                     </div>
-                    <button class="flex items-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.abrirModalAudiEquipe()">
-                        <i class="ph ph-users-three text-lg"></i> Gerenciar Equipe
-                    </button>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="importBackupGeralInput" accept=".json" class="hidden" onchange="window.importarBackupCompletoAuditoria(event)">
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-blue-500/30 bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:bg-blue-500 hover:text-white hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importBackupGeralInput').click()" title="Restaurar backup completo de todas as coleções de Auditoria">
+                            <i class="ph ph-file-arrow-up text-base"></i> Restaurar Backup Geral
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-green-500/30 bg-green-500/10 text-green-600 dark:text-green-400 font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:bg-green-600 hover:text-white hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarBackupCompletoAuditoria()" title="Baixar arquivo JSON com todas as coleções e dados do setor">
+                            <i class="ph ph-database text-base"></i> Backup Completo (JSON)
+                        </button>
+                        <button class="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.abrirModalAudiEquipe()">
+                            <i class="ph ph-users-three text-lg"></i> Gerenciar Equipe
+                        </button>
+                    </div>
                 </div>
 
                 <!-- KPIs -->
@@ -208,13 +217,16 @@
                             <i class="ph-fill ph-clipboard-text text-[var(--primary)] text-2xl"></i> Auditoria Online
                         </h1>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <input type="file" id="importNotasInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarNotasExcel(event)">
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importNotasInput').click()">
-                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="importNotasInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarNotasArquivo(event)">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importNotasInput').click()" title="Importar planilha Excel ou arquivo JSON de Notas">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel/JSON
                         </button>
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarNotasPowerBI()">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarNotasPowerBI()" title="Exportar para Excel formato PowerBI">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                        <button class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarNotasJSON()" title="Exportar Backup JSON">
+                            <i class="ph ph-code text-lg text-purple-600"></i> JSON
                         </button>
                     </div>
                 </div>
@@ -283,16 +295,19 @@
                             <i class="ph-fill ph-calendar-check text-[var(--primary)] text-2xl"></i> Planejamento
                         </h1>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-md" onclick="window.abrirControleMensal()">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-[var(--primary)] text-white font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5 active:scale-95 shadow-md" onclick="window.abrirControleMensal()">
                             <i class="ph-fill ph-chart-bar text-lg"></i> Controle Mensal
                         </button>
-                        <input type="file" id="importPlanejamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarPlanejamentoExcel(event)">
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importPlanejamentoInput').click()">
-                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
+                        <input type="file" id="importPlanejamentoInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarPlanejamentoArquivo(event)">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importPlanejamentoInput').click()" title="Importar planilha Excel ou JSON de Planejamento">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel/JSON
                         </button>
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarPlanejamentoPowerBI()">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarPlanejamentoPowerBI()" title="Exportar para Excel com Notas Internas e Regionais">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                        <button class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarPlanejamentoJSON()" title="Exportar Backup JSON">
+                            <i class="ph ph-code text-lg text-purple-600"></i> JSON
                         </button>
                     </div>
                 </div>
@@ -415,13 +430,16 @@
                             <i class="ph-fill ph-map-trifold text-[var(--primary)] text-2xl"></i> Mapeamento
                         </h1>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <input type="file" id="importMapeamentoInput" accept=".xlsx, .xls" class="hidden" onchange="window.importarMapeamentoExcel(event)">
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importMapeamentoInput').click()">
-                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="importMapeamentoInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarMapeamentoArquivo(event)">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="document.getElementById('importMapeamentoInput').click()" title="Importar tentativas de auditoria em Excel ou JSON">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel/JSON
                         </button>
-                        <button class="flex items-center justify-center gap-2.5 px-5 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarMapeamentoPowerBI()">
+                        <button class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarMapeamentoPowerBI()" title="Exportar histórico de tentativas para Excel">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                        <button class="flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-black text-[10px] uppercase tracking-[0.15em] transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:-translate-y-0.5 active:scale-95 shadow-sm" onclick="window.exportarMapeamentoJSON()" title="Exportar Backup JSON">
+                            <i class="ph ph-code text-lg text-purple-600"></i> JSON
                         </button>
                     </div>
                 </div>
@@ -567,15 +585,22 @@
                             <i class="ph-fill ph-kanban text-[var(--primary)] text-2xl"></i> Tarefas da Equipe
                         </h1>
                     </div>
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2">
                         <div class="relative hidden lg:block">
                             <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-lg"></i>
                             <input type="text" id="taskSearchInput" placeholder="Buscar tarefa..." 
                                 class="pl-11 pr-4 py-2.5 bg-[var(--surface)] border border-[var(--border)] rounded-xl text-sm transition-all duration-300 focus:border-[var(--primary)] outline-none w-48 focus:w-64 shadow-sm"
                                 oninput="window.renderizarAudiProjetosList()">
                         </div>
-                        <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary)]/5 active:scale-95" onclick="window.exportarAudiProjetosCSV()">
+                        <input type="file" id="importTarefasInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarTarefasArquivo(event)">
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95" onclick="document.getElementById('importTarefasInput').click()" title="Importar tarefas da equipe em Excel ou JSON">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> <span class="hidden sm:inline">Importar</span>
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 active:scale-95" onclick="window.exportarTarefasExcel()" title="Exportar todas as tarefas com checklists e comentários para Excel">
                             <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> <span class="hidden sm:inline">Exportar Excel</span>
+                        </button>
+                        <button class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 active:scale-95" onclick="window.exportarTarefasJSON()" title="Exportar Backup JSON completo">
+                            <i class="ph ph-code text-lg text-purple-600"></i> <span class="hidden sm:inline">JSON</span>
                         </button>
                     </div>
                 </div>
@@ -679,6 +704,18 @@
                     <div class="flex items-center gap-3">
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0">Protocolo de Chamados</h1>
                     </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="importProtocolosInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarProtocolosArquivo(event)">
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95" onclick="document.getElementById('importProtocolosInput').click()" title="Importar chamados em Excel ou JSON">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel/JSON
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 active:scale-95" onclick="window.exportarProtocolosExcel()" title="Exportar chamados para Excel">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                        <button class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 active:scale-95" onclick="window.exportarProtocolosJSON()" title="Exportar Backup JSON">
+                            <i class="ph ph-code text-lg text-purple-600"></i> JSON
+                        </button>
+                    </div>
                 </div>
 
                 <div class="bg-[var(--surface)] p-6 rounded-xl border border-[var(--border)] mb-8 shadow-sm">
@@ -762,10 +799,21 @@
             <div id="view-links" style="display: none;">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                     <div class="flex items-center gap-3">
-
                         <h1 class="text-2xl font-bold text-[var(--text-main)] m-0 flex items-center gap-3">
                             <i class="ph-fill ph-link text-[var(--primary)] text-2xl"></i> Links Úteis
                         </h1>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <input type="file" id="importLinksInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarLinksArquivo(event)">
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 active:scale-95" onclick="document.getElementById('importLinksInput').click()" title="Importar links em Excel ou JSON">
+                            <i class="ph ph-file-arrow-up text-lg text-blue-600"></i> Importar Excel/JSON
+                        </button>
+                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-green-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 active:scale-95" onclick="window.exportarLinksExcel()" title="Exportar links úteis para Excel">
+                            <i class="ph ph-microsoft-excel-logo text-lg text-green-600"></i> Exportar Excel
+                        </button>
+                        <button class="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-[var(--text-main)] font-semibold shadow-sm transition-all duration-300 hover:border-purple-500 hover:text-purple-500 hover:bg-purple-50 dark:hover:bg-purple-900/20 active:scale-95" onclick="window.exportarLinksJSON()" title="Exportar Backup JSON">
+                            <i class="ph ph-code text-lg text-purple-600"></i> JSON
+                        </button>
                     </div>
                 </div>
 
@@ -1065,7 +1113,14 @@
                         </button>
                     </div>
                 </div>
-                <div class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase mb-3 ml-1 opacity-60">Equipe Atual</div>
+                <div class="text-[0.65rem] font-bold text-[var(--text-muted)] uppercase mb-3 ml-1 opacity-60 flex justify-between items-center">
+                    <span>Equipe Atual</span>
+                    <div class="flex gap-2">
+                        <input type="file" id="importEquipeInput" accept=".xlsx, .xls, .json" class="hidden" onchange="window.importarEquipeArquivo(event)">
+                        <button onclick="document.getElementById('importEquipeInput').click()" class="text-blue-500 text-[10px] font-bold hover:underline" title="Importar lista de membros">Importar</button>
+                        <button onclick="window.exportarEquipeJSON()" class="text-purple-500 text-[10px] font-bold hover:underline" title="Exportar lista de membros">Exportar JSON</button>
+                    </div>
+                </div>
                 <div id="listaAudiEquipeGerenciar" class="flex flex-col gap-2 max-h-[300px] overflow-y-auto custom-scrollbar pr-2">
                     <!-- JS monta a lista -->
                 </div>
