@@ -5,7 +5,8 @@ let chartTarefaStatusInst = null;
 let chartTarefaEquipeInst = null;
 
 function getLojaRegional(nomeLoja) {
-    const l = lojasIniciais.find(function (x) { return x.nome === nomeLoja; });
+    const lojas = window.lojasIniciais || lojasIniciais || [];
+    const l = lojas.find(function (x) { return x.nome === nomeLoja; });
     return l ? l.estado : 'N/A';
 }
 window.getLojaRegional = getLojaRegional;
@@ -15,16 +16,79 @@ if (typeof ChartDataLabels !== 'undefined') {
     Chart.register(ChartDataLabels);
 }
 
+window.popularFiltrosDashboard = function () {
+    try {
+        const select = document.getElementById('dashFilterRegional');
+        if (!select) return;
+
+        const lojas = window.lojasIniciais || lojasIniciais || [];
+        const currentVal = select.value;
+
+        // Manter a opção padrão
+        select.innerHTML = '<option value="">Todas as Regionais (Rede)</option>';
+
+        const estados = [...new Set(lojas.map(l => l.estado).filter(Boolean))].sort();
+        estados.forEach(est => {
+            const countLojas = lojas.filter(l => l.estado === est).length;
+            const opt = document.createElement('option');
+            opt.value = est;
+            opt.textContent = `Regional ${est} (${countLojas} lojas)`;
+            select.appendChild(opt);
+        });
+
+        if (currentVal && estados.includes(currentVal)) {
+            select.value = currentVal;
+        }
+    } catch (e) {
+        console.error("Erro ao popular filtros do dashboard:", e);
+    }
+};
+
 window.renderDashboard = function () {
-    var notasCache = window.notasCache || [];
-    var planeCache = window.planejamentoCache || [];
-    var mapCache = window.historicoMapeamento || [];
+    // Garantir que os filtros do select estejam populados
+    if (typeof window.popularFiltrosDashboard === 'function') {
+        const select = document.getElementById('dashFilterRegional');
+        if (select && select.options.length <= 1) {
+            window.popularFiltrosDashboard();
+        }
+    }
+
+    const selectRegional = document.getElementById('dashFilterRegional');
+    const filterRegional = selectRegional ? selectRegional.value : "";
+
+    // Atualizar badge informativa de filtro
+    const infoSpan = document.getElementById('dashFiltroInfo');
+    if (infoSpan) {
+        if (filterRegional) {
+            infoSpan.innerHTML = `<span class="bg-[var(--primary)]/10 text-[var(--primary)] px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1"><i class="ph-fill ph-funnel"></i> Regional ${filterRegional} selecionada</span>`;
+        } else {
+            infoSpan.innerHTML = `<i class="ph ph-info text-base text-[var(--primary)]"></i><span>Exibindo visão consolidada da rede</span>`;
+        }
+    }
+
+    let notasCache = window.notasCache || [];
+    let planeCache = window.planejamentoCache || [];
+    let mapCache = window.historicoMapeamento || [];
+
+    // --- FILTRAGEM POR REGIONAL ---
+    if (filterRegional) {
+        notasCache = notasCache.filter(n => getLojaRegional(n.loja) === filterRegional);
+        planeCache = planeCache.filter(p => getLojaRegional(p.loja) === filterRegional || p.regional === filterRegional);
+        mapCache = mapCache.filter(m => m.estado === filterRegional || getLojaRegional(m.nomeLoja) === filterRegional);
+    }
 
     var hoje = new Date();
     var mesAtual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
     var hojeISO = hoje.toISOString().split('T')[0];
 
     // --- KPI: Auditoria Online (Media e Notas) ---
+    var elMediaRedeTitle = document.querySelector('#kpiMediaRede + p');
+    if (elMediaRedeTitle) {
+        elMediaRedeTitle.textContent = filterRegional ? `Média Regional (${filterRegional})` : 'Média da Rede';
+    }
+
+    var todasUltimas = [];
+
     if (notasCache.length === 0) {
         document.getElementById('kpiTotalAuditorias').textContent = '0';
         document.getElementById('kpiMediaRede').textContent = '-';
@@ -33,18 +97,26 @@ window.renderDashboard = function () {
         document.getElementById('kpiAuditoriaMes').textContent = '0';
     } else {
         document.getElementById('kpiTotalAuditorias').textContent = notasCache.length;
-        var somaNotas = notasCache.reduce(function (acc, n) { return acc + n.nota; }, 0);
+        var somaNotas = notasCache.reduce(function (acc, n) { return acc + (parseFloat(n.nota) || 0); }, 0);
         var media = somaNotas / notasCache.length;
         var elMedia = document.getElementById('kpiMediaRede');
         if (elMedia) {
+            elMedia.textContent = media.toFixed(1);
             elMedia.className = media >= 8.5 ? 'text-3xl font-black m-0 leading-none text-spPistache' : (media >= 7 ? 'text-3xl font-black m-0 leading-none text-spLaranja' : 'text-3xl font-black m-0 leading-none text-spRed');
         }
         var ultimaPorLoja = {};
         notasCache.forEach(function (n) { if (!ultimaPorLoja[n.loja] || n.data > ultimaPorLoja[n.loja].data) ultimaPorLoja[n.loja] = n; });
-        var todasUltimas = Object.values(ultimaPorLoja);
-        var menor = todasUltimas.reduce(function (min, n) { return n.nota < min.nota ? n : min; }, todasUltimas[0]);
-        if (document.getElementById('kpiMenorNota')) document.getElementById('kpiMenorNota').textContent = menor.nota.toFixed(1);
-        if (document.getElementById('kpiMenorNotaLoja')) document.getElementById('kpiMenorNotaLoja').textContent = menor.loja;
+        todasUltimas = Object.values(ultimaPorLoja);
+        
+        if (todasUltimas.length > 0) {
+            var menor = todasUltimas.reduce(function (min, n) { return n.nota < min.nota ? n : min; }, todasUltimas[0]);
+            if (document.getElementById('kpiMenorNota')) document.getElementById('kpiMenorNota').textContent = menor.nota.toFixed(1);
+            if (document.getElementById('kpiMenorNotaLoja')) document.getElementById('kpiMenorNotaLoja').textContent = menor.loja;
+        } else {
+            if (document.getElementById('kpiMenorNota')) document.getElementById('kpiMenorNota').textContent = '-';
+            if (document.getElementById('kpiMenorNotaLoja')) document.getElementById('kpiMenorNotaLoja').textContent = '';
+        }
+
         var doMesNotas = notasCache.filter(function (n) { return n.data && n.data.startsWith(mesAtual); });
         if (document.getElementById('kpiAuditoriaMes')) document.getElementById('kpiAuditoriaMes').textContent = doMesNotas.length;
     }
@@ -109,7 +181,7 @@ window.renderDashboard = function () {
             .sort((a, b) => b[1].maxTentativa - a[1].maxTentativa);
 
         if (criticas.length === 0) {
-            bodyCriticas.innerHTML = '<div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada.</div>';
+            bodyCriticas.innerHTML = `<div class="col-span-full py-10 text-center text-[var(--text-muted)]">Nenhuma loja crítica identificada${filterRegional ? ' na Regional ' + filterRegional : ''}.</div>`;
         } else {
             bodyCriticas.innerHTML = criticas.map(([nome, dados]) => `
                 <div class="bg-[var(--surface)] p-5 rounded-2xl border border-[var(--border)] flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300 group hover:-translate-y-1 relative overflow-hidden">
@@ -134,28 +206,42 @@ window.renderDashboard = function () {
     var textColor = isDark ? '#f8fafc' : '#0f172a';
     var gridColor = isDark ? '#334155' : '#e2e8f0';
 
-    // Gráfico 1: Média Regional (Existente)
+    // Gráfico 1: Média Regional
     var canvasRegional = document.getElementById('chartMediaRegional');
-    if (canvasRegional && todasUltimas) {
+    if (canvasRegional) {
         var mediaPorRegional = {};
         var countPorRegional = {};
-        todasUltimas.forEach(n => {
+
+        // Se filtro ativo, calcula médias de lojas daquela regional ou de todas com destaque
+        const notasParaGrafico = filterRegional 
+            ? (window.notasCache || []).filter(n => getLojaRegional(n.loja) === filterRegional)
+            : (window.notasCache || []);
+
+        var ultimasGrafico = {};
+        notasParaGrafico.forEach(function (n) { 
+            if (!ultimasGrafico[n.loja] || n.data > ultimasGrafico[n.loja].data) ultimasGrafico[n.loja] = n; 
+        });
+
+        Object.values(ultimasGrafico).forEach(n => {
             var reg = getLojaRegional(n.loja);
             if (!mediaPorRegional[reg]) { mediaPorRegional[reg] = 0; countPorRegional[reg] = 0; }
-            mediaPorRegional[reg] += n.nota; countPorRegional[reg]++;
+            mediaPorRegional[reg] += parseFloat(n.nota) || 0; 
+            countPorRegional[reg]++;
         });
+
         var regionais = Object.keys(mediaPorRegional).sort();
         var mediasRegionais = regionais.map(r => +(mediaPorRegional[r] / countPorRegional[r]).toFixed(1));
         var coresBarras = mediasRegionais.map(m => m >= 8.5 ? '#4F7039' : (m >= 7 ? '#DA5513' : '#DA0D17'));
+        
         if (chartMediaRegionalInst) chartMediaRegionalInst.destroy();
         chartMediaRegionalInst = new Chart(canvasRegional, {
             type: 'bar',
-            data: { labels: regionais, datasets: [{ label: 'Média', data: mediasRegionais, backgroundColor: coresBarras, borderRadius: 8, barThickness: 25 }] },
+            data: { labels: regionais.length > 0 ? regionais : ['Sem dados'], datasets: [{ label: 'Média', data: mediasRegionais.length > 0 ? mediasRegionais : [0], backgroundColor: coresBarras.length > 0 ? coresBarras : ['#94a3b8'], borderRadius: 8, barThickness: 25 }] },
             options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { color: textColor, font: { weight: 'bold' }, anchor: 'end', align: 'end' }}, scales: { x: { min: 0, max: 10, ticks: { color: textColor } }, y: { ticks: { color: textColor } } } }
         });
     }
 
-    // Gráfico 2: Status do Planejamento (Novo)
+    // Gráfico 2: Status do Planejamento
     var canvasStatus = document.getElementById('chartStatusPlanejamento');
     if (canvasStatus) {
         if (chartStatusPlanejamentoInst) chartStatusPlanejamentoInst.destroy();
@@ -180,22 +266,39 @@ window.renderDashboard = function () {
         });
     }
 
-    // Gráfico 3: Ranking (Refinado top 15)
+    // Gráfico 3: Ranking Notas (Top 15 Lojas)
     var canvasRanking = document.getElementById('chartRankingLojas');
-    if (canvasRanking && todasUltimas) {
-        var ranking = notasCache.slice().sort((a,b) => a.nota - b.nota).slice(0, 15);
+    if (canvasRanking) {
+        var ranking = (todasUltimas.length > 0 ? todasUltimas : notasCache.slice())
+            .sort((a,b) => a.nota - b.nota)
+            .slice(0, 15);
+
         if (chartRankingLojasInst) chartRankingLojasInst.destroy();
         chartRankingLojasInst = new Chart(canvasRanking, {
             type: 'bar',
             data: {
-                labels: ranking.map(n => n.loja),
-                datasets: [{ data: ranking.map(n => n.nota), backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), borderRadius: 8, barThickness: 15 }]
+                labels: ranking.length > 0 ? ranking.map(n => n.loja) : ['Sem dados'],
+                datasets: [{ 
+                    data: ranking.length > 0 ? ranking.map(n => n.nota) : [0], 
+                    backgroundColor: ranking.map(n => n.nota >= 8.5 ? '#4F7039' : (n.nota >= 7 ? '#DA5513' : '#DA0D17')), 
+                    borderRadius: 8, 
+                    barThickness: 15 
+                }]
             },
-            options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', plugins: { legend: { display: false }, datalabels: { display: false } }, scales: { x: { min: 0, max: 10, ticks: { display: false }, grid: { display: false } }, y: { ticks: { color: textColor, font: { size: 10 } } } } }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                indexAxis: 'y', 
+                plugins: { legend: { display: false }, datalabels: { display: false } }, 
+                scales: { 
+                    x: { min: 0, max: 10, ticks: { display: false }, grid: { display: false } }, 
+                    y: { ticks: { color: textColor, font: { size: 10 } } } 
+                } 
+            }
         });
     }
 
-    // --- INDICADORES DE TAREFAS (Igual ao TI) ---
+    // --- INDICADORES DE TAREFAS ---
     var tasks = window.audiProjetos || {};
     var taskStatusCounts = { 'Pendente': 0, 'Em Andamento': 0, 'Concluído': 0 };
     var taskDistrib = {};
@@ -264,4 +367,4 @@ window.renderDashboard = function () {
             }
         });
     }
-}
+};
