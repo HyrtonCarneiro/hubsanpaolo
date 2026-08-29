@@ -2,21 +2,10 @@
 // Hub Central de Controle - San Paolo
 // Gerencia Autenticação, Escolha de Setores e Inicialização do App
 
-// Configuração Global de Setores
+// Configuração Global de Setores (Auditoria Exclusivo)
 window.appConfig = {
     sectors: [
-        { id: "Diretoria", title: "Painel Diretoria", icon: "ph-fill ph-crown", color: true },
-        { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false },
-        { id: "Centro_Distribuicao", title: "Centro de Distribuição", icon: "ph-fill ph-package", color: false },
-        { id: "Controladoria", title: "Controladoria", icon: "ph-fill ph-chart-line-up", color: false },
-        { id: "Expansao", title: "Expansão", icon: "ph-fill ph-map-pin-line", color: false },
-        { id: "Financeiro", title: "Financeiro", icon: "ph-fill ph-bank", color: false },
-        { id: "Fiscal", title: "Fiscal", icon: "ph-fill ph-receipt", color: false },
-        { id: "Gente_Gestao", title: "Gente e Gestão", icon: "ph-fill ph-users-three", color: false, equipeCol: "equipe_gente_gestao" },
-        { id: "Marketing", title: "Marketing", icon: "ph-fill ph-megaphone", color: false },
-        { id: "Operacao", title: "Operação", icon: "ph-fill ph-gear", color: false, equipeCol: "equipe_operacao" },
-        { id: "TI", title: "Tecnologia (TI)", icon: "ph-fill ph-hard-drives", color: false, equipeCol: "equipe_ti" },
-        { id: "Varejo", title: "Varejo", icon: "ph-fill ph-storefront", color: false }
+        { id: "Auditoria", title: "Auditoria", icon: "ph-fill ph-magnifying-glass", color: false, equipeCol: "auditoria_equipe" }
     ]
 };
 
@@ -57,7 +46,7 @@ window.handleAuth = async function () {
         const userData = docRef.data();
 
         if (userData.pass === pass) {
-            let sectors = userData.setores_permitidos || ["TI"];
+            let sectors = userData.setores_permitidos || ["Auditoria"];
             if (user === 'admin') {
                 sectors = window.appConfig.sectors.map(s => s.id);
             }
@@ -96,9 +85,9 @@ window.initApp = function () {
 
     let sectors = [];
     try {
-        sectors = JSON.parse(localStorage.getItem('userSectors')) || ["TI"];
+        sectors = JSON.parse(localStorage.getItem('userSectors')) || ["Auditoria"];
     } catch (e) {
-        sectors = ["TI"];
+        sectors = ["Auditoria"];
     }
 
     const urlParams = new URLSearchParams(window.location.search);

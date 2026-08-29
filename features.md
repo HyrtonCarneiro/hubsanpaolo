@@ -8,14 +8,12 @@
   - Errors must display cleanly.
   - On success, redirect to `/hub`.
 
-## 2. Dynamic Sector Hub
-- **Goal**: Display grid of available sectors.
+## 2. Sector Hub (Auditoria Exclusivo)
+- **Goal**: Direct access or hub routing for Auditoria sector.
 - **Rules**:
-  - Grid should be populated mapped from `sectorsData.ts`.
-  - Grid cards must be responsive (`Grid` -> `SectorCard`).
-  - Each sector routes to `/setor/:id`.
-  - Sectors require unique icons using Phosphor Icons.
-  - Maintain the distinct styling applied to "Diretoria" (Brand Orange).
+  - Grid is populated from `appConfig.sectors` containing Auditoria.
+  - Cards are responsive (`SectorCard`).
+  - Seamless redirection directly to `/setores/Auditoria/index.html`.
 
 ## 3. User Management (Admin)
 - **Goal**: Allow Admin accounts to manage user permissions.

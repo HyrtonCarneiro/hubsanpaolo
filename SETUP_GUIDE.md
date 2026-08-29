@@ -26,22 +26,11 @@
 
 ## 1. Visão Geral do Projeto
 
-O **Hub San Paolo** é um painel web interno da empresa San Paolo que centraliza a gestão de múltiplos setores:
+O **Hub San Paolo** é um painel web interno da empresa San Paolo focado na gestão completa do setor de **Auditoria**:
 
 | Setor | Diretório | Descrição |
 | :--- | :--- | :--- |
-| Diretoria | `setores/Diretoria/` | Dashboard executivo |
-| Auditoria | `setores/Auditoria/` | Notas de auditoria, planejamento, mapeamento, tarefas Kanban, protocolos |
-| Centro de Distribuição | `setores/Centro_Distribuicao/` | Logística |
-| Controladoria | `setores/Controladoria/` | Indicadores financeiros |
-| Expansão | `setores/Expansao/` | Novas lojas |
-| Financeiro | `setores/Financeiro/` | Gestão financeira |
-| Fiscal | `setores/Fiscal/` | Compliance |
-| Gente e Gestão | `setores/Gente_Gestao/` | RH |
-| Marketing | `setores/Marketing/` | Campanhas |
-| Operação | `setores/Operacao/` | Gestão operacional |
-| TI | `setores/TI/` | Tecnologia da Informação |
-| Varejo | `setores/Varejo/` | Operações de varejo |
+| Auditoria | `setores/Auditoria/` | Notas de auditoria, planejamento, mapeamento, tarefas Kanban, protocolos, Meta PWR e links |
 
 ### Stack Tecnológica
 
@@ -88,25 +77,22 @@ hubsanpaolo/
 │   └── logic/                    ← Regras de negócio (ProtocolosLogic)
 ├── css/                          ← Estilos globais
 ├── setores/
-│   ├── Auditoria/
-│   │   ├── index.html            ← Página do setor
-│   │   └── js/
-│   │       ├── app.js            ← Inicialização do setor
-│   │       ├── controllers/      ← Controladores de cada módulo
-│   │       │   ├── AppController.js
-│   │       │   ├── ExportController.js     ← Exportação/Importação completa
-│   │       │   ├── DashboardController.js
-│   │       │   ├── AuditoriaOnlineController.js
-│   │       │   ├── PlanejamentoController.js
-│   │       │   ├── MapeamentoController.js
-│   │       │   ├── TarefasController.js
-│   │       │   └── ChartCMVController.js
-│   │       ├── logic/            ← Regras de negócio
-│   │       ├── services/         ← Serviços auxiliares
-│   │       └── tests/            ← Testes unitários (Node.js)
-│   ├── TI/                       ← Setor de TI
-│   ├── Diretoria/                ← Setor Diretoria
-│   └── ...                       ← Demais setores
+│   └── Auditoria/
+│       ├── index.html            ← Página do setor
+│       └── js/
+│           ├── app.js            ← Inicialização do setor
+│           ├── controllers/      ← Controladores de cada módulo
+│           │   ├── AppController.js
+│           │   ├── ExportController.js     ← Exportação/Importação completa
+│           │   ├── DashboardController.js
+│           │   ├── AuditoriaOnlineController.js
+│           │   ├── PlanejamentoController.js
+│           │   ├── MapeamentoController.js
+│           │   ├── TarefasController.js
+│           │   └── ChartCMVController.js
+│           ├── logic/            ← Regras de negócio
+│           ├── services/         ← Serviços auxiliares
+│           └── tests/            ← Testes unitários (Node.js)
 ├── APIs/                         ← Documentação de APIs externas (Athenas, Trilogo)
 └── tailwind.config.js            ← Configuração Tailwind (somente para referência)
 ```
@@ -300,9 +286,7 @@ Após logar como admin, vá no **Firestore Console** (Firebase → Firestore) e 
 
 **Setores disponíveis para `setores_permitidos`:**
 ```
-Diretoria, Auditoria, Centro_Distribuicao, Controladoria,
-Expansao, Financeiro, Fiscal, Gente_Gestao,
-Marketing, Operacao, TI, Varejo
+Auditoria
 ```
 
 > **⚠️ Segurança**: As senhas são armazenadas em texto plano no Firestore. Para ambiente de produção mais seguro, implemente Firebase Authentication.

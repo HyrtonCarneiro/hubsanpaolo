@@ -58,7 +58,7 @@ window.renderAdminUsersList = function () {
     }
 
     usuariosFiltrados.forEach(u => {
-        const currentPerms = Array.isArray(u.setores_permitidos) ? u.setores_permitidos : ["TI"];
+        const currentPerms = Array.isArray(u.setores_permitidos) ? u.setores_permitidos : ["Auditoria"];
 
         let checksHtml = window.appConfig.sectors.map(sec => {
             const isChecked = currentPerms.includes(sec.id);
@@ -161,7 +161,7 @@ window.criarUsuarioAdmin = async function () {
         const qs = await getDocs(q);
         if (!qs.empty) return showToast("Usuário já existe", "error");
 
-        await addDoc(collection(db, "users"), { user, pass, setores_permitidos: ["TI"] });
+        await addDoc(collection(db, "users"), { user, pass, setores_permitidos: ["Auditoria"] });
         showToast("Usuário criado com sucesso!");
         document.getElementById('novoUsuarioAdmin').value = '';
         document.getElementById('novaSenhaAdmin').value = '';
@@ -213,8 +213,7 @@ window.editarNomeUsuario = async function (userId, oldUserName) {
 
         // 3. Collections genéricas
         const genericCollections = [
-            "projetos", "auditoria_projetos", "projetos_expansao",
-            "protocolos_suporte", "atas", "logs", "notifications"
+            "auditoria_projetos", "protocolos_suporte", "atas", "logs", "notifications"
         ];
 
         for (let col of genericCollections) {

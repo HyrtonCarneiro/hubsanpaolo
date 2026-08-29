@@ -23,11 +23,6 @@ window.carregarTecnicos = async function () {
     try {
         const tecnicos = [];
         
-        // Buscar equipe TI
-        const qTI = query(collection(db, "equipe"), orderBy("nome"));
-        const snapTI = await getDocs(qTI);
-        snapTI.forEach(doc => tecnicos.push({ nome: doc.data().nome, setor: 'TI' }));
-
         // Buscar equipe Auditoria
         const qAudi = query(collection(db, "auditoria_equipe"), orderBy("nome"));
         const snapAudi = await getDocs(qAudi);
