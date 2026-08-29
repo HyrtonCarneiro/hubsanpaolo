@@ -118,7 +118,7 @@ hubsanpaolo/
 
 ```javascript
 const firebaseConfig = {
-    apiKey: "AIzaSy...",
+    apiKey: "AIzaSy_EXEMPLO_DE_CHAVE",
     authDomain: "seu-projeto.firebaseapp.com",
     projectId: "seu-projeto",
     storageBucket: "seu-projeto.firebasestorage.app",
@@ -311,7 +311,7 @@ node --test "setores/Auditoria/js/tests/mapeamento.test.js" "setores/Auditoria/j
 ## 14. Troubleshooting
 
 - **"Erro ao conectar com Firebase / permission-denied"**:
-  - Verifique as credenciais no [js/firebase-init.js](file:///g:/Meu%20Drive/SANPAOLO/Dev/hubsanpaolo/js/firebase-init.js).
+  - Verifique as credenciais no `js/firebase-init.js`.
   - Verifique se as Regras do Firestore estão publicadas com `allow read, write: if true;`.
 - **"Página não carrega dados ou estilos"**:
   - Verifique conexão à internet (o sistema utiliza CDNs para Tailwind, Chart.js e Phosphor Icons).
