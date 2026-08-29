@@ -1,6 +1,6 @@
 // js/data.js
 window.appConfig = {
-    desenvolvedor: "Hyrtinho Ruindade Pura",
+    desenvolvedor: "Equipe San Paolo",
     versao: "1.1.0"
 };
 

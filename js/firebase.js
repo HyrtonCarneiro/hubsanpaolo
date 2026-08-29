@@ -3,14 +3,15 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebas
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
 import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+// Preencha as credenciais do seu projeto Firebase abaixo:
 const firebaseConfig = {
-    apiKey: "AIzaSyCCseCGga6bcujJS_kdsiD52mr3GUjP8lE",
-    authDomain: "acompanhamento-ti.firebaseapp.com",
-    projectId: "acompanhamento-ti",
-    storageBucket: "acompanhamento-ti.firebasestorage.app",
-    messagingSenderId: "791239998085",
-    appId: "1:791239998085:web:308ba5164aea8102be47ec",
-    measurementId: "G-W8L9PJDR1F"
+    apiKey: "SUA_API_KEY_AQUI",
+    authDomain: "SEU_PROJETO.firebaseapp.com",
+    projectId: "SEU_PROJETO",
+    storageBucket: "SEU_PROJETO.firebasestorage.app",
+    messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+    appId: "SEU_APP_ID",
+    measurementId: "SEU_MEASUREMENT_ID"
 };
 
 const app = initializeApp(firebaseConfig);
